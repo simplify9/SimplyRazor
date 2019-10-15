@@ -1,0 +1,46 @@
+﻿@namespace SW.SimplyRazor
+
+<div>
+    @if (totalPages > 1)
+    {
+        <ul class="pagination" >
+            <li class="page-item ">
+                <button disabled="@(CurrentPage <= 1 ? "disabled" : null)" @onclick="(()=>ChangePage(1))" type="button" class="page-link">First</button>
+            </li>
+            <li class="page-item ">
+                <button disabled="@(CurrentPage <= 1 ? "disabled" : null)" @onclick="(()=>ChangePage(CurrentPage-1))" type="button" class="page-link">Previous</button>
+            </li>
+            <li class="page-item ">
+                <button disabled="@(CurrentPage < totalPages ? null : "disbaled" )" @onclick="(()=>ChangePage(CurrentPage+1))" type="button" class="page-link">Next</button>
+            </li>
+            <li class="page-item ">
+                <button disabled="@(CurrentPage < totalPages ? null : "disbaled" )" @onclick="(()=>ChangePage(totalPages))" type="button" class="page-link">Last</button>
+            </li>
+        </ul>
+    }
+</div>
+
+
+@code {
+
+    [Parameter]
+    public int CurrentPage { get; set; } = 1;
+
+    [Parameter]
+    public EventCallback<int> OnPageChanged { get; set; }
+
+    [Parameter]
+    public int PageSize { get; set; } = 20;
+
+    [Parameter]
+    public int TotalCount { get; set; }
+
+    int totalPages => (int)Math.Ceiling(decimal.Divide(TotalCount, PageSize));
+
+    Task ChangePage(int page)
+    {
+        CurrentPage = page;
+        return OnPageChanged.InvokeAsync(page);
+    }
+
+}

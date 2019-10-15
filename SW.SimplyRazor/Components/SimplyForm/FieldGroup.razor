@@ -1,0 +1,14 @@
+﻿@namespace SW.SimplyRazor
+
+<CascadingValue Value="true" Name="Grouped">
+    <div class="form-row">
+        @ChildContent
+    </div>
+</CascadingValue>
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+}

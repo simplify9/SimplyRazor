@@ -1,0 +1,24 @@
+{
+  "name": "sw.simplyrazor",
+  "version": "1.0.0",
+  "description": "simplyrazor components library",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Simplify9",
+  "license": "ISC",
+  "dependencies": {
+    "@tarekraafat/autocomplete.js": "^7.1.0",
+    "@yaireo/tagify": "^2.30.0",
+    "bootstrap": "^4.3.1",
+    "bs-custom-file-input": "^1.3.2",
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-cssnano": "^2.1.3",
+    "gulp-minify": "^3.1.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-uglify": "^3.0.2",
+    "quill": "^1.3.7"
+  }
+}

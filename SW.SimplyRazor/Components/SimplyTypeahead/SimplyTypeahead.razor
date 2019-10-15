@@ -1,0 +1,80 @@
+﻿@typeparam TKey
+@implements ISimplyTypeahead
+@namespace SW.SimplyRazor
+@using System.Text.Json
+@using SW.SimplyRazor.HttpClients
+@inject IJSRuntime JSRuntime
+@inject LookupServiceClient lookupServiceClient
+
+
+
+<input @ref="inputRef" value="@inputValue" type="text" class="form-control" />
+
+
+
+<p>@inputValue</p>
+
+@code {
+
+    ElementReference inputRef;
+    string inputValue;
+
+
+    [Parameter]
+    public string LookupServiceName { get; set; }
+
+    [Parameter]
+    public TKey Value { get; set; }
+
+    [Parameter]
+    public EventCallback<TKey> ValueChanged { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Value == null)
+        {
+            inputValue = null;
+            return;
+        }
+
+        inputValue = await lookupServiceClient.Get(LookupServiceName, Value);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var wrapper = new SimplyTypeaheadInterop(this);
+            await wrapper.InitAutoComplete(JSRuntime, inputRef);
+        }
+    }
+
+    public async Task SetSelectedItem(KeyValuePair<JsonElement, string> keyValue)
+    {
+
+
+        if (keyValue.Key.ValueKind == JsonValueKind.String)
+        {
+            string keyStr = null;
+            keyStr = keyValue.Key.ToString();
+            await ValueChanged.InvokeAsync((TKey)(object)keyStr);
+
+        }
+        else if (keyValue.Key.ValueKind == JsonValueKind.Number)
+        {
+            if (keyValue.Key.TryGetInt32(out var keyInt))
+            {
+                await ValueChanged.InvokeAsync((TKey)(object)keyInt);
+            }
+            throw new NotImplementedException();
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
+
+
+    }
+
+
+}

@@ -1,0 +1,25 @@
+﻿@namespace SW.SimplyRazor
+
+    <div class="custom-control custom-checkbox">
+        <input id="@State.Id"
+               checked="@State.Value"
+               type="checkbox"
+               class="custom-control-input @((State.IsInvalid ? "is-invalid" : null))"
+               form="@State.FormId"
+               @onchange="(e)=> ValueChanged.InvokeAsync(e.Value)"
+               @attributes="UnmatchedAttributes" />
+
+        <label class="custom-control-label" for="@State.Id">@State.Display</label>
+    </div>
+@code {
+
+    [Parameter]
+    public EventCallback<object> ValueChanged { get; set; }
+
+    [Parameter]
+    public FieldState State { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+}

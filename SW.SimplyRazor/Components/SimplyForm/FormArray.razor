@@ -1,0 +1,178 @@
+﻿@typeparam TModel
+@implements ISimplyForm
+@namespace SW.SimplyRazor
+@using BlazorLob3.Extensions
+
+
+<div class="clearfix mt-2 mb-1">
+    <label>@Display</label>
+</div>
+
+
+@if (collection.Count == 0)
+{
+    <p>Nothing to display, <button type="button" class="btn btn-link" @onclick="AddOnClick" >click here</button> to add.</p>
+}
+else
+{
+    <div class="row">
+        <div class="col">
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr>
+                        <CascadingValue Value="FieldRole.ColumnName" Name="RenderMode">
+                            <CascadingValue Value="collection.First()" Name="Model">
+                                @ChildContent
+                            </CascadingValue>
+                        </CascadingValue>
+                        <th align="right" scope="col" style="width:95px;">
+                            <button type="button" class="btn btn-outline-secondary btn-sm float-right" @onclick="AddOnClick"><span class="oi oi-plus" /></button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        for (var i = 0; i < collection.Count; i++)
+                        {
+                            var itemIndex = i;
+                            <tr>
+                                <CascadingValue Value="FieldRole.ColumnValue" Name="RenderMode">
+                                    <CascadingValue Value="collection[itemIndex]" Name="Model">
+                                        @ChildContent
+                                    </CascadingValue>
+                                </CascadingValue>
+                                <td align="right">
+                                    <button @onclick="(()=> EditModel(itemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-pencil" /></button>
+                                    <button @onclick="(()=> collection.RemoveAt(itemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-x" /></button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+
+
+@{ if (beingEditedModel != null)
+    {
+        <form @onsubmit="OnFormSubmit" @onreset="OnFormReset" id="@Id"></form>
+        <SimplyModal>
+            <Content>
+                <CascadingValue IsFixed="true" Value="this" Name="Form">
+                    <CascadingValue Value="FieldRole.Input" Name="RenderMode">
+                        <CascadingValue Value="beingEditedModel" Name="Model">
+                            @ChildContent
+                        </CascadingValue>
+                    </CascadingValue>
+                </CascadingValue>
+            </Content>
+            <Footer>
+                <button type="reset" class="btn btn-secondary" form="@Id">Close</button>
+                <button type="submit" class="btn btn-primary" form="@Id">Ok</button>
+            </Footer>
+        </SimplyModal>
+    }
+}
+
+
+@code {
+
+    [CascadingParameter(Name = "Form")]
+    public ISimplyForm Form { get; set; }
+
+    [CascadingParameter(Name = "Model")]
+    public object Model { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
+    public string Display { get; set; }
+
+    public string Id => Name;
+
+
+    IList<TModel> collection { get; set; }
+    Type modelType = null;
+    object beingEditedModel = null;
+    int beingEditedModelIndex;
+
+    protected override void OnInitialized()
+    {
+
+
+        Type arrayType = Model.GetType();
+        var childModel = Model;
+
+        var arr = Name.Split('.');
+
+
+        for (var i = 0; i < arr.Length; i++)
+        {
+            var pInfo = arrayType.GetProperty(arr[i]);
+            arrayType = pInfo.PropertyType;
+            childModel = pInfo.GetValue(childModel);
+        };
+        //propertyInfo = arrayType.GetProperty(arr[^1]);
+        modelType = arrayType.GenericTypeArguments[0];
+
+        collection = ((IList<TModel>)childModel);
+
+    }
+
+    public async Task FieldValueChanged(string name)
+    {
+        //await ValueChanged.InvokeAsync(Value);
+
+    }
+
+    public void AddField(FieldState formField)
+    {
+        //fields.Add(formField.Name, formField);
+    }
+
+    Task AddOnClick(EventArgs args)
+    {
+        beingEditedModelIndex = -1;
+        beingEditedModel = Activator.CreateInstance(modelType);
+        return Task.CompletedTask;
+    }
+
+    async Task OnFormSubmit(EventArgs arg)
+    {
+
+        if (beingEditedModelIndex < 0)
+        {
+            collection.Add((TModel)beingEditedModel);
+        }
+        else
+        {
+            beingEditedModel.DeepCloneTo(collection[beingEditedModelIndex]);// = (TModel)beingEditedModel;
+        }
+        beingEditedModel = null;
+        await Form.FieldValueChanged(Name);
+
+    }
+
+    Task OnFormReset(EventArgs arg)
+    {
+        beingEditedModel = null;
+        return Task.CompletedTask;
+    }
+
+    Task EditModel(int index)
+    {
+        beingEditedModelIndex = index;
+        beingEditedModel = collection[index].DeepClone(); //JsonConvert.DeserializeObject<TModel>(JsonConvert.SerializeObject( collection[index]));
+        return Task.CompletedTask;
+    }
+
+
+
+}

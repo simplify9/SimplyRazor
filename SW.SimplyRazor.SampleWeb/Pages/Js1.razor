@@ -1,0 +1,45 @@
+﻿@page "/js"
+
+@inject IJSRuntime JSRuntime
+
+
+<h3>js</h3>
+
+
+<div>
+    <button type="button" class="btn btn-primary" @onclick="@(()=> editorValue="<p>test</p>")">Set Value</button>
+</div>
+
+
+
+<SimplyEditor @bind-Value="editorValue" />
+
+<div>@editorValue</div>
+
+<div>
+    <SimplyUpload></SimplyUpload>
+
+</div>
+
+<div>
+    <SimplyTypeahead @bind-Value="autoCompleteValue"  LookupServiceName="country" />
+</div>
+
+<div>
+
+    <SimplyTags></SimplyTags>
+</div>
+
+@code {
+
+
+    string autoCompleteValue;
+
+    string editorValue = "<p>hello!!!</p>";
+
+
+
+
+
+
+}

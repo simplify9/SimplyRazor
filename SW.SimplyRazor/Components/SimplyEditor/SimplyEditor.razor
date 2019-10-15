@@ -1,0 +1,101 @@
+﻿@namespace SW.SimplyRazor
+@inject IJSRuntime JSRuntime
+
+<div id="toolbar" >
+    <span class="ql-formats">
+        <select class="ql-font">
+            <option selected=""></option>
+            <option value="serif"></option>
+            <option value="monospace"></option>
+        </select>
+        <select class="ql-size">
+            <option value="small"></option>
+            <option selected=""></option>
+            <option value="large"></option>
+            <option value="huge"></option>
+        </select>
+    </span>
+    <span class="ql-formats">
+        <button class="ql-bold"></button>
+        <button class="ql-italic"></button>
+        <button class="ql-underline"></button>
+        <button class="ql-strike"></button>
+    </span>
+    <span class="ql-formats">
+        <select class="ql-color"></select>
+        <select class="ql-background"></select>
+    </span>
+    <span class="ql-formats">
+        <button class="ql-list" value="ordered"></button>
+        <button class="ql-list" value="bullet"></button>
+        <select class="ql-align">
+            <option selected=""></option>
+            <option value="center"></option>
+            <option value="right"></option>
+            <option value="justify"></option>
+        </select>
+    </span>
+    <span class="ql-formats">
+        <button class="ql-link"></button>
+        <button class="ql-image"></button>
+    </span>
+</div>
+
+
+<div id="@quilDivId" >
+    <p></p>
+</div>
+
+
+@code {
+
+    string quilDivId = "quill_" + Guid.NewGuid().ToString("N");
+
+    //ElementReference editorRef;
+    //object quillRef;
+
+    [Parameter]
+    public string Value { get; set; }
+
+    string oldValue;
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("simplyEditorInterop.initEditor", quilDivId, DotNetObjectReference.Create(this));
+        }
+
+        if (Value != oldValue)
+        {
+            await JSRuntime.InvokeVoidAsync("simplyEditorInterop.setEditorContent", quilDivId, Value);
+            oldValue = Value;
+
+        }
+    }
+
+    //public async Task SetValue(EventArgs args)
+    //{
+    //}
+
+    [JSInvokable]
+    public void textChange(string source)
+    {
+
+    }
+
+    [JSInvokable]
+    public async Task editorValueChanged(string newValue)
+    {
+        Value = newValue; //await JSRuntime.InvokeAsync<string>("simplyRazor.getInnerHtml", editorRef);
+        oldValue = newValue;
+        await ValueChanged.InvokeAsync(newValue);
+    }
+
+
+}

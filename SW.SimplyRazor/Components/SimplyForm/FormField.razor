@@ -1,0 +1,126 @@
+﻿@namespace SW.SimplyRazor
+@implements IFormField
+
+
+@{
+    switch (RenderMode)
+    {
+        case FieldRole.Input:
+            {
+                if (fieldState.Visibility == FieldVisibility.Normal || fieldState.Visibility == FieldVisibility.InputVisible)
+                {
+                    <div class="@((Grouped) ? "col" : "form-group")">
+
+                        @inputComponent
+
+                        @if (fieldState.IsInvalid)
+                        {
+                            <div class="invalid-feedback">
+                                @fieldState.InvalidFeedback
+                            </div>
+                        }
+
+                        @if (fieldState.Help != null)
+                        {
+                            <small class="form-text text-muted">@fieldState.Help</small>
+                        }
+                    </div>
+                }
+                break;
+            }
+        case FieldRole.ColumnValue:
+            {
+                if (fieldState.Visibility == FieldVisibility.Normal || fieldState.Visibility == FieldVisibility.ColumnVisible)
+                {
+                    <td>@fieldState.Value</td>
+                }
+                break;
+            }
+
+        case FieldRole.ColumnName:
+            {
+                if (fieldState.Visibility == FieldVisibility.Normal || fieldState.Visibility == FieldVisibility.ColumnVisible)
+                {
+                    <th scope="col">@fieldState.Name</th>
+                }
+                break;
+            }
+    }
+}
+
+@code {
+
+    [CascadingParameter(Name = "Form")]
+    public ISimplyForm Form { get; set; }
+
+    [CascadingParameter(Name = "Model")]
+    public object Model { get; set; }
+
+    [CascadingParameter(Name = "RenderMode")]
+    public FieldRole RenderMode { get; set; }
+
+    [CascadingParameter(Name = "Grouped")]
+    public bool Grouped { get; set; }
+
+
+    [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
+    public Type Component { get; set; }
+
+    [Parameter]
+    public string Display { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    //[Parameter]
+    //public bool Readonly { get; set; }
+
+    [Parameter]
+    public FieldVisibility Visibility { get; set; }
+
+    [Parameter]
+    public string Help { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+    public string FormId => Form.Id;
+
+    RenderFragment inputComponent;
+
+    RenderFragment CreateInputComponent() => builder =>
+    {
+
+        builder.OpenComponent(0, fieldState.Component);
+        builder.AddAttribute(1, "State", fieldState);
+        builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<object>(this, OnChange));
+        builder.AddMultipleAttributes(3, UnmatchedAttributes);
+        builder.CloseComponent();
+
+    };
+
+
+    FieldState fieldState;
+
+    protected override void OnInitialized()
+    {
+        fieldState = new FieldState(this, Model);
+        if (RenderMode == FieldRole.Input)
+        {
+            Form.AddField(fieldState);
+            inputComponent = CreateInputComponent();
+            //value = fieldState.Value.ToString();
+        }
+        //ParentForm.AddField(this);
+    }
+
+    async Task OnChange(object value)
+    {
+        if (fieldState.TrySetValue(value)) await Form.FieldValueChanged(fieldState.Name);
+    }
+
+
+}

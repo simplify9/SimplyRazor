@@ -1,0 +1,57 @@
+﻿@page "/form"
+
+    <SimplyForm @bind-Value="employees[0]"   >
+
+        <FieldGroup>
+            <FormField Name="FirstName" readonly Visibility="(employees[0].Married ? FieldVisibility.Normal : FieldVisibility.Hidden)" ></FormField>
+            <FormField Name="LastName"></FormField>
+        </FieldGroup>
+
+        <FormField Name="Age" />
+        <FormField Name="Married" />
+        <FieldGroup>
+            <FormField Name="Salary.Amount" />
+            <FormField Name="Salary.Currency" />
+        </FieldGroup>
+        <FormArray Name="Leaves" Display="Leaves" TModel="Leave">
+            <FormField Name="Reason"  />
+            <FormField Name="Days" min="1" max="100" pattern="[0-9]{5}" />
+        </FormArray>
+
+    </SimplyForm>
+
+<p>@employees[0].Age</p>
+
+
+@code {
+
+    Task OnFormChange(object formModel)
+    {
+        employees[0] = (Employee)formModel;  
+        return Task.CompletedTask; 
+    }
+
+
+    static readonly List<Employee> employees = new List<Employee>
+{
+        new Employee()
+        {
+            Id=1,
+            FirstName="Samer",
+            LastName="Awajan",
+            Gender="M",
+            Salary = new Money{Amount=100, Currency="USD" },
+            Leaves = new List<Leave>()
+        {
+                new Leave {Days=100, Reason="sick" },
+                new Leave {Days=30, Reason="marriage" }
+            }
+        },
+
+
+        new Employee() {Id=2, FirstName="Yaser", LastName="Awajan", Gender="M" },
+        new Employee() {Id=3, FirstName="Osama", LastName="Awajan", Gender="M" },
+        new Employee() {Id=4, FirstName="Ahmad", LastName="Awajan", Gender="M" },
+
+    };
+}

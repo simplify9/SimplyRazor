@@ -1,0 +1,66 @@
+﻿@page "/BuiltContent"
+@using Microsoft.AspNetCore.Components.RenderTree
+
+<h1>Build a component</h1>
+<button type="button" @onclick="@(() =>
+                                  {
+                                      //simplyModal.Show("hello", "hello");
+                                      showModal = true;
+                                      //ModalOnClose = () =>
+                                      //{
+                                      //    return Task.CompletedTask;
+                                      //};
+                                  } )">
+    Show Dialog
+</button>
+
+@if (showModal)
+{
+<SimplyModal @ref="simplyModal" OnClose="ModalOnClose" Title="Title">
+    <p>hello <strong>test</strong>.....</p>
+</SimplyModal>
+}
+
+
+<SimplyModal @ref="simplyModal" OnClose="ModalOnClose" Title="Title">
+    <p>hello <strong>test</strong>.....</p>
+</SimplyModal>
+
+<SimplyModal @ref="simplyModal" OnClose="ModalOnClose" Title="Title">
+    <p>hello <strong>test</strong>.....</p>
+</SimplyModal>
+
+
+
+@code {
+
+    //public event Action< OnClose;
+    //private RenderFragment CustomRender { get; set; }
+    bool showModal;
+    SimplyModal simplyModal;
+
+    //    private RenderFragment CreateComponent() => builder =>
+    //    {
+    //    //for (var i = 0; i < 3; i++)
+    //    //{
+
+    //    //builder.OpenComponent(0, typeof(SimplyModal));
+    //    //builder.AddAttribute<int>(0, "OnClose", ModalOnClose );
+    //    //builder.CloseComponent();
+
+
+    //};
+
+
+    //private void RenderComponent()
+    //{
+    //    CustomRender = CreateComponent();
+    //    //CustomRender.
+    //}
+
+    Func<Task> ModalOnClose;
+    //{
+    //    showModal = false;
+    //}
+
+}

@@ -1,0 +1,31 @@
+﻿@namespace SW.SimplyRazor
+
+@inject IJSRuntime JSRuntime
+
+<div class="custom-file">
+    <input @ref="inputRef" @onchange="OnInputChange" type="file" accept="image/*" class="custom-file-input" id="customFile" />
+    <label class="custom-file-label" for="customFile">Choose file</label>
+</div>
+
+@code {
+
+    ElementReference inputRef;
+
+    //[Parameter(CaptureUnmatchedValues = true)]
+    //public Dictionary<string, object> UnmatchedParameters { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //styling
+            await JSRuntime.InvokeVoidAsync("simplyUploadInterop.initBsCustomFileInput");
+        }
+    }
+
+    async Task OnInputChange(EventArgs args)
+    {
+        await JSRuntime.InvokeVoidAsync("simplyUploadInterop.saveFile", inputRef);
+    }
+
+}

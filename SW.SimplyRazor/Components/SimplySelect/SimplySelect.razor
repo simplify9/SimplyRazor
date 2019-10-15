@@ -1,0 +1,78 @@
+﻿@typeparam TKey
+@namespace SW.SimplyRazor
+@if (KeyValuePairList != null)
+{
+
+    <select @onchange="SelectValueChanged" class="form-control">
+        @if (EmptyValue != null)
+        {
+            <option selected="@(Value.Equals(EmptyValue) )" value="@EmptyValue">@EmptyText</option>
+        }
+
+        @{
+            foreach (var item in KeyValuePairList)
+            {
+                <option selected="@(Value.Equals(item.Key) )" value="@item.Key">@item.Value</option>
+            }
+        }
+    </select>
+}
+
+@if (StringList != null)
+{
+
+    <select   @onchange="SelectValueChanged" class="form-control custom-select">
+        @if (EmptyValue != null)
+        {
+            <option  selected="@(int.Parse(Value.ToString())==0 )" value="0">@EmptyText</option>
+        }
+        @{
+            int itemIndex = 1;
+            foreach (var item in StringList)
+            {
+                <option selected="@(int.Parse(Value.ToString())==itemIndex )" value="@itemIndex">@item</option>
+                itemIndex++;
+            }
+        }
+    </select>
+}
+
+@code {
+
+    [Parameter]
+    public TKey Value { get; set; }
+
+    [Parameter]
+    public EventCallback<TKey> ValueChanged { get; set; }
+
+    [Parameter]
+    public IEnumerable<KeyValuePair<TKey, string>> KeyValuePairList { get; set; }
+
+    [Parameter]
+    public IEnumerable<string> StringList { get; set; }
+
+    [Parameter]
+    public TKey EmptyValue { get; set; }
+
+    [Parameter]
+    public string EmptyText { get; set; }
+
+
+
+    async Task SelectValueChanged(ChangeEventArgs args)
+    {
+        if (typeof(TKey) == typeof(string))
+        {
+            Value = (TKey)args.Value;
+            await ValueChanged.InvokeAsync(Value);
+        }
+        else if (typeof(TKey) == typeof(int))
+        {
+            Value = (TKey)(object)int.Parse(args.Value.ToString());
+            await ValueChanged.InvokeAsync(Value);
+        }
+        
+    }
+
+
+}
