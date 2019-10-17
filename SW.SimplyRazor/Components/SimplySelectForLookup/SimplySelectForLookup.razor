@@ -5,7 +5,7 @@
 
 @if (items != null)
 {
-    <select @onchange="SelectValueChanged" class="form-control" @attributes="UnmatchedAttributes" >
+    <select @onchange="SelectValueChanged" @attributes="UnmatchedAttributes" >
         @if (EmptyText != null)
         {
             <option selected="@(Value == null || emptyValue==Value.ToString())" value="@emptyValue">@EmptyText</option>

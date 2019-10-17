@@ -4,6 +4,7 @@
 
 <SimplySelectForLookup id="@State.Id"
                        form="@State.FormId"
+                       class="@cssClass"
                        ValueChanged="(e)=> ValueChanged.InvokeAsync(e)"
                        Value="@State.Value"
                        EmptyText="Select"
@@ -21,5 +22,7 @@
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+    string cssClass => "form-control " + (State.IsInvalid ? "is-invalid" : null);
 
 }
