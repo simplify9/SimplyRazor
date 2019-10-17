@@ -22,6 +22,7 @@ namespace SW.SimplyRazor
             FormId = formField.FormId;
             Visibility = formField.Visibility;
             Component = formField.Component;
+            Lookup = formField.Lookup;   
 
             var childModelType = modelType;
             childModel = model;
@@ -49,13 +50,14 @@ namespace SW.SimplyRazor
             {
                 InputType = "number";
                 Step = "1";
-                Pattern = "[0-9]{10}";
-                if (Component == null) Component = typeof(FieldForText);
+                //Pattern = "[0-9]{10}";
+
+                if (Component == null) Component = (Lookup == null) ? typeof(FieldForText) : typeof(FieldForTextAsSelect);
             }
             else if (propertyInfo.PropertyType == typeof(string))
             {
                 InputType = "text";
-                if (Component == null) Component = typeof(FieldForText);
+                if (Component == null) Component = (Lookup == null) ? typeof(FieldForText) : typeof(FieldForTextAsSelect);
             }
             else if (propertyInfo.PropertyType == typeof(bool))
             {
@@ -96,7 +98,7 @@ namespace SW.SimplyRazor
         public string Help { get; set; }
         public string InputType { get; set; }
         public string Step { get; set; }
-        public string Pattern { get; set; }
+        //public string Pattern { get; set; }
         public string MaxLength { get; set; }
         public string Min { get; set; }
         public string Max { get; set; }

@@ -15,6 +15,8 @@ namespace SW.SimplyRazor.SampleWeb.Models
         public int Age { get; set; }
         public bool Married { get; set; }
         public Money Salary { get; set; }
+        public int EmploymentStatus { get; set; }
+        public string Country { get; set; }
         public ICollection<Leave> Leaves { get; set; }
     }
 

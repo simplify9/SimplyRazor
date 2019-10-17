@@ -2,7 +2,7 @@
 <h3>SelectExamples</h3>
 
 <p>
-    <SelectForLookup @bind-Value="value" EmptyText="Select country" Lookup="country"></SelectForLookup>
+    <SimplySelectForLookup @bind-Value="value" EmptyText="Select country" Lookup="country"></SimplySelectForLookup>
 
 </p>
 
@@ -11,7 +11,7 @@
 </p>
 
 <p>
-    <SelectForLookup @bind-Value="value2" EmptyText="Select country" Lookup="country"></SelectForLookup>
+    <SimplySelectForLookup @bind-Value="value2" EmptyText="Select country" Lookup="country"></SimplySelectForLookup>
 
 </p>
 
@@ -19,7 +19,21 @@
     @value2
 </p>
 
+<p>
+    <SimplySelectForLookup @bind-Value="value3" EmptyText="Select integer" Lookup="intmock"></SimplySelectForLookup>
+</p>
+
+<p>
+    @value3
+</p>
+
 @code {
     string value;
     string value2 = "JO";
+    int value3;
+
+    void test()
+    {
+        
+    }
 }

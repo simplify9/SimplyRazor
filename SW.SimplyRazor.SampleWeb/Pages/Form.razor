@@ -1,34 +1,41 @@
 ﻿@page "/form"
 
-    <SimplyForm @bind-Value="employees[0]"   >
+<SimplyForm @bind-Value="employees[0]">
 
-        <FieldGroup>
-            <FormField Name="FirstName" readonly  ></FormField>
-            <FormField Name="LastName"></FormField>
-        </FieldGroup>
+    <FieldGroup>
+        <FormField Name="FirstName" readonly></FormField>
+        <FormField Name="LastName"></FormField>
+    </FieldGroup>
 
-        <FormField Name="Age" />
-        <FormField Name="Married" />
-        <FieldGroup>
-            <FormField Name="Salary.Amount" />
-            <FormField Name="Salary.Currency" />
-        </FieldGroup>
-        <FormArray Name="Leaves" Display="Leaves" TModel="Leave">
-            <FormField Name="Reason"  />
-            <FormField Name="Days" min="1" max="100" pattern="[0-9]{5}" />
-        </FormArray>
+    <FormField Name="Age" />
+    <FormField Name="Married" />
+    <FormField Name="EmploymentStatus" Lookup="intmock" />
+    <FormField Name="Country" Lookup="country" />
 
-    </SimplyForm>
 
-<p>@employees[0].Age</p>
+    <FieldGroup>
+        <FormField Name="Salary.Amount" />
+        <FormField Name="Salary.Currency" />
+    </FieldGroup>
+    <FormArray Name="Leaves" Display="Leaves" TModel="Leave">
+        <FormField Name="Reason" />
+        <FormField Name="Days" min="1" max="100" pattern="[0-9]{5}" />
+    </FormArray>
+
+</SimplyForm>
+
+<p>Age: @employees[0].Age</p>
+<p>Emp Status: @employees[0].EmploymentStatus</p>
+<p>Country: @employees[0].Country</p>
+
 
 
 @code {
 
     Task OnFormChange(object formModel)
     {
-        employees[0] = (Employee)formModel;  
-        return Task.CompletedTask; 
+        employees[0] = (Employee)formModel;
+        return Task.CompletedTask;
     }
 
 
@@ -42,7 +49,7 @@
             Gender="M",
             Salary = new Money{Amount=100, Currency="USD" },
             Leaves = new List<Leave>()
-        {
+{
                 new Leave {Days=100, Reason="sick" },
                 new Leave {Days=30, Reason="marriage" }
             }

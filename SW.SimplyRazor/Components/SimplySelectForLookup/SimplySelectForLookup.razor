@@ -5,17 +5,14 @@
 
 @if (items != null)
 {
-    <select @onchange="SelectValueChanged" class="form-control">
+    <select @onchange="SelectValueChanged" class="form-control" @attributes="UnmatchedAttributes" >
         @if (EmptyText != null)
         {
             <option selected="@(Value == null || Value.ToString()==emptyValue)" value="@emptyValue">@EmptyText</option>
         }
-
-        @{
-            foreach (var item in items)
-            {
-                <option selected="@(Value != null && Value.Equals(item.Key.ToString()) )" value="@item.Key">@item.Value</option>
-            }
+        @foreach (var item in items)
+        {
+            <option selected="@(Value != null && Value.Equals(item.Key) )" value="@item.Key">@item.Value</option>
         }
     </select>
 }
@@ -34,25 +31,13 @@
     [Parameter]
     public TKey EmptyValue { get; set; }
 
-    string emptyValue
-    {
-        get
-        {
-            if (EmptyValue == null)
-            {
-                return " ";
-            }
-            else
-            {
-                return EmptyValue.ToString();
-            }
-        }
-
-    }
-
+    string emptyValue => EmptyValue == null ? " " : EmptyValue.ToString();
 
     [Parameter]
     public string EmptyText { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
 
     async protected override Task OnInitializedAsync()
@@ -80,6 +65,11 @@
             else if (typeof(TKey) == typeof(int))
             {
                 Value = (TKey)(object)int.Parse(args.Value.ToString());
+                await ValueChanged.InvokeAsync(Value);
+            }
+            else if (typeof(TKey) == typeof(object))
+            {
+                Value = (TKey)args.Value;
                 await ValueChanged.InvokeAsync(Value);
             }
         }
