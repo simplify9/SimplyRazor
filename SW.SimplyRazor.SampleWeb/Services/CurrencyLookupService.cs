@@ -1,4 +1,5 @@
 ﻿using SW.I18n;
+using SW.PrimitiveTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,20 +15,18 @@ namespace BlazorLob3.Services
             this.i18NService = i18NService;
         }
 
-        public bool CanServe(string lookupServiceName)
-        {
-            return lookupServiceName.ToLower() == "currency";
-        }
+        public string[] Serves => new[] { "currency" };
+
 
         public Task<string> Get(string lookupServiceName, object key)
         {
             return Task.FromResult(i18NService.Currencies.Get(key.ToString() ).Code);
         }
 
-        public Task<IEnumerable<KeyValuePair<object, string>>> Search(string lookupServiceName, string searchFor)
+        public Task<IEnumerable<KeyValuePair<object, string>>> Search(string lookup, string search = null, string filter = null)
         {
             return Task.FromResult(i18NService.Currencies.List()
-                .Where(c => string.IsNullOrWhiteSpace(searchFor) ? true : c.Code.Contains(searchFor, StringComparison.InvariantCultureIgnoreCase))
+                .Where(c => string.IsNullOrWhiteSpace(search) ? true : c.Code.Contains(search, StringComparison.InvariantCultureIgnoreCase))
                 .Select(c => new KeyValuePair<object, string>(c.Code, c.Name)));
 
         }

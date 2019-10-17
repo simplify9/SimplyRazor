@@ -14,7 +14,8 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using BlazorLob3.Services;
 using SW.I18n;
-
+using SW.PrimitiveTypes;
+using SW.Lookup;
 
 namespace SW.SimplyRazor.SampleWeb
 {
@@ -39,7 +40,7 @@ namespace SW.SimplyRazor.SampleWeb
 
 
             services.AddI18n();
-            services.AddHttpClient<LookupServiceClient>();
+            services.AddHttpClient<LookupClient>();
             
         }
 

@@ -15,6 +15,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\LookupController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentValidation" Version="8.5.0" />
     <PackageReference Include="Humanizer.Core" Version="2.7.9" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
@@ -28,12 +32,17 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Include="Scrutor" Version="3.1.0" />
     <PackageReference Include="SimplyWorks.I18n" Version="2019.9.9.1" />
+    <PackageReference Include="SimplyWorks.Lookup" Version="2019.10.17.1" />
     <PackageReference Include="SimplyWorks.Searchy" Version="2019.2.13.1" />
     
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SW.SimplyRazor\SW.SimplyRazor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

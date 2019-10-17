@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SW.I18n;
+using SW.PrimitiveTypes;
 
 namespace BlazorLob3.Services
 {
@@ -12,17 +13,15 @@ namespace BlazorLob3.Services
         {
         }
 
-        public bool CanServe(string lookupServiceName)
-        {
-            return lookupServiceName.ToLower() == "intmock";
-        }
+        public string[] Serves => new[] { "intmock" };
+
 
         public Task<string> Get(string lookupServiceName, object key)
         {
             return Task.FromResult(""); //return Task.FromResult(i18NService.Countries.Get(key.ToString() ).Name);
         }
 
-        public Task<IEnumerable<KeyValuePair<object, string>>> Search(string lookupServiceName, string searchFor)
+        public Task<IEnumerable<KeyValuePair<object, string>>> Search(string lookup, string search = null, string filter = null)
         {
             //throw new NotImplementedException();
 
