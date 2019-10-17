@@ -27,13 +27,22 @@
     @value3
 </p>
 
+<p>
+    <SimplySelectForLookup @bind-Value="value4" EmptyText="Select integer" Lookup="intmock"></SimplySelectForLookup>
+</p>
+
+<p>
+    @value4
+</p>
+
 @code {
     string value;
     string value2 = "JO";
     int value3;
+    int value4=2;
 
     void test()
     {
-        
+
     }
 }

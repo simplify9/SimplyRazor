@@ -8,7 +8,7 @@
     <select @onchange="SelectValueChanged" class="form-control" @attributes="UnmatchedAttributes" >
         @if (EmptyText != null)
         {
-            <option selected="@(Value == null || Value.ToString()==emptyValue)" value="@emptyValue">@EmptyText</option>
+            <option selected="@(Value == null || emptyValue==Value.ToString())" value="@emptyValue">@EmptyText</option>
         }
         @foreach (var item in items)
         {
