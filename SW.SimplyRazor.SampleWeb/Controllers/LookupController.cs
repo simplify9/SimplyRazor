@@ -22,7 +22,7 @@ namespace BlazorLob3.Controllers
         [HttpGet]
         public IActionResult List()
         {
-            var svcsList = serviceProvider.GetServices<ILookupService<string>>().Select(e => e.GetType().Name.Replace("LookupService", string.Empty).ToLower()); //.Select(e=> new {Instance = e ,Name = e.GetType().Name.Replace("LookupService", string.Empty) });  
+            var svcsList = serviceProvider.GetServices<ILookupService>().Select(e => e.GetType().Name.Replace("LookupService", string.Empty).ToLower()); //.Select(e=> new {Instance = e ,Name = e.GetType().Name.Replace("LookupService", string.Empty) });  
             return new OkObjectResult(svcsList);
         }
 
@@ -34,7 +34,7 @@ namespace BlazorLob3.Controllers
 
 
 
-            var svcs = serviceProvider.GetServices<ILookupService<string>>().Where(e => e.CanServe(lookupServiceName.ToLower())); //.Select(e=> new {Instance = e ,Name = e.GetType().Name.Replace("LookupService", string.Empty) });  
+            var svcs = serviceProvider.GetServices<ILookupService>().Where(e => e.CanServe(lookupServiceName.ToLower())); //.Select(e=> new {Instance = e ,Name = e.GetType().Name.Replace("LookupService", string.Empty) });  
             if (svcs.Count() != 1) return NotFound();
 
             if (key == null)

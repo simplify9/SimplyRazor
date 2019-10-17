@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace SW.SimplyRazor.HttpClients
+namespace SW.SimplyRazor
 {
     public class LookupServiceClient 
     {
@@ -12,7 +12,7 @@ namespace SW.SimplyRazor.HttpClients
 
         public LookupServiceClient(HttpClient client)
         {
-            client.BaseAddress = new Uri("https://localhost:5001");
+            //client.BaseAddress = new Uri("https://localhost:5001");
             //// GitHub API versioning
             //client.DefaultRequestHeaders.Add("Accept",
             //    "application/vnd.github.v3+json");
@@ -25,15 +25,13 @@ namespace SW.SimplyRazor.HttpClients
 
  
 
-        public async Task<IEnumerable<KeyValuePair<object, string>>> Search(string lookupServiceName, string searchFor)
+        public async Task<IEnumerable<KeyValuePair<string, string>>> Search(string lookupServiceName, string searchFor)
         {
-            var response = await Client.GetAsync(
-                 $"/api/lookup/{lookupServiceName}/s={searchFor}");
+            var response = await Client.GetAsync( $"api/lookup/{lookupServiceName}/?s={searchFor}");
 
             response.EnsureSuccessStatusCode();
-
-            var result = await response.Content
-                .ReadAsAsync<IEnumerable<KeyValuePair<object, string>>>();
+            //var str = await response.Content.ReadAsStringAsync(); 
+            var result = await response.Content.ReadAsAsync<IEnumerable<KeyValuePair<string, string>>>();
 
             return result;
         }

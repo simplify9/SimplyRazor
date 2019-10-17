@@ -1,0 +1,25 @@
+﻿@page "/select"
+<h3>SelectExamples</h3>
+
+<p>
+    <SelectForLookup @bind-Value="value" EmptyText="Select country" Lookup="country"></SelectForLookup>
+
+</p>
+
+<p>
+    @value
+</p>
+
+<p>
+    <SelectForLookup @bind-Value="value2" EmptyText="Select country" Lookup="country"></SelectForLookup>
+
+</p>
+
+<p>
+    @value2
+</p>
+
+@code {
+    string value;
+    string value2 = "JO";
+}

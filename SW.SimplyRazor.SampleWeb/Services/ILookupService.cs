@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace BlazorLob3.Services
 {
-    public interface ILookupService<TKey>
+    public interface ILookupService
     {
-        Task<IEnumerable<KeyValuePair<TKey, string>>> Search(string lookupServiceName, string searchFor);
-        Task<string> Get(string lookupServiceName, TKey key);
+        Task<IEnumerable<KeyValuePair<string, string>>> Search(string lookupServiceName, string searchFor);
+        Task<string> Get(string lookupServiceName, object key);
         bool CanServe(string lookupServiceName);
     }
 }

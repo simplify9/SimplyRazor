@@ -1,0 +1,89 @@
+﻿@typeparam TKey
+@namespace SW.SimplyRazor
+@inject LookupServiceClient lookupService
+@inject NavigationManager nav
+
+@if (items != null)
+{
+    <select @onchange="SelectValueChanged" class="form-control">
+        @if (EmptyText != null)
+        {
+            <option selected="@(Value == null || Value.ToString()==emptyValue)" value="@emptyValue">@EmptyText</option>
+        }
+
+        @{
+            foreach (var item in items)
+            {
+                <option selected="@(Value != null && Value.Equals(item.Key.ToString()) )" value="@item.Key">@item.Value</option>
+            }
+        }
+    </select>
+}
+
+@code {
+
+    [Parameter]
+    public TKey Value { get; set; }
+
+    [Parameter]
+    public EventCallback<TKey> ValueChanged { get; set; }
+
+    [Parameter]
+    public string Lookup { get; set; }
+
+    [Parameter]
+    public TKey EmptyValue { get; set; }
+
+    string emptyValue
+    {
+        get
+        {
+            if (EmptyValue == null)
+            {
+                return " ";
+            }
+            else
+            {
+                return EmptyValue.ToString();
+            }
+        }
+
+    }
+
+
+    [Parameter]
+    public string EmptyText { get; set; }
+
+
+    async protected override Task OnInitializedAsync()
+    {
+        lookupService.Client.BaseAddress = new Uri(nav.BaseUri);
+        items = await lookupService.Search(Lookup, "");
+    }
+
+    IEnumerable<KeyValuePair<string, string>> items;
+
+    async Task SelectValueChanged(ChangeEventArgs args)
+    {
+        if (string.IsNullOrWhiteSpace(args.Value.ToString()))
+        {
+            Value = default(TKey);
+            await ValueChanged.InvokeAsync(Value);
+        }
+        else
+        {
+            if (typeof(TKey) == typeof(string))
+            {
+                Value = (TKey)args.Value;
+                await ValueChanged.InvokeAsync(Value);
+            }
+            else if (typeof(TKey) == typeof(int))
+            {
+                Value = (TKey)(object)int.Parse(args.Value.ToString());
+                await ValueChanged.InvokeAsync(Value);
+            }
+        }
+    }
+
+
+}

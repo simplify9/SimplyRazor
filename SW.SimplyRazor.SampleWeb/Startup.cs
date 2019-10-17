@@ -14,7 +14,7 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using BlazorLob3.Services;
 using SW.I18n;
-using SW.SimplyRazor.HttpClients;
+
 
 namespace SW.SimplyRazor.SampleWeb
 {
@@ -34,7 +34,7 @@ namespace SW.SimplyRazor.SampleWeb
             services.AddRazorPages();
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; }); ;
             services.AddSingleton<WeatherForecastService>();
-            services.AddSingleton<ILookupService<string>, CountryLookupService>();
+            services.AddSingleton<ILookupService, CountryLookupService>();
 
             services.AddI18n();
             services.AddHttpClient<LookupServiceClient>();

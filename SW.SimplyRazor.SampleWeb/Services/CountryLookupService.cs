@@ -6,7 +6,7 @@ using SW.I18n;
 
 namespace BlazorLob3.Services
 {
-    public class CountryLookupService : ILookupService<string>
+    public class CountryLookupService : ILookupService
     {
         readonly I18nService i18NService;
         public CountryLookupService(I18nService i18NService)
@@ -19,9 +19,9 @@ namespace BlazorLob3.Services
             return lookupServiceName.ToLower() == "country";
         }
 
-        public Task<string> Get(string lookupServiceName, string key)
+        public Task<string> Get(string lookupServiceName, object key)
         {
-            return Task.FromResult(i18NService.Countries.Get(key).Name);
+            return Task.FromResult(i18NService.Countries.Get(key.ToString() ).Name);
         }
 
         public Task<IEnumerable<KeyValuePair<string, string>>> Search(string lookupServiceName, string searchFor)

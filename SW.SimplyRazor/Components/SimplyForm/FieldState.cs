@@ -107,6 +107,7 @@ namespace SW.SimplyRazor
         {
             try
             {
+                //if (value==null) propertyInfo.SetValue(childModel, default() );
                 var typedValue = value.ConvertObjectToType(propertyInfo.PropertyType);
                 propertyInfo.SetValue(childModel, typedValue);
                 InvalidFeedback = null;

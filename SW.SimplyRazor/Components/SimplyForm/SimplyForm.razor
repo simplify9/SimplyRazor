@@ -1,7 +1,6 @@
 ﻿@typeparam TModel
 @implements ISimplyForm
 @namespace SW.SimplyRazor
-@using BlazorLob3.Extensions
 @using FluentValidation
 
 <form id="@Id"></form>
@@ -43,6 +42,7 @@
 
     public async Task FieldValueChanged(string name)
     {
+        //if (name!="FirstName") Fields["FirstName"].TrySetValue("sss");
         await ValueChanged.InvokeAsync(Value);
     }
 
