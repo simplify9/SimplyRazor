@@ -16,6 +16,8 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\LookupController.cs" />
+    <Compile Remove="Services\CountryLookupService.cs" />
+    <Compile Remove="Services\CurrencyLookupService.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,10 +30,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.7" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Include="Scrutor" Version="3.1.0" />
-    <PackageReference Include="SimplyWorks.I18n" Version="2019.9.9.1" />
+    <PackageReference Include="SimplyWorks.I18n" Version="2019.10.17.2" />
     <PackageReference Include="SimplyWorks.Lookup" Version="2019.10.17.1" />
     <PackageReference Include="SimplyWorks.Searchy" Version="2019.2.13.1" />
     

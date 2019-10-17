@@ -35,7 +35,7 @@ namespace SW.SimplyRazor.SampleWeb
             services.AddRazorPages();
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; }); ;
             services.AddSingleton<WeatherForecastService>();
-            services.AddSingleton<ILookupService, CountryLookupService>();
+            //services.AddSingleton<ILookupService, CountryLookupService>();
             services.AddSingleton<ILookupService, IntMockLookupService>();
 
 

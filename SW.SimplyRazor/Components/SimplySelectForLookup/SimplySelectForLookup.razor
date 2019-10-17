@@ -43,7 +43,7 @@
     async protected override Task OnInitializedAsync()
     {
         lookupService.Client.BaseAddress = new Uri(nav.BaseUri);
-        items = await lookupService.Search(Lookup, "");
+        items = await lookupService.Search(Lookup);
     }
 
     IEnumerable<KeyValuePair<object, string>> items;
