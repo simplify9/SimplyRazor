@@ -22,17 +22,17 @@ namespace BlazorLob3.Services
             return Task.FromResult(""); //return Task.FromResult(i18NService.Countries.Get(key.ToString() ).Name);
         }
 
-        public Task<IEnumerable<KeyValuePair<string, string>>> Search(string lookupServiceName, string searchFor)
+        public Task<IEnumerable<KeyValuePair<object, string>>> Search(string lookupServiceName, string searchFor)
         {
             //throw new NotImplementedException();
 
-            IEnumerable<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>()
+            IEnumerable<KeyValuePair<object, string>> result = new List<KeyValuePair<object, string>>()
             {
-                new KeyValuePair<string, string> ("1","Text1"),
-                new KeyValuePair<string, string> ("2","Text2"),
-                new KeyValuePair<string, string> ("3","Text3"),
-                new KeyValuePair<string, string> ("4","Text4"),
-                new KeyValuePair<string, string> ("5","Text5"),
+                new KeyValuePair<object, string> (1,"Text1"),
+                new KeyValuePair<object, string> (2,"Text2"),
+                new KeyValuePair<object, string> (3,"Text3"),
+                new KeyValuePair<object, string> (4,"Text4"),
+                new KeyValuePair<object, string> (5,"Text5"),
 
             };
 

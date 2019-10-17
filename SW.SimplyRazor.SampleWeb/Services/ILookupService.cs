@@ -7,7 +7,7 @@ namespace BlazorLob3.Services
 {
     public interface ILookupService
     {
-        Task<IEnumerable<KeyValuePair<string, string>>> Search(string lookupServiceName, string searchFor);
+        Task<IEnumerable<KeyValuePair<object, string>>> Search(string lookupServiceName, string searchFor);
         Task<string> Get(string lookupServiceName, object key);
         bool CanServe(string lookupServiceName);
     }

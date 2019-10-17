@@ -24,13 +24,13 @@ namespace BlazorLob3.Services
             return Task.FromResult(i18NService.Countries.Get(key.ToString() ).Name);
         }
 
-        public Task<IEnumerable<KeyValuePair<string, string>>> Search(string lookupServiceName, string searchFor)
+        public Task<IEnumerable<KeyValuePair<object, string>>> Search(string lookupServiceName, string searchFor)
         {
             //throw new NotImplementedException();
 
             return Task.FromResult(i18NService.Countries.List()
                 .Where(c => string.IsNullOrWhiteSpace(searchFor) ? true : c.Name.Contains(searchFor, StringComparison.InvariantCultureIgnoreCase))
-                .Select(c => new KeyValuePair<string, string>(c.Code, c.Name)));
+                .Select(c => new KeyValuePair<object, string>(c.Code, c.Name)));
 
         }
     }

@@ -24,11 +24,11 @@ namespace BlazorLob3.Services
             return Task.FromResult(i18NService.Currencies.Get(key.ToString() ).Code);
         }
 
-        public Task<IEnumerable<KeyValuePair<string, string>>> Search(string lookupServiceName, string searchFor)
+        public Task<IEnumerable<KeyValuePair<object, string>>> Search(string lookupServiceName, string searchFor)
         {
             return Task.FromResult(i18NService.Currencies.List()
                 .Where(c => string.IsNullOrWhiteSpace(searchFor) ? true : c.Code.Contains(searchFor, StringComparison.InvariantCultureIgnoreCase))
-                .Select(c => new KeyValuePair<string, string>(c.Code, c.Name)));
+                .Select(c => new KeyValuePair<object, string>(c.Code, c.Name)));
 
         }
     }

@@ -25,18 +25,18 @@ namespace SW.SimplyRazor
 
  
 
-        public async Task<IEnumerable<KeyValuePair<string, string>>> Search(string lookupServiceName, string searchFor)
+        public async Task<IEnumerable<KeyValuePair<object, string>>> Search(string lookupServiceName, string searchFor)
         {
             var response = await Client.GetAsync( $"api/lookup/{lookupServiceName}/?s={searchFor}");
 
             response.EnsureSuccessStatusCode();
             //var str = await response.Content.ReadAsStringAsync(); 
-            var result = await response.Content.ReadAsAsync<IEnumerable<KeyValuePair<string, string>>>();
+            var result = await response.Content.ReadAsAsync<IEnumerable<KeyValuePair<object, string>>>();
 
             return result;
         }
 
-        public async Task<string> Get(string lookupServiceName, object key)
+        public async Task<object> Get(string lookupServiceName, object key)
         {
             var response = await Client.GetAsync(
                  $"api/lookup/{lookupServiceName}?k={key}");

@@ -12,7 +12,7 @@
         }
         @foreach (var item in items)
         {
-            <option selected="@(Value != null && Value.Equals(item.Key) )" value="@item.Key">@item.Value</option>
+            <option selected="@(Value != null && item.Key.ToString()==Value.ToString() )" value="@item.Key">@item.Value</option>
         }
     </select>
 }
@@ -46,7 +46,7 @@
         items = await lookupService.Search(Lookup, "");
     }
 
-    IEnumerable<KeyValuePair<string, string>> items;
+    IEnumerable<KeyValuePair<object, string>> items;
 
     async Task SelectValueChanged(ChangeEventArgs args)
     {
