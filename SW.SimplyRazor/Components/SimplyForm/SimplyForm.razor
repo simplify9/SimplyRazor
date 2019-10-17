@@ -34,15 +34,11 @@
     public string Id => "MainForm";
 
 
-    //public object Model => (object)Value;
-
-
-    //IList<FormFieldDetails> fields = new List<FormFieldDetails>();
-    IDictionary<string, FieldState> fields = new Dictionary<string, FieldState>();
+    public IDictionary<string, FieldState> Fields { get; set; }
 
     protected override void OnInitialized()
     {
-        //fields = new List<IFormField>();
+        Fields = new Dictionary<string, FieldState>();
     }
 
     public async Task FieldValueChanged(string name)
@@ -52,7 +48,12 @@
 
     public void AddField(FieldState formField)
     {
-        fields.Add(formField.Name, formField);
+        Fields.Add(formField.Name, formField);
+    }
+
+    public void RemoveField(string name)
+    {
+        Fields.Remove(name);
     }
 
     async Task ValidateOnClick(EventArgs args)
@@ -63,7 +64,7 @@
 
         foreach (var err in result.Errors)
         {
-            var fld = fields[err.PropertyName];
+            var fld = Fields[err.PropertyName];
             fld.InvalidFeedback = err.ErrorMessage;
 
         };
@@ -71,60 +72,6 @@
 
     }
 
-    //public void AddField(IFormField formField)
-    //{
-    //    var formFieldDetails = new FormFieldDetails(formField, Value.GetType());
-
-
-    //    fields.Add(formFieldDetails);
-    //    StateHasChanged();
-    //}
-
-    //string GetFieldType(string name)
-    //{
-    //    var prop = Value.GetType().GetProperty(name);
-
-    //    if (prop.PropertyType == typeof(int))
-    //    {
-    //        return "number";
-    //    }
-    //    else if (prop.PropertyType == typeof(string))
-    //    {
-    //        return "text";
-    //    }
-    //    else
-    //    {
-    //        return "text";
-    //    }
-
-
-    //}
-
-    //object GetFieldValue(string name)
-    //{
-    //    var prop = Value.GetType().GetProperty(name);
-    //    return prop.GetValue(Value);
-    //}
-
-    //async Task OnFieldChange(string name, object value)
-    //{
-
-    //    var prop = Value.GetType().GetProperty(name);
-    //    try
-    //    {
-    //        var typedValue = value.ConvertObjectToType(prop.PropertyType);
-    //        prop.SetValue(Value, typedValue);
-    //        await ValueChanged.InvokeAsync(Value);
-
-    //    }
-    //    catch (Exception ex)
-    //    {
-
-    //        //StateHasChanged();
-    //        Console.WriteLine(ex);
-    //        //throw;
-    //    }
-    //}
 
 
 

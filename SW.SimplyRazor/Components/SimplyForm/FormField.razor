@@ -1,5 +1,6 @@
 ﻿@namespace SW.SimplyRazor
 @implements IFormField
+@implements IDisposable
 
 
 @{
@@ -62,6 +63,9 @@
     [CascadingParameter(Name = "Grouped")]
     public bool Grouped { get; set; }
 
+    [CascadingParameter(Name = "Lookup")]
+    public string Lookup { get; set; }
+
 
     [Parameter]
     public string Name { get; set; }
@@ -75,8 +79,6 @@
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
-    //[Parameter]
-    //public bool Readonly { get; set; }
 
     [Parameter]
     public FieldVisibility Visibility { get; set; }
@@ -122,5 +124,12 @@
         if (fieldState.TrySetValue(value)) await Form.FieldValueChanged(fieldState.Name);
     }
 
+    void IDisposable.Dispose()
+    {
+        if (RenderMode == FieldRole.Input)
+        {
+            Form.RemoveField(Name);
+        }
 
+    }
 }

@@ -21,6 +21,8 @@ namespace SW.SimplyRazor
 
         //string InvalidClass { get; set; }
 
+        string Lookup { get; set; }
+
 
     }
 }

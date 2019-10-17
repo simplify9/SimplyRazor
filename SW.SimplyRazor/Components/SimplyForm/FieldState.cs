@@ -90,10 +90,9 @@ namespace SW.SimplyRazor
         }
 
         public Type Component { get; set; }
-
         public bool Readonly { get; set; }
         public FieldVisibility Visibility { get; set; }
-
+        public string Lookup { get; set; }
         public string Help { get; set; }
         public string InputType { get; set; }
         public string Step { get; set; }
@@ -101,7 +100,6 @@ namespace SW.SimplyRazor
         public string MaxLength { get; set; }
         public string Min { get; set; }
         public string Max { get; set; }
-        //public string InvalidClass => (IsInvalid ? "is-invalid" : null);
         public string InvalidFeedback { get; set; }
         public bool IsInvalid => InvalidFeedback != null;
         public object Value => propertyInfo.GetValue(childModel);
@@ -119,7 +117,6 @@ namespace SW.SimplyRazor
                 InvalidFeedback = "Failed to set value.";
                 return false;
             }
-
         }
 
 

@@ -11,7 +11,7 @@
 
 @if (collection.Count == 0)
 {
-    <p>Nothing to display, <button type="button" class="btn btn-link" @onclick="AddOnClick" >click here</button> to add.</p>
+    <p>Nothing to display, <button type="button" class="btn btn-link" @onclick="AddOnClick">click here</button> to add.</p>
 }
 else
 {
@@ -97,6 +97,8 @@ else
 
     public string Id => Name;
 
+    public IDictionary<string, FieldState> Fields { get; set; }
+
 
     IList<TModel> collection { get; set; }
     Type modelType = null;
@@ -106,6 +108,7 @@ else
     protected override void OnInitialized()
     {
 
+        Fields = new Dictionary<string, FieldState>();
 
         Type arrayType = Model.GetType();
         var childModel = Model;
@@ -124,6 +127,8 @@ else
 
         collection = ((IList<TModel>)childModel);
 
+
+
     }
 
     public async Task FieldValueChanged(string name)
@@ -134,7 +139,12 @@ else
 
     public void AddField(FieldState formField)
     {
-        //fields.Add(formField.Name, formField);
+        Fields.Add(formField.Name, formField);
+    }
+
+    public void RemoveField(string name)
+    {
+        Fields.Remove(name);
     }
 
     Task AddOnClick(EventArgs args)
