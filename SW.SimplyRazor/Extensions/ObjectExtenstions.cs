@@ -2,7 +2,7 @@
 using System;
 
 
-namespace BlazorLob3.Extensions
+namespace SW.SimplyRazor 
 {
     public static  class ObjectExtenstions
     {
