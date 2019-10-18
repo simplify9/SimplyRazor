@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Humanizer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -21,7 +22,7 @@ namespace SW.SimplyRazor
             Help = formField.Help;
             FormId = formField.FormId;
             Visibility = formField.Visibility;
-            Component = formField.Component;
+            Editor = formField.Editor;
             Lookup = formField.Lookup;   
 
             var childModelType = modelType;
@@ -35,7 +36,7 @@ namespace SW.SimplyRazor
                 {
                     var pInfo = childModelType.GetProperty(arr[i]);
                     childModelType = pInfo.PropertyType;
-                    childModel = pInfo.GetValue(childModel);
+                    if (childModel != null) childModel = pInfo.GetValue(childModel);
                 };
                 propertyInfo = childModelType.GetProperty(arr[arr.Length - 1]);
 
@@ -49,20 +50,20 @@ namespace SW.SimplyRazor
             if (propertyInfo.PropertyType == typeof(int))
             {
                 InputType = "number";
-                Step = "1";
+                //Step = "1";
                 //Pattern = "[0-9]{10}";
 
-                if (Component == null) Component = (Lookup == null) ? typeof(FieldForText) : typeof(FieldForTextAsSelect);
+                if (Editor == null) Editor = (Lookup == null) ? typeof(EditorForText) : typeof(EditorForTextAsSelect);
             }
             else if (propertyInfo.PropertyType == typeof(string))
             {
                 InputType = "text";
-                if (Component == null) Component = (Lookup == null) ? typeof(FieldForText) : typeof(FieldForTextAsSelect);
+                if (Editor == null) Editor = (Lookup == null) ? typeof(EditorForText) : typeof(EditorForTextAsSelect);
             }
             else if (propertyInfo.PropertyType == typeof(bool))
             {
                 //InputType = "text";
-                if (Component == null) Component = typeof(FieldForBoolean);
+                if (Editor == null) Editor = typeof(EditorForBoolean);
             }
             else
             {
@@ -83,7 +84,7 @@ namespace SW.SimplyRazor
         {
             get
             {
-                return (display == null) ? Name : Display;
+                return (display == null) ? Name.Humanize() : Display;
             }
             set
             {
@@ -91,20 +92,20 @@ namespace SW.SimplyRazor
             }
         }
 
-        public Type Component { get; set; }
+        public Type Editor { get; set; }
         public bool Readonly { get; set; }
         public FieldVisibility Visibility { get; set; }
         public string Lookup { get; set; }
         public string Help { get; set; }
         public string InputType { get; set; }
-        public string Step { get; set; }
+        //public string Step { get; set; }
         //public string Pattern { get; set; }
-        public string MaxLength { get; set; }
-        public string Min { get; set; }
-        public string Max { get; set; }
+        //public string MaxLength { get; set; }
+        //public string Min { get; set; }
+        //public string Max { get; set; }
         public string InvalidFeedback { get; set; }
         public bool IsInvalid => InvalidFeedback != null;
-        public object Value => propertyInfo.GetValue(childModel);
+        public object Value => childModel !=null ? propertyInfo.GetValue(childModel) : null;
         public bool TrySetValue(object value)
         {
             try

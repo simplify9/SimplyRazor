@@ -11,7 +11,7 @@ namespace SW.SimplyRazor
         string Name { get; set; }
         string Display { get; set; }
         string Help { get; set; }
-        Type Component { get; set; }
+        Type Editor { get; set; }
         FieldVisibility Visibility { get; set; }
         string Lookup { get; set; }
     }

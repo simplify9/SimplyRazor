@@ -2,12 +2,11 @@
 @implements ISimplyForm
 @namespace SW.SimplyRazor
 
-
+@if (RenderMode!=FieldRole.Input ) { return; }
 
 <div class="clearfix mt-2 mb-1">
     <label>@Display</label>
 </div>
-
 
 @if (Value.Count == 0)
 {
@@ -54,8 +53,6 @@ else
     </div>
 }
 
-
-
 @{ if (beingEditedModel != null)
     {
         <form @onsubmit="OnFormSubmit" @onreset="OnFormReset" id="@Id"></form>
@@ -89,6 +86,9 @@ else
     [CascadingParameter(Name = "Value")]
     public IList<TModel> Value { get; set; }
 
+    [CascadingParameter(Name = "RenderMode")]
+    public FieldRole RenderMode { get; set; }
+
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
@@ -111,9 +111,6 @@ else
 
     public IDictionary<string, FieldState> Fields { get; set; }
 
-
-    //IList<TModel> collection { get; set; }
-    //Type modelType = null;
     object beingEditedModel = null;
     int beingEditedModelIndex;
 

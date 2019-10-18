@@ -33,7 +33,19 @@
             {
                 if (fieldState.Visibility == FieldVisibility.Normal || fieldState.Visibility == FieldVisibility.ColumnVisible)
                 {
-                    <td>@fieldState.Value</td>
+
+                    <td>
+                        @if (ColumnValue == null)
+                        {
+                            @fieldState.Value
+
+                        }
+                        else
+                        {
+                            @ColumnValue(fieldState)
+                        }
+                    </td>
+
                 }
                 break;
             }
@@ -42,7 +54,17 @@
             {
                 if (fieldState.Visibility == FieldVisibility.Normal || fieldState.Visibility == FieldVisibility.ColumnVisible)
                 {
-                    <th scope="col">@fieldState.Name</th>
+                    <th scope="col">
+                        @if (ColumnHeader == null)
+                        {
+                            @fieldState.Display
+
+                        }
+                        else
+                        {
+                            @ColumnHeader(fieldState)
+                        }
+                    </th>
                 }
                 break;
             }
@@ -70,13 +92,16 @@
     public string Name { get; set; }
 
     [Parameter]
-    public Type Component { get; set; }
+    public Type Editor { get; set; }
 
     [Parameter]
     public string Display { get; set; }
 
-    //[Parameter]
-    //public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public RenderFragment<FieldState> ColumnHeader { get; set; }
+
+    [Parameter]
+    public RenderFragment<FieldState> ColumnValue { get; set; }
 
 
     [Parameter]
@@ -95,7 +120,7 @@
     RenderFragment CreateInputComponent() => builder =>
     {
 
-        builder.OpenComponent(0, fieldState.Component);
+        builder.OpenComponent(0, fieldState.Editor);
         builder.AddAttribute(1, "State", fieldState);
         builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<object>(this, OnChange));
         builder.AddMultipleAttributes(3, UnmatchedAttributes);

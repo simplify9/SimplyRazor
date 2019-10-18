@@ -3,25 +3,25 @@
 <SimplyForm @bind-Value="Employee.Sample[0]">
 
     <FieldGroup>
-        <FormField Name="FirstName" readonly></FormField>
-        <FormField Name="LastName"></FormField>
+        <SimplyField Name="FirstName" readonly></SimplyField>
+        <SimplyField Name="LastName"></SimplyField>
     </FieldGroup>
 
-    <FormField Name="Age" />
-    <FormField Name="Married" />
-    <FormField Name="EmploymentStatus" Lookup="intmock" />
-    <FormField Name="Country" Lookup="country" />
-    <FormField Name="Photo" Lookup="country" Component="typeof(FieldForUpload)" />
+    <SimplyField Name="Age" />
+    <SimplyField Name="Married" />
+    <SimplyField Name="EmploymentStatus" Lookup="intmock" />
+    <SimplyField Name="Country" Lookup="country" />
+    <SimplyField Name="Photo" Lookup="country" Component="typeof(FieldForUpload)" />
 
 
 
     <FieldGroup>
-        <FormField Name="Salary.Amount" />
-        <FormField Name="Salary.Currency" />
+        <SimplyField Name="Salary.Amount" />
+        <SimplyField Name="Salary.Currency" />
     </FieldGroup>
     <FormArray Name="Leaves" Display="Leaves" TModel="Leave">
-        <FormField Name="Reason" />
-        <FormField Name="Days" min="1" max="100" pattern="[0-9]{5}" />
+        <SimplyField Name="Reason" />
+        <SimplyField Name="Days" min="1" max="100" pattern="[0-9]{5}" />
     </FormArray>
 
 </SimplyForm>

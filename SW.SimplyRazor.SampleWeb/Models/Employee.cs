@@ -10,7 +10,7 @@ namespace SW.SimplyRazor.SampleWeb.Models
     {
         public Employee()
         {
-            Salary = new Money();
+            //Salary = new Money();
         }
 
         public int Id { get; set; }
