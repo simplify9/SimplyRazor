@@ -14,11 +14,7 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Controllers\LookupController.cs" />
-    <Compile Remove="Services\CountryLookupService.cs" />
-    <Compile Remove="Services\CurrencyLookupService.cs" />
-  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="8.5.0" />
@@ -41,10 +37,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SW.SimplyRazor\SW.SimplyRazor.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

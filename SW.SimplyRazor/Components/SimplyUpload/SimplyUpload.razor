@@ -1,18 +1,28 @@
 ﻿@namespace SW.SimplyRazor
-
 @inject IJSRuntime JSRuntime
 
-<div class="custom-file">
-    <input @ref="inputRef" @onchange="OnInputChange" type="file" accept="image/*" class="custom-file-input" id="customFile" />
-    <label class="custom-file-label" for="customFile">Choose file</label>
+<div class="input-group mb-3">
+    <div class="custom-file">
+        <input  @ref="inputRef"  @onchange="InputOnChange" type="file" accept="image/*" class="custom-file-input" id="customFile" />
+        <label class="custom-file-label" for="customFile">Choose </label>
+    </div>
+    <div class="input-group-append">
+        <button disabled="@(!saveButtonState)" @onclick="SaveOnClick" class="btn btn-outline-secondary" type="button">Save</button>
+    </div>
 </div>
 
 @code {
 
     ElementReference inputRef;
+    string value;
 
-    //[Parameter(CaptureUnmatchedValues = true)]
-    //public Dictionary<string, object> UnmatchedParameters { get; set; }
+
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedParameters { get; set; }
+
+    [Parameter]
+    public EventCallback<KeyValuePair<string, string>> ValueChanged { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -23,9 +33,18 @@
         }
     }
 
-    async Task OnInputChange(EventArgs args)
+    async Task SaveOnClick(EventArgs args)
     {
         await JSRuntime.InvokeVoidAsync("simplyUploadInterop.saveFile", inputRef);
     }
+
+    bool saveButtonState;
+
+    void InputOnChange(ChangeEventArgs args)
+    {
+        saveButtonState = true;
+    }
+
+
 
 }
