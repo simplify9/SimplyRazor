@@ -8,103 +8,86 @@
     @ChildContent
 </CascadingValue>
 
-<div class="card card-default">
-    <div class="card-header">
-        <div class="row">
-            <label for="filterSelect" class="col-auto col-form-label">Search</label>
-            <div class="col-auto">
 
-                <div class="input-group">
-                    <SimplySelect @bind-Value="filterValue" 
-                                  EmptyText="Select filter"
-                                  StringList="@(AvailableFilters.Select(e=>e.DisplayName))">
+<div class="row">
+    <label for="filterSelect" class="col-auto col-form-label">Search</label>
+    <div class="col-auto">
 
-                    </SimplySelect>
+        <div class="input-group">
+            <SimplySelect @bind-Value="filterValue"
+                          EmptyText="Select filter"
+                          StringList="@(AvailableFilters.Select(e=>e.DisplayName))">
 
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
-                    </div>
-                </div>
-                @*<select @bind="filterValue" class="form-control" id="filterSelect">
-            <option value="0">Select a filter</option>
-            @{
-                int itemIndex = 1;
-                foreach (var item in AvailableFilters)
-                {
-                    <option value="@itemIndex">@item.DisplayName</option>
-                    itemIndex++;
-                }
-            }
-        </select>*@
-            </div>
-            <div class="col text-right mb-3">
-                <button type="submit" class="btn btn-primary" @onclick="SearchOnClick">Search</button>
+            </SimplySelect>
+
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
             </div>
         </div>
-    </div>
-    <div class="card-body">
-        @{
-            int lineIndex = 0;
-            foreach (var item in model)
-            {
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="">@item.Params.DisplayName</span>
-                    </div>
-                    <SimplySelect @bind-Value="item.Operator"
-                                  EmptyText="Select condition"
-                                  KeyValuePairList="@(operators.Where(e => e.Applicability.Contains(item.Params.Type)).ToDictionary(op=>(int)op.Operator,op=>op.Operator.ToString().Humanize()) )">
-
-                    </SimplySelect>
-                    @{
-                        @*var operatorsFiltered = operators.Where(e => e.Applicability.Contains(item.Params.Type));
-
-            <select @bind="item.Operator" class="form-control">
-                <option value="0">Select condition</option>
-
-                @foreach (var op in operatorsFiltered)
-                {
-                    <option value="@((int)op.Operator)">@(op.Operator.ToString().Humanize())</option>
-
+        @*<select @bind="filterValue" class="form-control" id="filterSelect">
+                <option value="0">Select a filter</option>
+                @{
+                    int itemIndex = 1;
+                    foreach (var item in AvailableFilters)
+                    {
+                        <option value="@itemIndex">@item.DisplayName</option>
+                        itemIndex++;
+                    }
                 }
             </select>*@
+    </div>
+    <div class="col text-right mb-3">
+        <button type="submit" class="btn btn-primary" @onclick="SearchOnClick">Search</button>
+    </div>
+</div>
 
-                        switch (item.Params.Type)
+@{
+    int lineIndex = 0;
+    foreach (var item in model)
+    {
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="">@item.Params.DisplayName</span>
+            </div>
+            <SimplySelect @bind-Value="item.Operator"
+                          EmptyText="Select condition"
+                          KeyValuePairList="@(operators.Where(e => e.Applicability.Contains(item.Params.Type)).ToDictionary(op=>(int)op.Operator,op=>op.Operator.ToString().Humanize()) )">
+
+            </SimplySelect>
+            @{switch (item.Params.Type)
+                {
+                    case FilterType.Text:
                         {
-                            case SimplyFilterType.Text:
-                                {
 
-                                    <input @bind="item.ValueString" type="text" class="form-control" />
+                            <input @bind="item.ValueString" type="text" class="form-control" />
 
-                                    break;
-                                }
-                            case SimplyFilterType.WholeNumber:
-                                {
-                                    <input @bind="item.ValueInt" type="number" class="form-control" />
-
-                                    break;
-                                }
-                            case SimplyFilterType.Date:
-                                {
-                                    <input @bind="item.ValueDate" type="date" class="form-control" />
-                                    break;
-                                }
+                            break;
                         }
-                        int thisLine = lineIndex;
-                        <div class="input-group-append">
-                            <button @onclick="@(e => model.RemoveAt(thisLine))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
-                        </div>
-                    }
+                    case FilterType.WholeNumber:
+                        {
+                            <input @bind="item.ValueInt" type="number" class="form-control" />
 
+                            break;
+                        }
+                    case FilterType.Date:
+                        {
+                            <input @bind="item.ValueDate" type="date" class="form-control" />
+                            break;
+                        }
+                }
+                int thisLine = lineIndex;
+                <div class="input-group-append">
+                    <button @onclick="@(e => model.RemoveAt(thisLine))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
                 </div>
-
-                lineIndex++;
             }
 
-        }
-    </div>
+        </div>
 
-</div>
+        lineIndex++;
+    }
+
+}
+
 
 @code{
 
@@ -116,7 +99,7 @@
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
-    readonly List<SimplyFilterInstance> model = new List<SimplyFilterInstance>();
+    readonly List<FilterModel> model = new List<FilterModel>();
 
     int filterValue;
 
@@ -125,7 +108,7 @@
     {
         if (filterValue > 0)
         {
-            model.Add(new SimplyFilterInstance(AvailableFilters[filterValue - 1]));
+            model.Add(new FilterModel(AvailableFilters[filterValue - 1]));
             filterValue = 0;
         }
         return Task.CompletedTask;
@@ -144,42 +127,42 @@
         new SimplyFilterOperator()
         {
         Operator=FilterByOptions.FilterOperatorOptions.EqualsTo,
-        Applicability=new[] {SimplyFilterType.Decimal, SimplyFilterType.WholeNumber, SimplyFilterType.Text }
+        Applicability=new[] {FilterType.Decimal, FilterType.WholeNumber, FilterType.Text }
         },
         new SimplyFilterOperator()
         {
         Operator=FilterByOptions.FilterOperatorOptions.NotEqualsTo,
-        Applicability=new[] {SimplyFilterType.Decimal, SimplyFilterType.WholeNumber, SimplyFilterType.Text }
+        Applicability=new[] {FilterType.Decimal, FilterType.WholeNumber, FilterType.Text }
         },
         new SimplyFilterOperator()
         {
         Operator=FilterByOptions.FilterOperatorOptions.GreaterThan,
-        Applicability=new[] {SimplyFilterType.Date, SimplyFilterType.Decimal, SimplyFilterType.WholeNumber }
+        Applicability=new[] {FilterType.Date, FilterType.Decimal, FilterType.WholeNumber }
         },
         new SimplyFilterOperator()
         {
         Operator=FilterByOptions.FilterOperatorOptions.GreaterThanOrEquals,
-        Applicability=new[] {SimplyFilterType.Date, SimplyFilterType.Decimal, SimplyFilterType.WholeNumber }
+        Applicability=new[] {FilterType.Date, FilterType.Decimal, FilterType.WholeNumber }
         },
         new SimplyFilterOperator()
         {
         Operator=FilterByOptions.FilterOperatorOptions.LessThan,
-        Applicability=new[] {SimplyFilterType.Date, SimplyFilterType.Decimal, SimplyFilterType.WholeNumber }
+        Applicability=new[] {FilterType.Date, FilterType.Decimal, FilterType.WholeNumber }
         },
         new SimplyFilterOperator()
         {
         Operator=FilterByOptions.FilterOperatorOptions.LessThanOrEquals,
-        Applicability=new[] {SimplyFilterType.Date, SimplyFilterType.Decimal, SimplyFilterType.WholeNumber }
+        Applicability=new[] {FilterType.Date, FilterType.Decimal, FilterType.WholeNumber }
         },
         new SimplyFilterOperator()
         {
         Operator=FilterByOptions.FilterOperatorOptions.BeginsWith,
-        Applicability=new[] {SimplyFilterType.Text }
+        Applicability=new[] {FilterType.Text }
         },
         new SimplyFilterOperator()
         {
         Operator=FilterByOptions.FilterOperatorOptions.Contains,
-        Applicability=new[] {SimplyFilterType.Text }
+        Applicability=new[] {FilterType.Text }
         },
         //new SimplyFilterOperator()
         //{
@@ -217,32 +200,11 @@
         return OnSearch.InvokeAsync(sq);
     }
 
-    class SimplyFilterInstance
-    {
-        public SimplyFilterInstance(IFilterParams filterParams)
-        {
-            Params = filterParams;
-        }
 
-        public IFilterParams Params { get; set; }
-        public int Operator { get; set; }
-        public string ValueString { get; set; }
-
-        public int? ValueInt { get; set; }
-
-        public decimal? ValueDecimal { get; set; }
-
-        public DateTime? ValueDate { get; set; }
-
-
-        //public string Value2 { get; set; }
-
-
-    }
 
     class SimplyFilterOperator
     {
         public FilterByOptions.FilterOperatorOptions Operator { get; set; }
-        public SimplyFilterType[] Applicability { get; set; }
+        public FilterType[] Applicability { get; set; }
     }
 }

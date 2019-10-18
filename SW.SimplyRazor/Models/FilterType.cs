@@ -3,7 +3,7 @@
 
 namespace SW.SimplyRazor
 {
-    public enum SimplyFilterType
+    public enum FilterType
     {
         Text,
         WholeNumber,

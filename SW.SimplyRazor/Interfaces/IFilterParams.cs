@@ -7,7 +7,7 @@ namespace SW.SimplyRazor
 {
     public interface IFilterParams
     {
-         SimplyFilterType Type { get; set; }
+         FilterType Type { get; set; }
 
 
          string DisplayName { get; set; }

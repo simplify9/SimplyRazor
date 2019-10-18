@@ -2,34 +2,33 @@
 
 @using SW.Searchy
 
-<h1>Hello, world!</h1>
+
 
 <SimplyFilter OnSearch="SimplyFilterOnSearch">
-    <FilterParams FieldName="Id" DisplayName="Id" Type="SimplyFilterType.WholeNumber"></FilterParams>
-    <FilterParams FieldName="HandlerName" DisplayName="Handler" Type="SimplyFilterType.Text"></FilterParams>
-    <FilterParams FieldName="Started" DisplayName="Date" Type="SimplyFilterType.Date"></FilterParams>
+    <FilterParams FieldName="Id" DisplayName="Id" Type="FilterType.WholeNumber"></FilterParams>
+    <FilterParams FieldName="HandlerName" DisplayName="Handler" Type="FilterType.Text"></FilterParams>
+    <FilterParams FieldName="Started" DisplayName="Date" Type="FilterType.Date"></FilterParams>
 </SimplyFilter>
 
-<div>
-    <SimplyTable  Value="Employee.Sample">
-        <SimplyField Name="FirstName" readonly></SimplyField>
-        <SimplyField Name="LastName">
-            <ColumnHeader>
-                L.N...
-            </ColumnHeader>
-            <ColumnValue>
-                @context.Value.ToString().ToLower()
-            </ColumnValue>
-        </SimplyField>
-        <SimplyField Name="Age" />
-        <SimplyField Name="Married" />
-        <SimplyField Name="EmploymentStatus" Lookup="intmock" />
-        <SimplyField Name="Country" Lookup="country" />
-        <SimplyField Name="Salary.Amount" />
-        <SimplyField Name="Salary.Currency" />
-    </SimplyTable>
+<SimplyTable Value="Employee.Sample">
+    <SimplyField Name="FirstName" readonly></SimplyField>
+    <SimplyField Name="LastName">
+        <ColumnHeader>
+            L.N...
+        </ColumnHeader>
+        <ColumnValue>
+            @context.Value.ToString().ToLower()
+        </ColumnValue>
+    </SimplyField>
+    <SimplyField Name="Age" />
+    <SimplyField Name="Married" />
+    <SimplyField Name="EmploymentStatus" Lookup="intmock" />
+    <SimplyField Name="Country" Lookup="country" />
+    <SimplyField Name="Salary.Amount" />
+    <SimplyField Name="Salary.Currency" />
+</SimplyTable>
 
-</div>
+
 
 <SimplyPager TotalCount="2000" PageSize="20" OnPageChanged="SimplyPagerOnPageChanged" />
 
