@@ -3,8 +3,16 @@
 
 <div class="input-group mb-3">
     <div class="custom-file">
-        <input class="custom-file-input" @ref="inputRef" @onchange="InputOnChange" type="file" accept="image/*" />
+
+        <input class="custom-file-input" 
+               @ref="inputRef" 
+               @onchange="InputOnChange" 
+               type="file" 
+               accept="image/*" 
+               @attributes="UnmatchedParameters" />
+
         <label class="custom-file-label" for="customFile">Select</label>
+
     </div>
     <div class="input-group-append">
         <button disabled="@(!saveButtonState)" @onclick="SaveOnClick" class="btn btn-outline-secondary" type="button">
@@ -26,23 +34,21 @@
 </div>
 
 
-
-
-
 @code {
 
     ElementReference inputRef;
-    string value;
 
-
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>
-    UnmatchedParameters
-    { get; set; }
+    //[Parameter]
+    //public string Value { get; set; }
 
     [Parameter]
-    public EventCallback<KeyValuePair<string, string>> ValueChanged { get; set; }
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedParameters { get; set; }
+
+    //[Parameter]
+    //public EventCallback<KeyValuePair<string, string>> ValueChanged { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -64,7 +70,8 @@
 
         try
         {
-            var x = await JSRuntime.InvokeAsync<string>("simplyUploadInterop.saveFile", inputRef);
+            var id = await JSRuntime.InvokeAsync<string>("simplyUploadInterop.saveFile", inputRef);
+            await ValueChanged.InvokeAsync(id);
         }
         catch (Exception)
         {
