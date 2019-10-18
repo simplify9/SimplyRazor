@@ -1,0 +1,22 @@
+﻿@namespace SW.SimplyRazor
+
+<label for="@State.Id">@State.Display</label>
+
+<SimplyUpload id="@State.Id"
+              form="@State.FormId"
+              ValueChanged="(e)=> ValueChanged.InvokeAsync(e)"
+              @attributes="UnmatchedAttributes"  />
+
+@code {
+
+    [Parameter]
+    public EventCallback<object> ValueChanged { get; set; }
+
+    [Parameter]
+    public FieldState State { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+
+}

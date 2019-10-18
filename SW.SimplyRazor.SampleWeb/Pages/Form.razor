@@ -11,6 +11,8 @@
     <FormField Name="Married" />
     <FormField Name="EmploymentStatus" Lookup="intmock" />
     <FormField Name="Country" Lookup="country" />
+    <FormField Name="Photo" Lookup="country" Component="typeof(FieldForUpload)" />
+
 
 
     <FieldGroup>
@@ -27,8 +29,7 @@
 <p>Age: @employees[0].Age</p>
 <p>Emp Status: @employees[0].EmploymentStatus</p>
 <p>Country: @employees[0].Country</p>
-
-
+<p>Photo: @employees[0].Photo</p>
 
 @code {
 

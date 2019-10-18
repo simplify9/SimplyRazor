@@ -35,8 +35,8 @@ namespace SW.SimplyRazor.SampleWeb.Controllers
             {
                 await ur.File.CopyToAsync(fs);
             };
-            return new BadRequestResult(); 
-            //return new OkObjectResult(fileId);
+            //return new BadRequestResult(); 
+            return new OkObjectResult(fileId);
         }
 
         //// DELETE api/<controller>/5

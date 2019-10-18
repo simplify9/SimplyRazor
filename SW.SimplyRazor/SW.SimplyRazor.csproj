@@ -55,4 +55,9 @@
     <PackageReference Include="SimplyWorks.Searchy" Version="2019.2.13.1" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Folder Include="Components\SimplyField\" />
+  </ItemGroup>
+
 </Project>

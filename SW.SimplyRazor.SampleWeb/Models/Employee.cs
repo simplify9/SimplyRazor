@@ -17,6 +17,7 @@ namespace SW.SimplyRazor.SampleWeb.Models
         public Money Salary { get; set; }
         public int EmploymentStatus { get; set; }
         public string Country { get; set; }
+        public string Photo { get; set; }
         public ICollection<Leave> Leaves { get; set; }
     }
 
