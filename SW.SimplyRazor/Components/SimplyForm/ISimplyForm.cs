@@ -9,13 +9,8 @@ namespace SW.SimplyRazor
     {
         void AddField(FieldState formField);
         void RemoveField(string name);
-
         Task FieldValueChanged(string name);
-
         IDictionary<string, FieldState> Fields { get; set; }
-
-
         string Id { get;  }
-
     }
 }

@@ -4,10 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 
-namespace SW.SimplyRazor.SampleWeb.Models 
+namespace SW.SimplyRazor.SampleWeb.Models
 {
     public class Employee
     {
+        public Employee()
+        {
+            Salary = new Money();
+        }
+
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -19,6 +24,28 @@ namespace SW.SimplyRazor.SampleWeb.Models
         public string Country { get; set; }
         public string Photo { get; set; }
         public ICollection<Leave> Leaves { get; set; }
+
+        public static IList<Employee> Sample = new List<Employee>
+            {
+            new Employee()
+            {
+                Id=1,
+                FirstName="Samer",
+                LastName="Awajan",
+                Gender="M",
+                Salary = new Money{Amount=100, Currency="USD" },
+                Leaves = new List<Leave>()
+                {
+                    new Leave {Days=100, Reason="sick" },
+                    new Leave {Days=30, Reason="marriage" }
+                }
+            },
+            new Employee() {Id=2, FirstName="Yaser", LastName="Awajan", Gender="M" },
+            new Employee() {Id=3, FirstName="Osama", LastName="Awajan", Gender="M" },
+            new Employee() {Id=4, FirstName="Ahmad", LastName="Awajan", Gender="M" },
+
+    };
+
     }
 
 
@@ -43,4 +70,5 @@ namespace SW.SimplyRazor.SampleWeb.Models
         public int Days { get; set; }
         public string Reason { get; set; }
     }
+
 }

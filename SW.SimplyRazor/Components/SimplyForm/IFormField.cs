@@ -10,19 +10,9 @@ namespace SW.SimplyRazor
         string FormId { get; }
         string Name { get; set; }
         string Display { get; set; }
-        //FieldDisplayMode Mode { get; set; }
-
         string Help { get; set; }
-
         Type Component { get; set; }
-        //bool Readonly { get; set; }
-
         FieldVisibility Visibility { get; set; }
-
-        //string InvalidClass { get; set; }
-
         string Lookup { get; set; }
-
-
     }
 }

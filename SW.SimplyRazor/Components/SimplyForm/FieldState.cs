@@ -14,7 +14,7 @@ namespace SW.SimplyRazor
 
         public FieldState(IFormField formField, object model) : this(formField, model.GetType(), model) { }
 
-        public FieldState(IFormField formField, Type modelType, object model = null)
+        private FieldState(IFormField formField, Type modelType, object model)
         {
 
             Name = formField.Name;
@@ -35,7 +35,7 @@ namespace SW.SimplyRazor
                 {
                     var pInfo = childModelType.GetProperty(arr[i]);
                     childModelType = pInfo.PropertyType;
-                    if (childModel != null) childModel = pInfo.GetValue(childModel);
+                    childModel = pInfo.GetValue(childModel);
                 };
                 propertyInfo = childModelType.GetProperty(arr[arr.Length - 1]);
 

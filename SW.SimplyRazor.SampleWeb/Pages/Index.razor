@@ -11,22 +11,15 @@
 </SimplyFilter>
 
 <div>
-    <SimplyTable Items="employees" Context="e">
-        <TableHeader>
-            <td>Id</td>
-            <td>First Name</td>
-            <td>Last Name</td>
-            <td>Gender</td>
-        </TableHeader>
-        <RowTemplate>
-            <td>@e.Id</td>
-            <td>@e.FirstName</td>
-            <td>@e.LastName</td>
-            <td>@e.Gender</td>
-        </RowTemplate>
-        <TableFooter>
-
-        </TableFooter>
+    <SimplyTable  Value="Employee.Sample">
+        <FormField Name="FirstName" readonly></FormField>
+        <FormField Name="LastName"></FormField>
+        <FormField Name="Age" />
+        <FormField Name="Married" />
+        <FormField Name="EmploymentStatus" Lookup="intmock" />
+        <FormField Name="Country" Lookup="country" />
+        <FormField Name="Salary.Amount" />
+        <FormField Name="Salary.Currency" />
     </SimplyTable>
 
 </div>
@@ -35,31 +28,7 @@
 
 @code{
 
-    //static readonly IList<SimplyFilterParams> filters = new List<SimplyFilterParams>
-    //{
-    //    new SimplyFilterParams("Id", "Id", SimplyFilterType.WholeNumber),
-    //    new SimplyFilterParams("Started", "Date", SimplyFilterType.Date),
-    //    new SimplyFilterParams("HandlerName", "Handler", SimplyFilterType.Text),
-    //    new SimplyFilterParams("FirstName", "First Name", SimplyFilterType.Text)
 
-    //};
-
-    class Employee
-    {
-        public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Gender { get; set; }
-    }
-
-    static readonly IReadOnlyList<Employee> employees = new List<Employee>
-{
-        new Employee() {Id=1, FirstName="Samer", LastName="Awajan", Gender="M" },
-        new Employee() {Id=2, FirstName="Yaser", LastName="Awajan", Gender="M" },
-        new Employee() {Id=3, FirstName="Osama", LastName="Awajan", Gender="M" },
-        new Employee() {Id=4, FirstName="Ahmad", LastName="Awajan", Gender="M" },
-
-    };
 
     SearchQuery sq;
 

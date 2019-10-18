@@ -3,9 +3,15 @@
 @inject LookupClient lookupService
 @inject NavigationManager nav
 
-@if (items != null)
+@if (items == null)
 {
-    <select @onchange="SelectValueChanged" @attributes="UnmatchedAttributes" >
+    <div class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+}
+else
+{
+    <select @onchange="SelectValueChanged" @attributes="UnmatchedAttributes">
         @if (EmptyText != null)
         {
             <option selected="@(Value == null || emptyValue==Value.ToString())" value="@emptyValue">@EmptyText</option>

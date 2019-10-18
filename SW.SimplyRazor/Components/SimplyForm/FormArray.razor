@@ -9,7 +9,7 @@
 </div>
 
 
-@if (collection.Count == 0)
+@if (Value.Count == 0)
 {
     <p>Nothing to display, <button type="button" class="btn btn-link" @onclick="AddOnClick">click here</button> to add.</p>
 }
@@ -21,7 +21,7 @@ else
                 <thead>
                     <tr>
                         <CascadingValue Value="FieldRole.ColumnName" Name="RenderMode">
-                            <CascadingValue Value="collection.First()" Name="Model">
+                            <CascadingValue Value="Value.First()" Name="Model">
                                 @ChildContent
                             </CascadingValue>
                         </CascadingValue>
@@ -32,18 +32,18 @@ else
                 </thead>
                 <tbody>
                     @{
-                        for (var i = 0; i < collection.Count; i++)
+                        for (var i = 0; i < Value.Count; i++)
                         {
                             var itemIndex = i;
                             <tr>
                                 <CascadingValue Value="FieldRole.ColumnValue" Name="RenderMode">
-                                    <CascadingValue Value="collection[itemIndex]" Name="Model">
+                                    <CascadingValue Value="Value[itemIndex]" Name="Model">
                                         @ChildContent
                                     </CascadingValue>
                                 </CascadingValue>
                                 <td align="right">
                                     <button @onclick="(()=> EditModel(itemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-pencil" /></button>
-                                    <button @onclick="(()=> collection.RemoveAt(itemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-x" /></button>
+                                    <button @onclick="(()=> Value.RemoveAt(itemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-x" /></button>
                                 </td>
                             </tr>
                         }
@@ -86,6 +86,9 @@ else
     [CascadingParameter(Name = "Model")]
     public object Model { get; set; }
 
+    [CascadingParameter(Name = "Value")]
+    public IList<TModel> Value { get; set; }
+
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
@@ -95,13 +98,22 @@ else
     [Parameter]
     public string Display { get; set; }
 
+    [Parameter]
+    public bool Edit { get; set; }
+
+    [Parameter]
+    public bool Add { get; set; }
+
+    [Parameter]
+    public bool Delete { get; set; }
+
     public string Id => Name;
 
     public IDictionary<string, FieldState> Fields { get; set; }
 
 
-    IList<TModel> collection { get; set; }
-    Type modelType = null;
+    //IList<TModel> collection { get; set; }
+    //Type modelType = null;
     object beingEditedModel = null;
     int beingEditedModelIndex;
 
@@ -110,11 +122,12 @@ else
 
         Fields = new Dictionary<string, FieldState>();
 
+        if (Value != null) return;
+
         Type arrayType = Model.GetType();
         var childModel = Model;
 
         var arr = Name.Split('.');
-
 
         for (var i = 0; i < arr.Length; i++)
         {
@@ -122,19 +135,16 @@ else
             arrayType = pInfo.PropertyType;
             childModel = pInfo.GetValue(childModel);
         };
-        //propertyInfo = arrayType.GetProperty(arr[^1]);
-        modelType = arrayType.GenericTypeArguments[0];
 
-        collection = ((IList<TModel>)childModel);
+        Value = ((IList<TModel>)childModel);
 
 
 
     }
 
-    public async Task FieldValueChanged(string name)
+    public Task FieldValueChanged(string name)
     {
-        //await ValueChanged.InvokeAsync(Value);
-
+        return Task.CompletedTask;
     }
 
     public void AddField(FieldState formField)
@@ -150,7 +160,7 @@ else
     Task AddOnClick(EventArgs args)
     {
         beingEditedModelIndex = -1;
-        beingEditedModel = Activator.CreateInstance(modelType);
+        beingEditedModel = Activator.CreateInstance<TModel>();// (modelType);
         return Task.CompletedTask;
     }
 
@@ -159,14 +169,15 @@ else
 
         if (beingEditedModelIndex < 0)
         {
-            collection.Add((TModel)beingEditedModel);
+            Value.Add((TModel)beingEditedModel);
         }
         else
         {
-            beingEditedModel.DeepCloneTo(collection[beingEditedModelIndex]);// = (TModel)beingEditedModel;
+            beingEditedModel.DeepCloneTo(Value[beingEditedModelIndex]);// = (TModel)beingEditedModel;
         }
         beingEditedModel = null;
-        await Form.FieldValueChanged(Name);
+
+        await Form?.FieldValueChanged(Name);
 
     }
 
@@ -179,7 +190,7 @@ else
     Task EditModel(int index)
     {
         beingEditedModelIndex = index;
-        beingEditedModel = collection[index].DeepClone(); //JsonConvert.DeserializeObject<TModel>(JsonConvert.SerializeObject( collection[index]));
+        beingEditedModel = Value[index].DeepClone(); //JsonConvert.DeserializeObject<TModel>(JsonConvert.SerializeObject( collection[index]));
         return Task.CompletedTask;
     }
 

@@ -1,32 +1,52 @@
-﻿@typeparam TItem
-
+﻿@typeparam TModel
 @namespace SW.SimplyRazor
+@implements ISimplyForm
 
-<table class="table">
-    <thead>
-        <tr>@TableHeader</tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Items)
-        {
-            <tr>@RowTemplate(item)</tr>
-        }
-    </tbody>
-    <tfoot>
-        <tr>@TableFooter</tr>
-    </tfoot>
-</table>
+<CascadingValue IsFixed="true" Value="this" Name="Form">
+    <CascadingValue Value="Value" Name="Value">
+        <FormArray TModel="TModel">
+            @ChildContent
+        </FormArray>
+    </CascadingValue>
+</CascadingValue>
 
 @code {
-    [Parameter]
-    public RenderFragment TableHeader { get; set; }
 
     [Parameter]
-    public RenderFragment<TItem> RowTemplate { get; set; }
+    public IList<TModel> Value { get; set; }
 
     [Parameter]
-    public RenderFragment TableFooter { get; set; }
+    public RenderFragment ChildContent { get; set; }
 
-    [Parameter]
-    public IReadOnlyList<TItem> Items { get; set; }
+    public string Id => "MainForm";
+
+    public IDictionary<string, FieldState> Fields { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Fields = new Dictionary<string, FieldState>();
+    }
+
+    public Task FieldValueChanged(string name)
+    {
+        return Task.CompletedTask;
+    }
+
+    public void AddField(FieldState formField)
+    {
+        //Fields.Add(formField.Name, formField);
+    }
+
+    public void RemoveField(string name)
+    {
+        //Fields.Remove(name);
+    }
+
+
+
+
+
+
+
+
 }
