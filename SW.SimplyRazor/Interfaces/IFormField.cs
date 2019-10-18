@@ -9,10 +9,10 @@ namespace SW.SimplyRazor
     {
         string FormId { get; }
         string Name { get; set; }
-        string Display { get; set; }
+        string Text { get; set; }
         string Help { get; set; }
         Type Editor { get; set; }
-        FieldVisibility Visibility { get; set; }
+        FieldShowsOn ShowsOn { get; set; }
         string Lookup { get; set; }
     }
 }

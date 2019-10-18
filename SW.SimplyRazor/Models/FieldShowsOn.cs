@@ -4,11 +4,10 @@ using System.Text;
 
 namespace SW.SimplyRazor
 { 
-    public enum FieldVisibility
+    public enum FieldShowsOn
     {
-        Normal,
-        InputVisible,
-        ColumnVisible,
-        Hidden
+        Always,
+        Edit,
+        List,
     }
 }

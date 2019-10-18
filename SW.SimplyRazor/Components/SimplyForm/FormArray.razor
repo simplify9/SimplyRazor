@@ -2,7 +2,7 @@
 @implements ISimplyForm
 @namespace SW.SimplyRazor
 
-@if (RenderMode!=FieldRole.Input ) { return; }
+@if (RenderMode != FieldRole.Input) { return; }
 
 <div class="clearfix mt-2 mb-1">
     <label>@Display</label>
@@ -20,9 +20,12 @@ else
                 <thead>
                     <tr>
                         <CascadingValue Value="FieldRole.ColumnName" Name="RenderMode">
-                            <CascadingValue Value="Value.First()" Name="Model">
+
+                            <SimplyForm Value="Value.First()">
                                 @ChildContent
-                            </CascadingValue>
+                            </SimplyForm>
+
+
                         </CascadingValue>
                         <th align="right" scope="col" style="width:95px;">
                             <button type="button" class="btn btn-outline-secondary btn-sm float-right" @onclick="AddOnClick"><span class="oi oi-plus" /></button>
@@ -36,9 +39,9 @@ else
                             var itemIndex = i;
                             <tr>
                                 <CascadingValue Value="FieldRole.ColumnValue" Name="RenderMode">
-                                    <CascadingValue Value="Value[itemIndex]" Name="Model">
+                                    <SimplyForm Value="Value[itemIndex]">
                                         @ChildContent
-                                    </CascadingValue>
+                                    </SimplyForm>
                                 </CascadingValue>
                                 <td align="right">
                                     <button @onclick="(()=> EditModel(itemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-pencil" /></button>

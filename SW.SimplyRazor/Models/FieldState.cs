@@ -17,11 +17,10 @@ namespace SW.SimplyRazor
 
         private FieldState(IFormField formField, Type modelType, object model)
         {
-
             Name = formField.Name;
             Help = formField.Help;
             FormId = formField.FormId;
-            Visibility = formField.Visibility;
+            ShowsOn = formField.ShowsOn;
             Editor = formField.Editor;
             Lookup = formField.Lookup;   
 
@@ -79,22 +78,22 @@ namespace SW.SimplyRazor
 
         public string Name { get; set; }
 
-        string display = null;
-        public string Display
+        string text = null;
+        public string Text
         {
             get
             {
-                return (display == null) ? Name.Humanize() : Display;
+                return (text == null) ? Name.Humanize() : Text;
             }
             set
             {
-                display = value;
+                text = value;
             }
         }
 
         public Type Editor { get; set; }
-        public bool Readonly { get; set; }
-        public FieldVisibility Visibility { get; set; }
+        //public bool Readonly { get; set; }
+        public FieldShowsOn ShowsOn { get; set; }
         public string Lookup { get; set; }
         public string Help { get; set; }
         public string InputType { get; set; }
