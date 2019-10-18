@@ -3,13 +3,31 @@
 
 <div class="input-group mb-3">
     <div class="custom-file">
-        <input  @ref="inputRef"  @onchange="InputOnChange" type="file" accept="image/*" class="custom-file-input" id="customFile" />
-        <label class="custom-file-label" for="customFile">Choose </label>
+        <input class="custom-file-input" @ref="inputRef" @onchange="InputOnChange" type="file" accept="image/*" />
+        <label class="custom-file-label" for="customFile">Select</label>
     </div>
     <div class="input-group-append">
-        <button disabled="@(!saveButtonState)" @onclick="SaveOnClick" class="btn btn-outline-secondary" type="button">Save</button>
+        <button disabled="@(!saveButtonState)" @onclick="SaveOnClick" class="btn btn-outline-secondary" type="button">
+            @if (saving)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                @:Saving...
+            }
+            else if (saved)
+            {
+                @:Saved
+            }
+            else
+            {
+                @:Save
+            }
+        </button>
     </div>
 </div>
+
+
+
+
 
 @code {
 
@@ -19,7 +37,9 @@
 
 
     [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> UnmatchedParameters { get; set; }
+    public Dictionary<string, object>
+    UnmatchedParameters
+    { get; set; }
 
     [Parameter]
     public EventCallback<KeyValuePair<string, string>> ValueChanged { get; set; }
@@ -33,18 +53,35 @@
         }
     }
 
+    bool saveButtonState;
+    bool saving;
+    bool saved;
+
     async Task SaveOnClick(EventArgs args)
     {
-        await JSRuntime.InvokeVoidAsync("simplyUploadInterop.saveFile", inputRef);
+        saving = true;
+        saveButtonState = false;
+
+        try
+        {
+            var x = await JSRuntime.InvokeAsync<string>("simplyUploadInterop.saveFile", inputRef);
+        }
+        catch (Exception)
+        {
+            var x = 1;
+        }
+        finally
+        {
+            saving = false;
+            saved = true;
+            saveButtonState = false;
+        }
     }
 
-    bool saveButtonState;
-
-    void InputOnChange(ChangeEventArgs args)
+    Task InputOnChange(ChangeEventArgs args)
     {
+        saved = false;
         saveButtonState = true;
+        return Task.CompletedTask;
     }
-
-
-
 }

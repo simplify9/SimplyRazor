@@ -39,4 +39,8 @@
     <ProjectReference Include="..\SW.SimplyRazor\SW.SimplyRazor.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="uploads\" />
+  </ItemGroup>
+
 </Project>
