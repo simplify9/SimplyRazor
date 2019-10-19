@@ -6,19 +6,14 @@
 <form id="@Id"></form>
 <CascadingValue IsFixed="true" Value="this" Name="Form">
     <CascadingValue Value="(object)Value" Name="Model">
-
         @ChildContent
-
     </CascadingValue>
-
 </CascadingValue>
-
 
 @code {
 
     [Parameter]
     public TModel Value { get; set; }
-
 
     [Parameter]
     public EventCallback<TModel> ValueChanged { get; set; }
@@ -31,7 +26,6 @@
 
     public string Id => "MainForm";
 
-
     public IDictionary<string, FieldState> Fields { get; set; }
 
     protected override void OnInitialized()
@@ -41,7 +35,6 @@
 
     public async Task FieldValueChanged(string name)
     {
-        //if (name!="FirstName") Fields["FirstName"].TrySetValue("sss");
         await ValueChanged.InvokeAsync(Value);
     }
 
@@ -67,8 +60,6 @@
             fld.InvalidFeedback = err.ErrorMessage;
 
         };
-
-
     }
 
 

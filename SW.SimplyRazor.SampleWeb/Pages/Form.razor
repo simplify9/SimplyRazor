@@ -19,10 +19,10 @@
         <SimplyField Name="Salary.Amount" />
         <SimplyField Name="Salary.Currency" />
     </FieldGroup>
-    <FormArray Name="Leaves" Display="Leaves" TModel="Leave">
+    <SimplyTable Name="Leaves" Display="Leaves" TModel="Leave">
         <SimplyField Name="Reason" />
         <SimplyField Name="Days" min="1" max="100" pattern="[0-9]{5}" />
-    </FormArray>
+    </SimplyTable>
 
 </SimplyForm>
 

@@ -3,7 +3,7 @@
 <label for="@State.Id">@State.Text</label>
 <input id="@State.Id"
        value="@State.Value"
-       type="@State.InputType"
+       type="@inputType"
        class="form-control @((State.IsInvalid ? "is-invalid" : null))"
        form="@State.FormId"
        @onchange="(e)=> ValueChanged.InvokeAsync(e.Value)"
@@ -19,5 +19,16 @@
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+    string inputType;
+
+    protected override void  OnInitialized()
+    {
+        if (State.PropertyInfo.PropertyType == typeof(int))
+        {
+            inputType = "number";
+        }
+        else inputType = "text";
+    }
 
 }

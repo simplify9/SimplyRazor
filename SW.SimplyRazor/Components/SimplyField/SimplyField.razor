@@ -1,5 +1,6 @@
 ﻿@namespace SW.SimplyRazor
 @implements IFormField
+@implements IDisposable
 
 
 
@@ -73,89 +74,87 @@
 
 @code {
 
-        [CascadingParameter(Name = "Form")]
-        public ISimplyForm Form { get; set; }
+[CascadingParameter(Name = "Form")]
+public ISimplyForm Form { get; set; }
 
-        [CascadingParameter(Name = "Model")]
-        public object Model { get; set; }
+[CascadingParameter(Name = "Model")]
+public object Model { get; set; }
 
-        [CascadingParameter(Name = "RenderMode")]
-        public FieldRole RenderMode { get; set; }
+[CascadingParameter(Name = "RenderMode")]
+public FieldRole RenderMode { get; set; }
 
-        [CascadingParameter(Name = "Grouped")]
-        public bool Grouped { get; set; }
+[CascadingParameter(Name = "Grouped")]
+public bool Grouped { get; set; }
 
-        [Parameter]
-        public string Lookup { get; set; }
+[Parameter]
+public string Lookup { get; set; }
 
-        [Parameter]
-        public string Name { get; set; }
+[Parameter]
+public string Name { get; set; }
 
-        [Parameter]
-        public Type Editor { get; set; }
+[Parameter]
+public Type Editor { get; set; }
 
-        [Parameter]
-        public string Text { get; set; }
+[Parameter]
+public string Text { get; set; }
 
-        [Parameter]
-        public RenderFragment<FieldState> ColumnHeader { get; set; }
+[Parameter]
+public RenderFragment<FieldState> ColumnHeader { get; set; }
 
-        [Parameter]
-        public RenderFragment<FieldState> ColumnValue { get; set; }
-
-
-        [Parameter]
-        public FieldShowsOn ShowsOn { get; set; }
-
-        [Parameter]
-        public string Help { get; set; }
-
-        [Parameter(CaptureUnmatchedValues = true)]
-        public Dictionary<string, object> UnmatchedAttributes { get; set; }
-
-        public string FormId => Form.Id;
-
-        RenderFragment inputComponent;
-
-        RenderFragment CreateInputComponent() => builder =>
-        {
-
-            builder.OpenComponent(0, fieldState.Editor);
-            builder.AddAttribute(1, "State", fieldState);
-            builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<object>(this, OnChange));
-            builder.AddMultipleAttributes(3, UnmatchedAttributes);
-            builder.CloseComponent();
-
-        };
+[Parameter]
+public RenderFragment<FieldState> ColumnValue { get; set; }
 
 
-        FieldState fieldState;
+[Parameter]
+public FieldShowsOn ShowsOn { get; set; }
 
-        protected override void OnInitialized()
-        {
-            //if (Form.Fields.ContainsKey(Name)) fieldState = Form.Fields[Name];
-            //else
-            //{
-            fieldState = new FieldState(this, Model);
-            Form.AddField(fieldState);
-        //}
-        if (RenderMode == FieldRole.Input) inputComponent = CreateInputComponent();
-        //{
+[Parameter]
+public string Help { get; set; }
 
-        //    //}
-    }
+[Parameter(CaptureUnmatchedValues = true)]
+public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
-    async Task OnChange(object value)
-    {
-        if (fieldState.TrySetValue(value)) await Form.FieldValueChanged(fieldState.Name);
-    }
+public string FormId => Form.Id;
 
-    //void IDisposable.Dispose()
+RenderFragment inputComponent;
+
+RenderFragment CreateInputComponent() => builder =>
+{
+
+    builder.OpenComponent(0, fieldState.Editor);
+    builder.AddAttribute(1, "State", fieldState);
+    builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<object>(this, OnChange));
+    builder.AddMultipleAttributes(3, UnmatchedAttributes);
+    builder.CloseComponent();
+
+};
+
+
+FieldState fieldState;
+
+protected override void OnInitialized()
+{
+
+    fieldState = new FieldState(this, Model);
+    Form.AddField(fieldState);
+
+    if (RenderMode == FieldRole.Input) inputComponent = CreateInputComponent();
     //{
-    //    if (RenderMode == FieldRole.Input)
-    //    {
-    //        Form.RemoveField(Name);
-    //    }
 
-    //}
+    //    //}
+}
+
+async Task OnChange(object value)
+{
+    if (fieldState.TrySetValue(value)) await Form.FieldValueChanged(fieldState.Name);
+}
+
+void IDisposable.Dispose()
+{
+    if (RenderMode == FieldRole.Input)
+    {
+        Form.RemoveField(Name);
+    }
+
+}
 }
