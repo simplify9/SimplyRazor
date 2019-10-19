@@ -1,10 +1,9 @@
 ﻿@typeparam TModel
-@implements ISimplyForm
 @namespace SW.SimplyRazor
 @*@if (RenderMode != FieldRole.Input) { return; }*@
 
 <div class="clearfix mt-2 mb-1">
-    <label>@Display</label>
+    <label>@Text</label>
 </div>
 
 @if (Value.Count == 0)
@@ -54,20 +53,17 @@ else
 
 @{ if (beingEditedModel != null)
     {
-        <form @onsubmit="OnFormSubmit" @onreset="OnFormReset" id="@Id"></form>
         <SimplyModal>
             <Content>
-                <CascadingValue IsFixed="true" Value="this" Name="Form">
-                    <CascadingValue Value="FieldRole.Input" Name="RenderMode">
-                        <CascadingValue Value="beingEditedModel" Name="Model">
-                            @ChildContent
-                        </CascadingValue>
-                    </CascadingValue>
+                <CascadingValue Value="FieldRole.Input" Name="RenderMode">
+                    <SimplyForm Name="@Name" Value="beingEditedModel" OnSubmit="OnFormSubmit" OnReset="OnFormReset">
+                        @ChildContent
+                    </SimplyForm>
                 </CascadingValue>
             </Content>
             <Footer>
-                <button type="reset" class="btn btn-secondary" form="@Id">Close</button>
-                <button type="submit" class="btn btn-primary" form="@Id">Ok</button>
+                <button type="reset" class="btn btn-secondary" form="@Name">Close</button>
+                <button type="submit" class="btn btn-primary" form="@Name">Ok</button>
             </Footer>
         </SimplyModal>
     }
@@ -94,10 +90,8 @@ else
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
-
-
     [Parameter]
-    public string Display { get; set; }
+    public string Text { get; set; }
 
     [Parameter]
     public bool Edit { get; set; }
@@ -108,17 +102,13 @@ else
     [Parameter]
     public bool Delete { get; set; }
 
-    public string Id => Name;
 
-    public IDictionary<string, FieldState> Fields { get; set; }
 
     object beingEditedModel = null;
     int beingEditedModelIndex;
 
     protected override void OnInitialized()
     {
-
-        Fields = new Dictionary<string, FieldState>();
 
         if (Value != null) return;
 
@@ -135,25 +125,9 @@ else
         };
 
         Value = ((IList<TModel>)childModel);
-
-
-
     }
 
-    public Task FieldValueChanged(string name)
-    {
-        return Task.CompletedTask;
-    }
 
-    public void AddField(FieldState formField)
-    {
-        Fields.Add(formField.Name, formField);
-    }
-
-    public void RemoveField(string name)
-    {
-        Fields.Remove(name);
-    }
 
     Task AddOnClick(EventArgs args)
     {
@@ -162,7 +136,7 @@ else
         return Task.CompletedTask;
     }
 
-    async Task OnFormSubmit(EventArgs arg)
+    async Task OnFormSubmit(object arg)
     {
 
         if (beingEditedModelIndex < 0)
@@ -179,7 +153,7 @@ else
 
     }
 
-    Task OnFormReset(EventArgs arg)
+    Task OnFormReset(object arg)
     {
         beingEditedModel = null;
         return Task.CompletedTask;

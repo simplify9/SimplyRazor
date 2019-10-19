@@ -3,7 +3,7 @@
 @namespace SW.SimplyRazor
 @using FluentValidation
 
-<form id="@Id"></form>
+<form id="@Id" @onsubmit="(e) => OnSubmit.InvokeAsync(e)" @onreset="(e) => OnReset.InvokeAsync(e)"></form>
 <CascadingValue IsFixed="true" Value="this" Name="Form">
     <CascadingValue Value="(object)Value" Name="Model">
         @ChildContent
@@ -13,10 +13,19 @@
 @code {
 
     [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
     public TModel Value { get; set; }
 
     [Parameter]
     public EventCallback<TModel> ValueChanged { get; set; }
+
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    [Parameter]
+    public EventCallback OnReset { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
@@ -24,7 +33,7 @@
     [Parameter]
     public AbstractValidator<TModel> Validator { get; set; }
 
-    public string Id => "MainForm";
+    public string Id => (Name==null) ? "MainForm" : Name;
 
     public IDictionary<string, FieldState> Fields { get; set; }
 

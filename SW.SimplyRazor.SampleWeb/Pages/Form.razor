@@ -13,13 +13,11 @@
     <SimplyField Name="Country" Lookup="country" />
     <SimplyField Name="Photo"  Editor="typeof(EditorForUpload)" />
 
-
-
     <FieldGroup>
         <SimplyField Name="Salary.Amount" />
         <SimplyField Name="Salary.Currency" />
     </FieldGroup>
-    <SimplyTable Name="Leaves" Display="Leaves" TModel="Leave">
+    <SimplyTable Name="Leaves" Text="Leaves" TModel="Leave">
         <SimplyField Name="Reason" />
         <SimplyField Name="Days" min="1" max="100" pattern="[0-9]{5}" />
     </SimplyTable>

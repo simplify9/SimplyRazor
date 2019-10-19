@@ -10,7 +10,7 @@ namespace SW.SimplyRazor
 {
     public class FieldState : IFormField
     {
-        readonly object childModel;
+        readonly object instance;
 
         public FieldState(IFormField formField, object model) : this(formField, model.GetType(), model) { }
         private FieldState(IFormField formField, Type modelType, object model)
@@ -24,7 +24,7 @@ namespace SW.SimplyRazor
             Text = formField.Text;
 
             var childModelType = modelType;
-            childModel = model;
+            instance = model;
 
             var arr = Name.Split('.');
 
@@ -34,10 +34,9 @@ namespace SW.SimplyRazor
                 {
                     var pInfo = childModelType.GetProperty(arr[i]);
                     childModelType = pInfo.PropertyType;
-                    if (childModel != null) childModel = pInfo.GetValue(childModel);
+                    if (instance != null) instance = pInfo.GetValue(instance);
                 };
                 PropertyInfo = childModelType.GetProperty(arr[arr.Length - 1]);
-
             }
             else
             {
@@ -73,14 +72,14 @@ namespace SW.SimplyRazor
         //public string InputType { get; set; }
         public string InvalidFeedback { get; set; }
         public bool IsInvalid => InvalidFeedback != null;
-        public object Value => childModel !=null ? PropertyInfo.GetValue(childModel) : null;
+        public object Value => instance !=null ? PropertyInfo.GetValue(instance) : null;
         public bool TrySetValue(object value)
         {
             try
             {
-                //if (value==null) propertyInfo.SetValue(childModel, default() );
+                //if (value==null) propertyInfo.SetValue(instance, default() );
                 var typedValue = value.ConvertObjectToType(PropertyInfo.PropertyType);
-                PropertyInfo.SetValue(childModel, typedValue);
+                PropertyInfo.SetValue(instance, typedValue);
                 InvalidFeedback = null;
                 return true;
             }
