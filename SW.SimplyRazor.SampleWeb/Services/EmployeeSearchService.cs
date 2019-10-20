@@ -11,12 +11,12 @@ namespace SW.SimplyRazor.SampleWeb
     {
         public string Serves => typeof(Employee).FullName;
 
-        public IEnumerable<ISearchyFilterConfig> FilterConfigs => new List<ISearchyFilterConfig>() 
-            { new SearchyFilterConfig {Field = "Id", Text = "The Id", Type = FilterDataType.Int }  };
+        public IEnumerable<ISearchyFilterConfig> FilterConfigs => new List<ISearchyFilterConfig>()
+            { new SearchyFilterConfig {Field = "Id", Text = "The Id", Type = SearchyFilterConfigType.Int }  };
 
-        public Task<IEnumerable<object>> Search(SearchyRequest request)
+        public Task<SearchyResponse> Search(SearchyRequest request)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(new SearchyResponse { Result = Employee.Sample.AsEnumerable<object>() });
         }
     }
 }

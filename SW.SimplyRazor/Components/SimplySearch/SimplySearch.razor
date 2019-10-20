@@ -1,16 +1,15 @@
-﻿@namespace SW.SimplyRazor
+﻿@typeparam TModel
+@namespace SW.SimplyRazor
 @inject SearchyClient searchyService
 @inject NavigationManager nav
 @using SW.Searchy
 @using Humanizer
 
-@if (value is null) return; 
+@if (filters is null) return;
 
-    <CascadingValue Value="FilterConfigs" Name="Filters">
-        @ChildContent
-    </CascadingValue>
-
-
+<CascadingValue Value="FilterConfigs" Name="FilterConfigs">
+    @ChildContent
+</CascadingValue>
 
 <div class="row">
     <label for="filterSelect" class="col-auto col-form-label">Search</label>
@@ -46,7 +45,7 @@
 
 @{
     int lineIndex = 0;
-    foreach (var item in value)
+    foreach (var item in filters)
     {
         <div class="input-group mb-1">
             <div class="input-group-prepend">
@@ -54,25 +53,25 @@
             </div>
             <SimplySelect @bind-value="item.Operator"
                           EmptyText="Select condition"
-                          KeyValuePairList="@(FilterDataType.RulesFor(item.Type).ToDictionary((e) => (int)e, (e)=> e.ToString().Humanize()))">
+                          KeyValuePairList="@(SearchyFilterConfigType.RulesFor(item.Type).ToDictionary((e) => (int)e, (e)=> e.ToString().Humanize()))">
 
             </SimplySelect>
             @{switch (item.Type)
                 {
-                    case FilterDataType.String:
+                    case SearchyFilterConfigType.String:
                         {
 
                             <input @bind="item.ValueString" type="text" class="form-control" />
 
                             break;
                         }
-                    case FilterDataType.Int:
+                    case SearchyFilterConfigType.Int:
                         {
                             <input @bind="item.ValueInt" type="number" class="form-control" />
 
                             break;
                         }
-                    case FilterDataType.Date:
+                    case SearchyFilterConfigType.Date:
                         {
                             <input @bind="item.ValueDate" type="date" class="form-control" />
                             break;
@@ -80,7 +79,7 @@
                 }
                 int thisLine = lineIndex;
                 <div class="input-group-append">
-                    <button @onclick="@(e => value.RemoveAt(thisLine))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
+                    <button @onclick="@(e => filters.RemoveAt(thisLine))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
                 </div>
             }
 
@@ -88,31 +87,32 @@
 
         lineIndex++;
     }
-
 }
-
 
 @code{
 
     List<ISearchyFilterConfig> FilterConfigs { get; set; }
 
-    //[Parameter]
-    //public EventCallback<SearchyQuery> OnSearch { get; set; }
+    [Parameter]
+    public IEnumerable<TModel> Value { get; set; }
+
+    [Parameter]
+    public EventCallback<IEnumerable<TModel>> OnValueChanged { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
-    [Parameter]
-    public Type Model { get; set; }
+    //[Parameter]
+    //public Type Model { get; set; }
 
     int filterValue;
-    List<FilterState> value;
+    List<FilterState> filters;
 
     Task FilterAddOnClick(MouseEventArgs e)
     {
         if (filterValue > 0)
         {
-            value.Add(new FilterState(FilterConfigs[filterValue - 1]));
+            filters.Add(new FilterState(FilterConfigs[filterValue - 1]));
             filterValue = 0;
         }
         return Task.CompletedTask;
@@ -122,41 +122,22 @@
     protected async override Task OnInitializedAsync()
     {
         FilterConfigs = new List<ISearchyFilterConfig>();
-        if (!(Model is null))
-        {
-            searchyService.Client.BaseAddress = new Uri(nav.BaseUri);
-            FilterConfigs.AddRange(await searchyService.GetFilterConfigs(Model.FullName));
-        }
-        value = new List<FilterState>();
+
+        searchyService.Client.BaseAddress = new Uri(nav.BaseUri);
+        FilterConfigs.AddRange(await searchyService.GetFilterConfigs(typeof(TModel).FullName));
+
+        filters = new List<FilterState>();
     }
 
-    private Task SearchOnClick(MouseEventArgs e)
+    private async Task SearchOnClick(MouseEventArgs e)
     {
+        var condition = new SearchyConditon(filters);
 
-        var sq = new SearchyQuery();
+        var sr = new SearchyRequest();
+        sr.Conditions = new List<SearchyConditon> { condition };
 
-        var filledLines = value
-            .Where(sl => sl.Operator != 0 &&
-            (sl.ValueString != null || sl.ValueString != null ||
-            sl.ValueDecimal != null || sl.ValueDate != null));
-
-
-        //.Select(sl => new FilterByOptions(sl.FieldName, (FilterByOptions.FilterOperatorOptions)sl.Operator, sl.value));
-
-        if (filledLines.Any())
-        {
-
-            foreach (var line in filledLines)
-            {
-
-            }
-
-            //sq.Conditions.Add(new SearchCondition(fbo));
-
-        }
-
-        //return OnSearch.InvokeAsync(sq);
-        return Task.CompletedTask;
+        Value = (await searchyService.Search<TModel>(sr)).Result;
+        //var result = ;
     }
 
 

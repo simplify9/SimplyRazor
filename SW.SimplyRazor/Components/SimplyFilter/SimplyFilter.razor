@@ -5,8 +5,8 @@
 
 @code {
 
-    [CascadingParameter(Name = "Filters")]
-    public IList<ISearchyFilterConfig> Filters { get; set; }
+    [CascadingParameter(Name = "FilterConfigs")]
+    public IList<ISearchyFilterConfig> FilterConfigs { get; set; }
 
     [Parameter]
     public string Type { get; set; }
@@ -19,12 +19,12 @@
 
     protected override void OnInitialized()
     {
-        Filters?.Add(this);
+        FilterConfigs?.Add(this);
     }
 
     public void Dispose()
     {
-        Filters?.Remove(this);
+        FilterConfigs?.Remove(this);
     }
 
 }

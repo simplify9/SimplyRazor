@@ -1,10 +1,10 @@
 ﻿@page "/"
 @using SW.Searchy
 
-<SimplySearch Model="typeof(Employee)" >
-    <SimplyFilter Field="Id" Text="Id" Type="@FilterDataType.Int"></SimplyFilter>
-    <SimplyFilter Field="HandlerName" Text="Handler" Type="@FilterDataType.String"></SimplyFilter>
-    <SimplyFilter Field="Started" Text="Date" Type="@FilterDataType.Date"></SimplyFilter>
+<SimplySearch TModel="Employee" >
+    <SimplyFilter Field="Id" Text="Id" Type="@SearchyFilterConfigType.Int"></SimplyFilter>
+    <SimplyFilter Field="HandlerName" Text="Handler" Type="@SearchyFilterConfigType.String"></SimplyFilter>
+    <SimplyFilter Field="Started" Text="Date" Type="@SearchyFilterConfigType.Date"></SimplyFilter>
 </SimplySearch>
 
 <SimplyTable Value="Employee.Sample">

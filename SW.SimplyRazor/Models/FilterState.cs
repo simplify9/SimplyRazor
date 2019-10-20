@@ -20,10 +20,10 @@ namespace SW.SimplyRazor
             { 
                 switch (Type)
                 {
-                    case FilterDataType.String: return ValueString;
-                    case FilterDataType.Int: return ValueInt;
-                    case FilterDataType.Decimal: return ValueDecimal;
-                    case FilterDataType.Date: return ValueDate;
+                    case SearchyFilterConfigType.String: return ValueString;
+                    case SearchyFilterConfigType.Int: return ValueInt;
+                    case SearchyFilterConfigType.Decimal: return ValueDecimal;
+                    case SearchyFilterConfigType.Date: return ValueDate;
                 }
                 return null;
             }
