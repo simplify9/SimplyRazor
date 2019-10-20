@@ -131,10 +131,7 @@
 
     private async Task SearchOnClick(MouseEventArgs e)
     {
-        var condition = new SearchyConditon(filters);
-
-        var sr = new SearchyRequest();
-        sr.Conditions = new List<SearchyConditon> { condition };
+        var sr = new SearchyRequest { Conditions = new List<SearchyConditon> { new SearchyConditon(filters) } };
 
         Value = (await searchyService.Search<TModel>(sr)).Result;
         //var result = ;
