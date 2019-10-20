@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using SW.I18n;
 using SW.PrimitiveTypes;
 
-namespace BlazorLob3.Services
+namespace SW.SimplyRazor.SampleWeb 
 {
     public class IntMockLookupService : ILookupService
     {

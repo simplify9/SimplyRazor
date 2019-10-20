@@ -13,7 +13,7 @@
                 {
                     <div class="@((Grouped) ? "col" : "form-group")">
 
-                        @inputComponent
+                        @editor
 
                         @if (fieldState.IsInvalid)
                         {
@@ -116,9 +116,9 @@ public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
 public string FormId => Form.Id;
 
-RenderFragment inputComponent;
+RenderFragment editor;
 
-RenderFragment CreateInputComponent() => builder =>
+RenderFragment CreateEditor() => builder =>
 {
 
     builder.OpenComponent(0, fieldState.Editor);
@@ -138,7 +138,7 @@ protected override void OnInitialized()
     fieldState = new FieldState(this, Model);
     Form.AddField(fieldState);
 
-    if (RenderMode == FieldRole.Input) inputComponent = CreateInputComponent();
+    if (RenderMode == FieldRole.Input) editor = CreateEditor();
     //{
 
     //    //}

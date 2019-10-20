@@ -1,14 +1,11 @@
 ﻿@page "/"
-
 @using SW.Searchy
 
-
-
-<SimplyFilter OnSearch="SimplyFilterOnSearch">
-    <FilterParams FieldName="Id" DisplayName="Id" Type="FilterType.WholeNumber"></FilterParams>
-    <FilterParams FieldName="HandlerName" DisplayName="Handler" Type="FilterType.Text"></FilterParams>
-    <FilterParams FieldName="Started" DisplayName="Date" Type="FilterType.Date"></FilterParams>
-</SimplyFilter>
+<SimplySearch Model="typeof(Employee)" >
+    <SimplyFilter Field="Id" Text="Id" Type="@FilterDataType.Int"></SimplyFilter>
+    <SimplyFilter Field="HandlerName" Text="Handler" Type="@FilterDataType.String"></SimplyFilter>
+    <SimplyFilter Field="Started" Text="Date" Type="@FilterDataType.Date"></SimplyFilter>
+</SimplySearch>
 
 <SimplyTable Value="Employee.Sample">
     <SimplyField Name="FirstName" readonly></SimplyField>
@@ -36,9 +33,9 @@
 
 
 
-    SearchQuery sq;
+    SearchyQuery sq;
 
-    async Task SimplyFilterOnSearch(SearchQuery sq)
+    async Task SimplySearchOnSearch(SearchyQuery sq)
     {
 
     }

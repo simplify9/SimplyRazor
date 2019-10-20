@@ -1,210 +1,30 @@
 ﻿@namespace SW.SimplyRazor
-
+@implements ISearchyFilterConfig 
+@implements IDisposable
 @using SW.Searchy
-@using Humanizer
 
+@code {
 
-<CascadingValue Value="AvailableFilters" Name="Filters">
-    @ChildContent
-</CascadingValue>
-
-
-<div class="row">
-    <label for="filterSelect" class="col-auto col-form-label">Search</label>
-    <div class="col-auto">
-
-        <div class="input-group">
-            <SimplySelect @bind-Value="filterValue"
-                          EmptyText="Select filter"
-                          StringList="@(AvailableFilters.Select(e=>e.DisplayName))">
-
-            </SimplySelect>
-
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
-            </div>
-        </div>
-        @*<select @bind="filterValue" class="form-control" id="filterSelect">
-                <option value="0">Select a filter</option>
-                @{
-                    int itemIndex = 1;
-                    foreach (var item in AvailableFilters)
-                    {
-                        <option value="@itemIndex">@item.DisplayName</option>
-                        itemIndex++;
-                    }
-                }
-            </select>*@
-    </div>
-    <div class="col text-right mb-2">
-        <button type="submit" class="btn btn-primary" @onclick="SearchOnClick">Search</button>
-    </div>
-</div>
-
-@{
-    int lineIndex = 0;
-    foreach (var item in model)
-    {
-        <div class="input-group mb-1">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="">@item.Params.DisplayName</span>
-            </div>
-            <SimplySelect @bind-Value="item.Operator"
-                          EmptyText="Select condition"
-                          KeyValuePairList="@(operators.Where(e => e.Applicability.Contains(item.Params.Type)).ToDictionary(op=>(int)op.Operator,op=>op.Operator.ToString().Humanize()) )">
-
-            </SimplySelect>
-            @{switch (item.Params.Type)
-                {
-                    case FilterType.Text:
-                        {
-
-                            <input @bind="item.ValueString" type="text" class="form-control" />
-
-                            break;
-                        }
-                    case FilterType.WholeNumber:
-                        {
-                            <input @bind="item.ValueInt" type="number" class="form-control" />
-
-                            break;
-                        }
-                    case FilterType.Date:
-                        {
-                            <input @bind="item.ValueDate" type="date" class="form-control" />
-                            break;
-                        }
-                }
-                int thisLine = lineIndex;
-                <div class="input-group-append">
-                    <button @onclick="@(e => model.RemoveAt(thisLine))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
-                </div>
-            }
-
-        </div>
-
-        lineIndex++;
-    }
-
-}
-
-
-@code{
-
-    IList<IFilterParams> AvailableFilters { get; set; }
+    [CascadingParameter(Name = "Filters")]
+    public IList<ISearchyFilterConfig> Filters { get; set; }
 
     [Parameter]
-    public EventCallback<SearchQuery> OnSearch { get; set; }
+    public string Type { get; set; }
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public string Text { get; set; }
 
-    readonly List<FilterModel> model = new List<FilterModel>();
-
-    int filterValue;
-
-
-    Task FilterAddOnClick(MouseEventArgs e)
-    {
-        if (filterValue > 0)
-        {
-            model.Add(new FilterModel(AvailableFilters[filterValue - 1]));
-            filterValue = 0;
-        }
-        return Task.CompletedTask;
-    }
-
+    [Parameter]
+    public string Field { get; set; }
 
     protected override void OnInitialized()
     {
-        AvailableFilters = new List<IFilterParams>();
+        Filters?.Add(this);
     }
 
-
-
-    static readonly List<SimplyFilterOperator> operators = new List<SimplyFilterOperator>
-{
-        new SimplyFilterOperator()
-        {
-        Operator=FilterByOptions.FilterOperatorOptions.EqualsTo,
-        Applicability=new[] {FilterType.Decimal, FilterType.WholeNumber, FilterType.Text }
-        },
-        new SimplyFilterOperator()
-        {
-        Operator=FilterByOptions.FilterOperatorOptions.NotEqualsTo,
-        Applicability=new[] {FilterType.Decimal, FilterType.WholeNumber, FilterType.Text }
-        },
-        new SimplyFilterOperator()
-        {
-        Operator=FilterByOptions.FilterOperatorOptions.GreaterThan,
-        Applicability=new[] {FilterType.Date, FilterType.Decimal, FilterType.WholeNumber }
-        },
-        new SimplyFilterOperator()
-        {
-        Operator=FilterByOptions.FilterOperatorOptions.GreaterThanOrEquals,
-        Applicability=new[] {FilterType.Date, FilterType.Decimal, FilterType.WholeNumber }
-        },
-        new SimplyFilterOperator()
-        {
-        Operator=FilterByOptions.FilterOperatorOptions.LessThan,
-        Applicability=new[] {FilterType.Date, FilterType.Decimal, FilterType.WholeNumber }
-        },
-        new SimplyFilterOperator()
-        {
-        Operator=FilterByOptions.FilterOperatorOptions.LessThanOrEquals,
-        Applicability=new[] {FilterType.Date, FilterType.Decimal, FilterType.WholeNumber }
-        },
-        new SimplyFilterOperator()
-        {
-        Operator=FilterByOptions.FilterOperatorOptions.BeginsWith,
-        Applicability=new[] {FilterType.Text }
-        },
-        new SimplyFilterOperator()
-        {
-        Operator=FilterByOptions.FilterOperatorOptions.Contains,
-        Applicability=new[] {FilterType.Text }
-        },
-        //new SimplyFilterOperator()
-        //{
-        //Operator=FilterByOptions.FilterOperatorOptions.EqualsToList,
-        //Applicability=new[] {SimplyFilterDefinitionType.Text }
-        //},
-
-    };
-
-    private Task SearchOnClick(MouseEventArgs e)
+    public void Dispose()
     {
-
-        var sq = new SearchQuery();
-
-        var filledLines = model
-            .Where(sl => sl.Operator != 0 &&
-            (sl.ValueString != null || sl.ValueString != null ||
-            sl.ValueDecimal != null || sl.ValueDate != null));
-
-
-        //.Select(sl => new FilterByOptions(sl.FieldName, (FilterByOptions.FilterOperatorOptions)sl.Operator, sl.Value));
-
-        if (filledLines.Any())
-        {
-
-            foreach (var line in filledLines)
-            {
-
-            }
-
-            //sq.Conditions.Add(new SearchCondition(fbo));
-
-        }
-
-        return OnSearch.InvokeAsync(sq);
+        Filters?.Remove(this);
     }
 
-
-
-    class SimplyFilterOperator
-    {
-        public FilterByOptions.FilterOperatorOptions Operator { get; set; }
-        public FilterType[] Applicability { get; set; }
-    }
 }

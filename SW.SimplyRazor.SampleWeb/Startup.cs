@@ -12,10 +12,11 @@ using Microsoft.Extensions.Hosting;
 using BlazorLob3.Data;
 using System.IO;
 using Microsoft.AspNetCore.Http;
-using BlazorLob3.Services;
+
 using SW.I18n;
 using SW.PrimitiveTypes;
 using SW.Lookup;
+using SW.Searchy;
 
 namespace SW.SimplyRazor.SampleWeb
 {
@@ -37,11 +38,14 @@ namespace SW.SimplyRazor.SampleWeb
             services.AddSingleton<WeatherForecastService>();
             //services.AddSingleton<ILookupService, CountryLookupService>();
             services.AddSingleton<ILookupService, IntMockLookupService>();
+            services.AddSingleton<ISearchyService, EmployeeSearchService>();
 
 
             services.AddI18n();
             services.AddHttpClient<LookupClient>();
-            
+            services.AddHttpClient<SearchyClient>();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
