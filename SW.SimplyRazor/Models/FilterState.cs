@@ -12,25 +12,7 @@ namespace SW.SimplyRazor
             Field = isf.Field;
         }
 
-        public object Value
-        {
-            get
-            { 
-                switch (Type)
-                {
-                    case SearchyFilterConfigType.String: return ValueString;
-                    case SearchyFilterConfigType.Int: return ValueInt;
-                    case SearchyFilterConfigType.Decimal: return ValueDecimal;
-                    case SearchyFilterConfigType.Date: return ValueDate;
-                }
-                return null;
-            }
-            set 
-            {
-                throw new NotImplementedException();
-            }
-        }
-
+        public object Value { get; set; }
         public SearchyRule Rule { get => (SearchyRule)Operator; set => Operator = (int)value; }
         public string Type { get; set; }
         public string Text { get; set; }
