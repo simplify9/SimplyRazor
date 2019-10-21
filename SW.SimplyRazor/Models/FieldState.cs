@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor
 {
-    public class FieldState : IFormField
+    public class FieldState : ISimplyField
     {
-        readonly object instance;
+        public dynamic ItemData { get; private set; }
 
-        public FieldState(IFormField formField, object model) : this(formField, model.GetType(), model) { }
-        private FieldState(IFormField formField, Type modelType, object model)
+        public FieldState(ISimplyField formField, object model) : this(formField, model.GetType(), model) { }
+        private FieldState(ISimplyField formField, Type modelType, object model)
         {
             Name = formField.Name;
             Help = formField.Help;
@@ -24,7 +24,9 @@ namespace SW.SimplyRazor
             Text = formField.Text;
 
             var childModelType = modelType;
-            instance = model;
+            ItemData = model;
+
+            if (Name is null) return;
 
             var arr = Name.Split('.');
 
@@ -34,7 +36,7 @@ namespace SW.SimplyRazor
                 {
                     var pInfo = childModelType.GetProperty(arr[i]);
                     childModelType = pInfo.PropertyType;
-                    if (instance != null) instance = pInfo.GetValue(instance);
+                    if (ItemData != null) ItemData = pInfo.GetValue(ItemData);
                 };
                 PropertyInfo = childModelType.GetProperty(arr[arr.Length - 1]);
             }
@@ -61,7 +63,7 @@ namespace SW.SimplyRazor
         string text = null;
         public string Text
         {
-            get => (text == null) ? Name.Humanize() : Text;
+            get => (text == null) ? Name?.Humanize() : Text;
             set => text = value;
         }
 
@@ -72,14 +74,14 @@ namespace SW.SimplyRazor
         //public string InputType { get; set; }
         public string InvalidFeedback { get; set; }
         public bool IsInvalid => InvalidFeedback != null;
-        public object Value => instance !=null ? PropertyInfo.GetValue(instance) : null;
+        public object Value => ItemData !=null ? PropertyInfo.GetValue(ItemData) : null;
         public bool TrySetValue(object value)
         {
             try
             {
-                //if (value==null) propertyInfo.SetValue(instance, default() );
+                //if (value==null) propertyInfo.SetValue(ItemData, default() );
                 var typedValue = value.ConvertObjectToType(PropertyInfo.PropertyType);
-                PropertyInfo.SetValue(instance, typedValue);
+                PropertyInfo.SetValue(ItemData, typedValue);
                 InvalidFeedback = null;
                 return true;
             }

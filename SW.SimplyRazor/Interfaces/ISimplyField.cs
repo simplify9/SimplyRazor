@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor
 {
-    public interface IFormField
+    public interface ISimplyField
     {
         string FormId { get; }
         string Name { get; set; }

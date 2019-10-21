@@ -8,13 +8,19 @@
 </SimplySearch>
 
 <SimplyTable @bind-Value="employees">
+    <SimplyField  readonly>
+        <ColumnValue>
+            Select
+        </ColumnValue> 
+    </SimplyField>
+
     <SimplyField Name="FirstName" readonly></SimplyField>
     <SimplyField Name="LastName">
         <ColumnHeader>
             L.N...
         </ColumnHeader>
         <ColumnValue>
-            @context.Value.ToString().ToLower()
+            @context.ItemData.LastName
         </ColumnValue>
     </SimplyField>
     <SimplyField Name="Age" />
