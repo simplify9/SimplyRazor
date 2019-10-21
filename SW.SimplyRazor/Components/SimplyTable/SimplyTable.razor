@@ -32,7 +32,7 @@ else
                         for (var i = 0; i < Value.Count; i++)
                         {
                             var itemIndex = i;
-                            <tr>
+                            <tr @key="Value[itemIndex]">
                                 <CascadingValue Value="FieldRole.ColumnValue" Name="RenderMode">
                                     <SimplyForm Value="Value[itemIndex]">
                                         @ChildContent
