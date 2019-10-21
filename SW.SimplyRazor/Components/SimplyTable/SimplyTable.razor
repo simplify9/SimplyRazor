@@ -56,14 +56,14 @@ else
         <SimplyModal>
             <Content>
                 <CascadingValue Value="FieldRole.Input" Name="RenderMode">
-                    <SimplyForm Name="@Name" Value="beingEditedModel" OnSubmit="OnFormSubmit" OnReset="OnFormReset">
+                    <SimplyForm Name="@($"{Name}{beingEditedModelIndex}")" Value="beingEditedModel" OnSubmit="OnFormSubmit" OnReset="OnFormReset">
                         @ChildContent
                     </SimplyForm>
                 </CascadingValue>
             </Content>
             <Footer>
-                <button type="reset" class="btn btn-secondary" form="@Name">Close</button>
-                <button type="submit" class="btn btn-primary" form="@Name">Ok</button>
+                <button type="reset" class="btn btn-secondary" form="@($"{Name}{beingEditedModelIndex}")">Close</button>
+                <button type="submit" class="btn btn-primary" form="@($"{Name}{beingEditedModelIndex}")">Ok</button>
             </Footer>
         </SimplyModal>
     }
@@ -113,6 +113,7 @@ else
     protected override void OnInitialized()
     {
 
+        if (Name == null) Name = "MainTable";
         if (Value != null) return;
         if (Model == null) return;
 
@@ -153,7 +154,7 @@ else
         }
         beingEditedModel = null;
 
-        await Form?.FieldValueChanged(Name);
+        if (Form !=null ) await Form.FieldValueChanged(Name);
 
     }
 

@@ -31,7 +31,7 @@
     <PackageReference Include="Scrutor" Version="3.1.0" />
     <PackageReference Include="SimplyWorks.I18n" Version="2019.10.17.3" />
     <PackageReference Include="SimplyWorks.Lookup" Version="2019.10.17.1" />
-    <PackageReference Include="SimplyWorks.Searchy" Version="2019.10.21.2" />
+    <PackageReference Include="SimplyWorks.Searchy" Version="2019.10.21.3" />
     
   </ItemGroup>
 

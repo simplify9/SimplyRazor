@@ -2,18 +2,16 @@
 @implements ISimplyField
 @implements IDisposable
 
-
-
 @{
     switch (RenderMode)
     {
         case FieldRole.Input:
             {
-                if (fieldState.ShowsOn == FieldShowsOn.Always || fieldState.ShowsOn == FieldShowsOn.Edit)
+                if (editorFragment != null && (fieldState.ShowsOn == FieldShowsOn.Always || fieldState.ShowsOn == FieldShowsOn.Edit))
                 {
                     <div class="@((Grouped) ? "col" : "form-group")">
 
-                        @editor
+                        @editorFragment
 
                         @if (fieldState.IsInvalid)
                         {
@@ -104,7 +102,6 @@ public RenderFragment<FieldState> ColumnHeader { get; set; }
 [Parameter]
 public RenderFragment<FieldState> ColumnValue { get; set; }
 
-
 [Parameter]
 public FieldShowsOn ShowsOn { get; set; }
 
@@ -116,7 +113,7 @@ public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
 public string FormId => Form.Id;
 
-RenderFragment editor;
+RenderFragment editorFragment;
 
 RenderFragment CreateEditor() => builder =>
 {
@@ -138,10 +135,7 @@ protected override void OnInitialized()
     fieldState = new FieldState(this, Model);
     Form.AddField(fieldState);
 
-    if (RenderMode == FieldRole.Input) editor = CreateEditor();
-    //{
-
-    //    //}
+    if ((RenderMode == FieldRole.Input) && (fieldState.Editor != null)) editorFragment = CreateEditor();
 }
 
 async Task OnChange(object value)

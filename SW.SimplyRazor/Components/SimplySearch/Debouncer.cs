@@ -17,7 +17,7 @@ namespace SW.SimplyRazor
             this.MillisecondsToWait = millisecondsToWait;
         }
 
-        public void Debouce(Action func)
+        public async Task Debouce(Action func)
         {
             CancelAllStepperTokens(); // Cancel all api requests;
             var newTokenSrc = new CancellationTokenSource();
@@ -25,7 +25,7 @@ namespace SW.SimplyRazor
             {
                 StepperCancelTokens.Add(newTokenSrc);
             }
-            Task.Delay(MillisecondsToWait, newTokenSrc.Token).ContinueWith(task => // Create new request
+            await Task.Delay(MillisecondsToWait, newTokenSrc.Token).ContinueWith(task => // Create new request
             {
                 if (!newTokenSrc.IsCancellationRequested) // if it hasn't been cancelled
                 {

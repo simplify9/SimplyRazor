@@ -133,7 +133,6 @@
         var sr = new SearchyRequest { Conditions = new List<SearchyConditon> { new SearchyConditon(typedFilters) } };
 
         var result = (await searchyService.Search<TModel>(sr)).Result.ToList();
-        //var result = ;
         await ValueChanged.InvokeAsync(result);
     }
 
@@ -142,7 +141,7 @@
 
     private async Task FilterOnInput(ChangeEventArgs args)
     {
-        StepperDeboucer.Debouce(() => { Console.WriteLine(args.Value);  });
+        await StepperDeboucer.Debouce(() => { Console.WriteLine(args.Value);  });
     }
 
 }
