@@ -1,13 +1,13 @@
 ﻿@page "/"
 @using SW.Searchy
 
-<SimplySearch TModel="Employee" >
+<SimplySearch TModel="Employee" @bind-Value="employees" >
     <SimplyFilter Field="Id" Text="Id" Type="@SearchyFilterConfigType.Int"></SimplyFilter>
     <SimplyFilter Field="HandlerName" Text="Handler" Type="@SearchyFilterConfigType.String"></SimplyFilter>
     <SimplyFilter Field="Started" Text="Date" Type="@SearchyFilterConfigType.Date"></SimplyFilter>
 </SimplySearch>
 
-<SimplyTable Value="Employee.Sample">
+<SimplyTable @bind-Value="employees">
     <SimplyField Name="FirstName" readonly></SimplyField>
     <SimplyField Name="LastName">
         <ColumnHeader>
@@ -31,7 +31,7 @@
 
 @code{
 
-
+    IList<Employee> employees;
 
     SearchyQuery sq;
 

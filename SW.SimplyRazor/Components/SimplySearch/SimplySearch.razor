@@ -61,7 +61,7 @@
                     case SearchyFilterConfigType.String:
                         {
 
-                            <input @bind="item.ValueString" type="text" class="form-control" />
+                            <input  type="text" class="form-control" @bind="item.ValueString"   />
 
                             break;
                         }
@@ -94,16 +94,13 @@
     List<ISearchyFilterConfig> FilterConfigs { get; set; }
 
     [Parameter]
-    public IEnumerable<TModel> Value { get; set; }
+    public IList<TModel> Value { get; set; }
 
     [Parameter]
-    public EventCallback<IEnumerable<TModel>> OnValueChanged { get; set; }
+    public EventCallback<IList<TModel>> ValueChanged { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
-
-    //[Parameter]
-    //public Type Model { get; set; }
 
     int filterValue;
     List<FilterState> filters;
@@ -121,6 +118,7 @@
 
     protected async override Task OnInitializedAsync()
     {
+        if (Value is null) Value = new List<TModel>();
         FilterConfigs = new List<ISearchyFilterConfig>();
 
         searchyService.Client.BaseAddress = new Uri(nav.BaseUri);
@@ -131,17 +129,20 @@
 
     private async Task SearchOnClick(MouseEventArgs e)
     {
-        var sr = new SearchyRequest { Conditions = new List<SearchyConditon> { new SearchyConditon(filters) } };
+        var typedFilters = filters.Select(f => (ISearchyFilterTyped)f).ToList();
+        var sr = new SearchyRequest { Conditions = new List<SearchyConditon> { new SearchyConditon(typedFilters) } };
 
-        Value = (await searchyService.Search<TModel>(sr)).Result;
+        var result = (await searchyService.Search<TModel>(sr)).Result.ToList();
         //var result = ;
+        await ValueChanged.InvokeAsync(result);
     }
 
+    Debouncer StepperDeboucer = new Debouncer(1000); // one second
 
 
-    //class SimplyFilterOperator
-    //{
-    //    public FilterByOptions.FilterOperatorOptions Operator { get; set; }
-    //    public string[] Applicability { get; set; }
-    //}
+    private async Task FilterOnInput(ChangeEventArgs args)
+    {
+        StepperDeboucer.Debouce(() => { Console.WriteLine(args.Value);  });
+    }
+
 }

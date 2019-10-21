@@ -6,7 +6,7 @@
     <label>@Text</label>
 </div>
 
-@if (Value.Count == 0)
+@if (Value ==null || Value.Count == 0)
 {
     <p>Nothing to display, <button type="button" class="btn btn-link" @onclick="AddOnClick">click here</button> to add.</p>
 }
@@ -85,6 +85,9 @@ else
     public IList<TModel> Value { get; set; }
 
     [Parameter]
+    public EventCallback<IList<TModel>> ValueChanged { get; set; }
+
+    [Parameter]
     public string Name { get; set; }
 
     [Parameter]
@@ -111,6 +114,7 @@ else
     {
 
         if (Value != null) return;
+        if (Model == null) return;
 
         Type arrayType = Model.GetType();
         var childModel = Model;

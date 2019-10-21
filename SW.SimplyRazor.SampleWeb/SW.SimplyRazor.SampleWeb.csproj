@@ -31,11 +31,12 @@
     <PackageReference Include="Scrutor" Version="3.1.0" />
     <PackageReference Include="SimplyWorks.I18n" Version="2019.10.17.3" />
     <PackageReference Include="SimplyWorks.Lookup" Version="2019.10.17.1" />
-    <PackageReference Include="SimplyWorks.Searchy" Version="2019.10.20.6" />
+    <PackageReference Include="SimplyWorks.Searchy" Version="2019.10.21.2" />
     
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SW.BogusDataModels\SW.BogusDataModels.csproj" />
     <ProjectReference Include="..\SW.SimplyRazor\SW.SimplyRazor.csproj" />
   </ItemGroup>
 
