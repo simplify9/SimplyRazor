@@ -22,7 +22,7 @@ namespace SW.SimplyRazor.SampleWeb
 
         public Task<SearchyResponse> Search(SearchyRequest request)
         {
-            return Task.FromResult(new SearchyResponse { Result = FakeEmployees.Data.AsQueryable().Search(request.Conditions).ToList()  });
+            return Task.FromResult(new SearchyResponse { Result = FakeEmployees.Data.AsQueryable().Search(request.Conditions, null, request.PageSize, request.PageIndex).ToList() });
         }
     }
 }

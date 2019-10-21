@@ -61,7 +61,7 @@
                     case SearchyFilterConfigType.String:
                         {
 
-                            <input  type="text" class="form-control" @bind="item.ValueString"   />
+                            <input type="text" class="form-control" @bind="item.ValueString" />
 
                             break;
                         }
@@ -100,6 +100,15 @@
     public EventCallback<IList<TModel>> ValueChanged { get; set; }
 
     [Parameter]
+    public PageInfo PageInfo { get; set; }
+
+    [Parameter]
+    public EventCallback<PageInfo> PageInfoChanged { get; set; }
+
+    [Parameter]
+    public int PageProbablyLast { get; set; }
+
+    [Parameter]
     public RenderFragment ChildContent { get; set; }
 
     int filterValue;
@@ -118,7 +127,10 @@
 
     protected async override Task OnInitializedAsync()
     {
+        if (PageInfo is null) PageInfo = new PageInfo(20); 
+
         if (Value is null) Value = new List<TModel>();
+
         FilterConfigs = new List<ISearchyFilterConfig>();
 
         searchyService.Client.BaseAddress = new Uri(nav.BaseUri);
@@ -127,10 +139,15 @@
         filters = new List<FilterState>();
     }
 
-    private async Task SearchOnClick(MouseEventArgs e)
+    private async Task SearchOnClick(EventArgs e)
     {
         var typedFilters = filters.Select(f => (ISearchyFilterTyped)f).ToList();
-        var sr = new SearchyRequest { Conditions = new List<SearchyConditon> { new SearchyConditon(typedFilters) } };
+        var sr = new SearchyRequest
+        {
+            Conditions = new List<SearchyConditon> { new SearchyConditon(typedFilters) },
+            PageIndex = PageInfo.Index ,
+            PageSize = PageInfo.Size
+        };
 
         var result = (await searchyService.Search<TModel>(sr)).Result.ToList();
         await ValueChanged.InvokeAsync(result);
@@ -141,7 +158,7 @@
 
     private async Task FilterOnInput(ChangeEventArgs args)
     {
-        await StepperDeboucer.Debouce(() => { Console.WriteLine(args.Value);  });
+        await StepperDeboucer.Debouce(() => { Console.WriteLine(args.Value); });
     }
 
 }

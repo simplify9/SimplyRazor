@@ -76,7 +76,7 @@ namespace SW.BogusDataModels
             .RuleFor(u => u.UserName, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
             .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
             .RuleFor(u => u.Id, f => f.UniqueIndex)
-
+            .RuleFor(u=> u.Country, f=> f.Address.CountryCode()) 
             //Use a method outside scope.
             //.RuleFor(u => u.CartId, f => Guid.NewGuid())
             //Compound property with context, use the first/last name properties

@@ -1,13 +1,14 @@
 ﻿@namespace SW.SimplyRazor
+@inject IJSRuntime JSRuntime
 
 <div class="modal " tabindex="-1" role="dialog" style="display:block">
-    <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div @ref="modalRef" class="modal-dialog modal-dialog-scrollable" role="document" @attributes="UnmatchedAttributes">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">@Title</h5>
                 @*<button type="reset" class="close" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>*@
+                        <span aria-hidden="true">&times;</span>
+                    </button>*@
             </div>
             <div class="modal-body">
                 @Content
@@ -15,13 +16,16 @@
             <div class="modal-footer">
                 @Footer
                 @*<button type="button" class="btn btn-secondary" @onclick="(()=> OnResponse.InvokeAsync(SimplyModalResponse.Closed))">Close</button>
-                <button type="button" class="btn btn-primary" @onclick="(()=> OnResponse.InvokeAsync(SimplyModalResponse.Confirmed))">Ok</button>*@
+                    <button type="button" class="btn btn-primary" @onclick="(()=> OnResponse.InvokeAsync(SimplyModalResponse.Confirmed))">Ok</button>*@
             </div>
         </div>
     </div>
 </div>
 
 @code {
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
     //[Parameter]
     //public EventCallback<SimplyModalResponse> OnResponse { get; set; }
@@ -34,5 +38,15 @@
 
     [Parameter]
     public RenderFragment Footer { get; set; }
+
+    ElementReference modalRef;
+
+    async protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("simplyModalInterop.setFocus", modalRef);
+        }
+    }
 
 }

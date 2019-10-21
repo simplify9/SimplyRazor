@@ -1,5 +1,5 @@
 ﻿@namespace SW.SimplyRazor
-@implements ISearchyFilterConfig 
+@implements ISearchyFilterConfig
 @implements IDisposable
 @using SW.Searchy
 
@@ -16,6 +16,15 @@
 
     [Parameter]
     public string Field { get; set; }
+
+[Parameter]
+        public bool Required { get; set; }
+        
+[Parameter]
+public bool Default { get; set; }
+        
+[Parameter]
+public ICollection<SearchyRule> Rules { get; set; }
 
     protected override void OnInitialized()
     {

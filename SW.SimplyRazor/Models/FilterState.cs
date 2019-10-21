@@ -1,15 +1,20 @@
 ﻿using SW.Searchy;
 using System;
+using System.Collections.Generic;
 
 namespace SW.SimplyRazor
 {
     public class FilterState : ISearchyFilterConfig, ISearchyFilterTyped
     {
-        public FilterState(ISearchyFilterConfig isf)
+        public FilterState(ISearchyFilterConfig isfc)
         {
-            Type = isf.Type;
-            Text = isf.Text;
-            Field = isf.Field;
+            
+            Type = isfc.Type;
+            Text = isfc.Text;
+            Field = isfc.Field;
+            Required  = isfc.Required ;
+            Default = isfc.Default;
+            Rules = isfc.Rules;
         }
 
         public object Value { get; set; }
@@ -17,6 +22,9 @@ namespace SW.SimplyRazor
         public string Type { get; set; }
         public string Text { get; set; }
         public string Field { get; set; }
+        public ICollection<SearchyRule> Rules { get; set; }
+        public bool Required { get; set; }
+        public bool Default { get; set; }
         public int Operator { get; set; }
         public bool? ValueBool { get; set; }
         public byte? ValueByte { get; set; }

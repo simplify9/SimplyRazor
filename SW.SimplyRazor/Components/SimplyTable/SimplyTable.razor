@@ -53,7 +53,7 @@ else
 
 @{ if (beingEditedModel != null)
     {
-        <SimplyModal>
+        <SimplyModal @onkeydown="OnModalKeyDown">
             <Content>
                 <CascadingValue Value="FieldRole.Input" Name="RenderMode">
                     <SimplyForm Name="@($"{Name}{beingEditedModelIndex}")" Value="beingEditedModel" OnSubmit="OnFormSubmit" OnReset="OnFormReset">
@@ -132,7 +132,12 @@ else
         Value = ((IList<TModel>)childModel);
     }
 
-
+    Task OnModalKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Code == "Enter") return OnFormSubmit(args);
+        if (args.Code == "Escape") return OnFormReset(args);
+        return Task.CompletedTask;
+    }
 
     Task AddOnClick(EventArgs args)
     {

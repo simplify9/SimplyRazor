@@ -26,6 +26,7 @@ gulp.task('js', function () {
         'components/simplytags/simplytagsinterop.js',
         'components/simplytypeahead/simplytypeaheadinterop.js',
         'components/simplyupload/simplyuploadinterop.js',
+        'components/simplymodal/SimplyModalInterop.js',
 
     ])
         .pipe(concat('simply.razor.js'))
