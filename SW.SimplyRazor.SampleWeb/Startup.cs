@@ -44,6 +44,7 @@ namespace SW.SimplyRazor.SampleWeb
             services.AddI18n();
             services.AddHttpClient<LookupClient>();
             services.AddHttpClient<SearchyClient>();
+            services.AddSimplyRazorServices(); 
 
 
         }

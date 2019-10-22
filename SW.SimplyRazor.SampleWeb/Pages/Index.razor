@@ -1,15 +1,13 @@
 ﻿@page "/"
 @using SW.Searchy
 
-<SimplySearch TModel="Employee" @bind-Value="employees" >
+<SimplySearch TModel="Employee"  >
     <SimplyFilter Field="Id" Text="Id" Type="@SearchyFilterConfigType.Int"></SimplyFilter>
     <SimplyFilter Field="HandlerName" Text="Handler" Type="@SearchyFilterConfigType.String"></SimplyFilter>
     <SimplyFilter Field="Started" Text="Date" Type="@SearchyFilterConfigType.Date"></SimplyFilter>
 </SimplySearch>
 
-<SimplyTable @bind-Value="employees">
-
-
+<SimplyTable TModel="Employee" For="nameofsearch" >
     <SimplyField Name="FirstName" readonly></SimplyField>
     <SimplyField Name="LastName">
         <ColumnHeader>

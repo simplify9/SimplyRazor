@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SW.SimplyRazor", "SW.Simply
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SW.SimplyRazor.SampleWeb", "SW.SimplyRazor.SampleWeb\SW.SimplyRazor.SampleWeb.csproj", "{84BC34D7-598B-4A32-8EB6-78997FFD64F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SW.BogusDataModels", "SW.BogusDataModels\SW.BogusDataModels.csproj", "{B683E3C2-00F6-4C6A-B617-EB191B92B782}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SW.BogusDataModels", "SW.BogusDataModels\SW.BogusDataModels.csproj", "{B683E3C2-00F6-4C6A-B617-EB191B92B782}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,13 @@
+﻿@namespace SW.SimplyRazor
+@inject NotifyService notify
+
+<h3>SimplySamplePublisher</h3>
+<button type="button" @onclick="Publish">Publish</button>
+@code {
+
+    async Task Publish(EventArgs args)
+    {
+        await notify.Publish(new Ping { Data = Guid.NewGuid().ToString() });
+    }
+
+}

@@ -2,6 +2,8 @@
 @namespace SW.SimplyRazor
 @*@if (RenderMode != FieldRole.Input) { return; }*@
 
+<SimplyNotify Notification="DatalistReady" OnReceived="OnReceived" ></SimplyNotify>
+
 <div class="clearfix mt-2 mb-1">
     <label>@Text</label>
 </div>
@@ -91,6 +93,9 @@ else
     public string Name { get; set; }
 
     [Parameter]
+    public string For { get; set; }
+
+    [Parameter]
     public RenderFragment ChildContent { get; set; }
 
     [Parameter]
@@ -130,6 +135,11 @@ else
         };
 
         Value = ((IList<TModel>)childModel);
+    }
+
+    void OnReceived(DatalistReady datalist)
+    {
+        Value = (IList<TModel>) datalist.Data;
     }
 
     Task OnModalKeyDown(KeyboardEventArgs args)

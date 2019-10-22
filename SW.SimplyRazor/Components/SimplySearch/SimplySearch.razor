@@ -2,6 +2,7 @@
 @namespace SW.SimplyRazor
 @inject SearchyClient searchyService
 @inject NavigationManager nav
+@inject NotifyService notify
 @using SW.Searchy
 @using Humanizer
 
@@ -127,7 +128,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        if (PageInfo is null) PageInfo = new PageInfo(20); 
+        if (PageInfo is null) PageInfo = new PageInfo(20);
 
         if (Value is null) Value = new List<TModel>();
 
@@ -151,6 +152,7 @@
 
         var result = (await searchyService.Search<TModel>(sr)).Result.ToList();
         await ValueChanged.InvokeAsync(result);
+        await notify.Publish(new DatalistReady { Data = result });
     }
 
     Debouncer StepperDeboucer = new Debouncer(1000); // one second
