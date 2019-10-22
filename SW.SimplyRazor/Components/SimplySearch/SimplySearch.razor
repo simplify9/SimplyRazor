@@ -144,7 +144,7 @@
         var typedFilters = filters.Select(f => (ISearchyFilterTyped)f).ToList();
         var sr = new SearchyRequest
         {
-            Conditions = new List<SearchyConditon> { new SearchyConditon(typedFilters) },
+            Conditions = new List<SearchyCondition> { new SearchyCondition(typedFilters) },
             PageIndex = PageInfo.Index ,
             PageSize = PageInfo.Size
         };
