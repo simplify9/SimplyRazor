@@ -134,12 +134,12 @@ else
             childModel = pInfo.GetValue(childModel);
         };
 
-        Value = ((IList<TModel>)childModel);
+        Value = ((IEnumerable<TModel>) childModel).ToList();
     }
 
     void OnReceived(DatalistReady datalist)
     {
-        Value = (IList<TModel>) datalist.Data;
+        Value = ((IEnumerable<TModel>) datalist.Datalist).ToList();
     }
 
     Task OnModalKeyDown(KeyboardEventArgs args)

@@ -1,46 +1,65 @@
 ﻿@namespace SW.SimplyRazor
+@inject NotifyService notify
+
+<SimplyNotify Notification="DatalistReady" OnReceived="HandleDatalistReady" />
 
 <div>
-    @if (totalPages > 1)
+    @if (Count > 0)
     {
-        <ul class="pagination" >
+        <ul class="pagination">
             <li class="page-item ">
-                <button disabled="@(CurrentPage <= 1 ? "disabled" : null)" @onclick="(()=>ChangePage(1))" type="button" class="page-link">First</button>
+                <button disabled="@(CurrentPage <= 0 ? "disabled" : null)" @onclick="(()=>ChangePage(0))" type="button" class="page-link">First</button>
             </li>
             <li class="page-item ">
-                <button disabled="@(CurrentPage <= 1 ? "disabled" : null)" @onclick="(()=>ChangePage(CurrentPage-1))" type="button" class="page-link">Previous</button>
+                <button disabled="@(CurrentPage <= 0 ? "disabled" : null)" @onclick="(()=>ChangePage(CurrentPage-1))" type="button" class="page-link">Previous</button>
             </li>
             <li class="page-item ">
-                <button disabled="@(CurrentPage < totalPages ? null : "disbaled" )" @onclick="(()=>ChangePage(CurrentPage+1))" type="button" class="page-link">Next</button>
+                <button disabled="@(Count == PageSize || CurrentPage < totalPages ? null : "disbaled")" @onclick="(()=>ChangePage(CurrentPage+1))" type="button" class="page-link">Next</button>
             </li>
-            <li class="page-item ">
-                <button disabled="@(CurrentPage < totalPages ? null : "disbaled" )" @onclick="(()=>ChangePage(totalPages))" type="button" class="page-link">Last</button>
-            </li>
+            @if (totalPages > 0)
+            {
+                <li class="page-item ">
+                    <button @onclick="(()=>ChangePage(totalPages-1))" type="button" class="page-link">Last</button>
+                </li>
+            }
+
         </ul>
     }
 </div>
 
-
+@*
+    disabled="@(CurrentPage < totalPages ? null : "disbaled")"*@
 @code {
 
     [Parameter]
-    public int CurrentPage { get; set; } = 1;
+    public int CurrentPage { get; set; }
 
     [Parameter]
-    public EventCallback<int> OnPageChanged { get; set; }
+    public EventCallback<int> OnCurrentPageChanged { get; set; }
 
     [Parameter]
-    public int PageSize { get; set; } = 20;
+    public int PageSize { get; set; }
+
+    [Parameter]
+    public int Count { get; set; }
 
     [Parameter]
     public int TotalCount { get; set; }
 
-    int totalPages => (int)Math.Ceiling(decimal.Divide(TotalCount, PageSize));
+    int totalPages => (PageSize == 0) ? 0 : (int)Math.Ceiling(decimal.Divide(TotalCount, PageSize));
 
-    Task ChangePage(int page)
+    async Task ChangePage(int page)
     {
-        CurrentPage = page;
-        return OnPageChanged.InvokeAsync(page);
+        await notify.Publish(new PageIndexRequested { Index = page });
+    }
+
+    async Task HandleDatalistReady(DatalistReady data)
+    {
+        CurrentPage = data.PageIndex;
+        TotalCount = data.TotalCount;
+        Count = data.Count;
+        PageSize = data.PageSize;
+        await OnCurrentPageChanged.InvokeAsync(CurrentPage);
     }
 
 }

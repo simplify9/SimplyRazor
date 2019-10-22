@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace SW.SimplyRazor
@@ -13,6 +15,9 @@ namespace SW.SimplyRazor
 
         public PageInfo(int index, int size, int count, int totalCount)
         {
+
+
+            
             Index = index;
             Size = size;
             Count = count;

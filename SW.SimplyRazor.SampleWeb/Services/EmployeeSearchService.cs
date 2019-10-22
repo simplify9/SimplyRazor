@@ -20,9 +20,14 @@ namespace SW.SimplyRazor.SampleWeb
 
         };
 
-        public Task<SearchyResponse> Search(SearchyRequest request)
+        async public Task<SearchyResponse> Search(SearchyRequest request)
         {
-            return Task.FromResult(new SearchyResponse { Result = FakeEmployees.Data.AsQueryable().Search(request.Conditions, null, request.PageSize, request.PageIndex).ToList() });
+            await Task.Delay(TimeSpan.FromSeconds(3));
+
+            return new SearchyResponse 
+            { 
+                Result =  FakeEmployees.Data.AsQueryable().Search(request.Conditions, null, request.PageSize, request.PageIndex) 
+            };
         }
     }
 }

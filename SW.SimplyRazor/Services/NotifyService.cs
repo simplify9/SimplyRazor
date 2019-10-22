@@ -17,7 +17,7 @@ namespace SW.SimplyRazor
 
         public Task Publish<TNotification>(TNotification notificationg)
         {
-            return Publish<TNotification>(notificationg, null);
+            return Publish(notificationg, null);
         }
 
         public async Task Publish<TNotification>(TNotification notification, params string[] tags)

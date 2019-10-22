@@ -4,5 +4,8 @@ using System.Text;
 
 namespace SW.SimplyRazor
 {
-    public interface INotification { }
+    public class PageIndexRequested
+    {
+        public int Index { get; set; }
+    }
 }
