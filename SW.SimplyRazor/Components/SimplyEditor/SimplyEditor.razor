@@ -90,7 +90,7 @@
     }
 
     [JSInvokable]
-    public async Task editorValueChanged(string newValue)
+    public async Task EditorValueChanged(string newValue)
     {
         Value = newValue; //await JSRuntime.InvokeAsync<string>("simplyRazor.getInnerHtml", editorRef);
         oldValue = newValue;

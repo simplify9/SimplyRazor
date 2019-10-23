@@ -2,13 +2,13 @@
 @namespace SW.SimplyRazor
 @*@if (RenderMode != FieldRole.Input) { return; }*@
 
-<SimplyNotify Notification="DatalistReady" OnReceived="OnReceived" ></SimplyNotify>
+<SimplyNotify Notification="DatalistReady" OnReceived="OnReceived"></SimplyNotify>
 
 <div class="clearfix mt-2 mb-1">
     <label>@Text</label>
 </div>
 
-@if (Value ==null || Value.Count == 0)
+@if (Value == null || Value.Count == 0)
 {
     <p>Nothing to display, <button type="button" class="btn btn-link" @onclick="AddOnClick">click here</button> to add.</p>
 }
@@ -55,16 +55,16 @@ else
 
 @{ if (beingEditedModel != null)
     {
-        <SimplyModal @onkeydown="OnModalKeyDown">
+        <SimplyModal OnVisibilityChanged="OnModalVisibilityChanged">
             <Content>
                 <CascadingValue Value="FieldRole.Input" Name="RenderMode">
-                    <SimplyForm Name="@($"{Name}{beingEditedModelIndex}")" Value="beingEditedModel" OnSubmit="OnFormSubmit" OnReset="OnFormReset">
+                    <SimplyForm Name="@($"{Name}{beingEditedModelIndex}")" Value="beingEditedModel" OnSubmit="()=> OnFormSubmit(context)">
                         @ChildContent
                     </SimplyForm>
                 </CascadingValue>
             </Content>
             <Footer>
-                <button type="reset" class="btn btn-secondary" form="@($"{Name}{beingEditedModelIndex}")">Close</button>
+                @*<button type="reset" class="btn btn-secondary" form="@($"{Name}{beingEditedModelIndex}")">Close</button>*@
                 <button type="submit" class="btn btn-primary" form="@($"{Name}{beingEditedModelIndex}")">Ok</button>
             </Footer>
         </SimplyModal>
@@ -110,8 +110,6 @@ else
     [Parameter]
     public bool Delete { get; set; }
 
-
-
     object beingEditedModel = null;
     int beingEditedModelIndex;
 
@@ -131,23 +129,23 @@ else
         {
             var pInfo = arrayType.GetProperty(arr[i]);
             arrayType = pInfo.PropertyType;
-            childModel = pInfo.GetValue(childModel);
+            if (childModel != null) childModel = pInfo.GetValue(childModel);
         };
 
-        Value = ((IEnumerable<TModel>) childModel).ToList();
+        Value = childModel == null ? new List<TModel>() : ((IEnumerable<TModel>)childModel).ToList();
     }
 
     void OnReceived(DatalistReady datalist)
     {
-        Value = ((IEnumerable<TModel>) datalist.Datalist).ToList();
+        Value = ((IEnumerable<TModel>)datalist.Datalist).ToList();
     }
 
-    Task OnModalKeyDown(KeyboardEventArgs args)
-    {
-        if (args.Code == "Enter") return OnFormSubmit(args);
-        if (args.Code == "Escape") return OnFormReset(args);
-        return Task.CompletedTask;
-    }
+    //Task OnModalKeyDown(KeyboardEventArgs args)
+    //{
+    //    if (args.Code == "Enter") return OnFormSubmit(args);
+    //    if (args.Code == "Escape") return OnFormReset(args);
+    //    return Task.CompletedTask;
+    //}
 
     Task AddOnClick(EventArgs args)
     {
@@ -156,7 +154,14 @@ else
         return Task.CompletedTask;
     }
 
-    async Task OnFormSubmit(object arg)
+    Task EditModel(int index)
+    {
+        beingEditedModelIndex = index;
+        beingEditedModel = Value[index].DeepClone(); //JsonConvert.DeserializeObject<TModel>(JsonConvert.SerializeObject( collection[index]));
+        return Task.CompletedTask;
+    }
+
+    async Task OnFormSubmit(ISimplyModal modal)
     {
 
         if (beingEditedModelIndex < 0)
@@ -167,24 +172,28 @@ else
         {
             beingEditedModel.DeepCloneTo(Value[beingEditedModelIndex]);// = (TModel)beingEditedModel;
         }
-        beingEditedModel = null;
 
-        if (Form !=null ) await Form.FieldValueChanged(Name);
+        if (Form != null) await Form.FieldValueChanged(Name);
 
+        await modal.Hide();
     }
 
-    Task OnFormReset(object arg)
+    Task OnModalVisibilityChanged(bool visible)
     {
-        beingEditedModel = null;
+        if (!visible) beingEditedModel = null;
         return Task.CompletedTask;
+
     }
 
-    Task EditModel(int index)
-    {
-        beingEditedModelIndex = index;
-        beingEditedModel = Value[index].DeepClone(); //JsonConvert.DeserializeObject<TModel>(JsonConvert.SerializeObject( collection[index]));
-        return Task.CompletedTask;
-    }
+    //async Task OnFormReset(ISimplyModal modal)
+    //{
+    //    await modal.Close();
+
+    //    beingEditedModel = null;
+    //    //return Task.CompletedTask;
+    //}
+
+
 
 
 

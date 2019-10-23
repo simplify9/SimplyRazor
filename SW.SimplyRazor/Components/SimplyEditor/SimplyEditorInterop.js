@@ -5,7 +5,7 @@
             window[`${element}`].root.innerHTML = html;
         },
 
-        initEditor: function (element, dotNetObjRef) {
+        initEditor: function (element, dotNetRef) {
             var quill = new Quill(`#${element}`,
                 {
                     theme: 'snow',
@@ -30,7 +30,7 @@
                 if (range == null && quillHtml != quill.root.innerHTML) {
                     console.log("editorValueChanged");
                     quillHtml = quill.root.innerHTML;
-                    dotNetObjRef.invokeMethodAsync('editorValueChanged', quill.root.innerHTML);
+                    dotNetRef.invokeMethodAsync('EditorValueChanged', quill.root.innerHTML);
                 }
                 //console.log("text-change after");
 

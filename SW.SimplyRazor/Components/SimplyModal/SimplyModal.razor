@@ -1,8 +1,9 @@
 ﻿@namespace SW.SimplyRazor
+@implements ISimplyModal
 @inject IJSRuntime JSRuntime
 
-<div class="modal " tabindex="-1" role="dialog" style="display:block">
-    <div @ref="modalRef" class="modal-dialog modal-dialog-scrollable" role="document" @attributes="UnmatchedAttributes">
+<div @ref="modalRef" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable" role="document" @attributes="UnmatchedAttributes">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">@Title</h5>
@@ -11,10 +12,10 @@
                     </button>*@
             </div>
             <div class="modal-body">
-                @Content
+                @Content(this)
             </div>
             <div class="modal-footer">
-                @Footer
+                @Footer(this)
                 @*<button type="button" class="btn btn-secondary" @onclick="(()=> OnResponse.InvokeAsync(SimplyModalResponse.Closed))">Close</button>
                     <button type="button" class="btn btn-primary" @onclick="(()=> OnResponse.InvokeAsync(SimplyModalResponse.Confirmed))">Ok</button>*@
             </div>
@@ -27,17 +28,18 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
-    //[Parameter]
-    //public EventCallback<SimplyModalResponse> OnResponse { get; set; }
+    [Parameter]
+    public EventCallback<bool>  OnVisibilityChanged { get; set; }
+
 
     [Parameter]
     public string Title { get; set; }
 
     [Parameter]
-    public RenderFragment Content { get; set; }
+    public RenderFragment<ISimplyModal> Content { get; set; }
 
     [Parameter]
-    public RenderFragment Footer { get; set; }
+    public RenderFragment<ISimplyModal> Footer { get; set; }
 
     ElementReference modalRef;
 
@@ -45,8 +47,23 @@
     {
         if (firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("simplyModalInterop.setFocus", modalRef);
+            await JSRuntime.InvokeVoidAsync("simplyModalInterop.showModal", 
+                modalRef, 
+                DotNetObjectReference.Create(this));
         }
     }
+
+    async public Task Hide()
+    {
+        await JSRuntime.InvokeVoidAsync("simplyModalInterop.hideModal", modalRef);
+    }
+
+    [JSInvokable]
+    public Task OnModalVisibilityChange(bool visible)
+    {
+        return OnVisibilityChanged.InvokeAsync(visible); 
+    }
+
+
 
 }

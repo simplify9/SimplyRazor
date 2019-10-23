@@ -1,4 +1,5 @@
-﻿/// <reference path="components/simplyeditor/simplyeditorinterop.js" />
+﻿/// <reference path="node_modules/bootstrap.native/dist/bootstrap-native-v4.js" />
+/// <reference path="components/simplyeditor/simplyeditorinterop.js" />
 /// <reference path="components/simplytags/simplytagsinterop.js" />
 /// <reference path="components/simplytypeahead/simplytypeaheadinterop.js" />
 /// <reference path="components/simplyupload/simplyuploadinterop.js" />
@@ -21,6 +22,7 @@ gulp.task('js', function () {
         'node_modules/@yaireo/tagify/dist/tagify.js',
         'node_modules/bs-custom-file-input/dist/bs-custom-file-input.js',
         'node_modules/@tarekraafat/autocomplete.js/dist/js/autocomplete.js',
+        'node_modules/bootstrap.native/dist/bootstrap-native-v4.js',
 
         'components/simplyeditor/simplyeditorinterop.js',
         'components/simplytags/simplytagsinterop.js',
