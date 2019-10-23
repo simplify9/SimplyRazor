@@ -34,7 +34,7 @@ else
                         for (var i = 0; i < Value.Count; i++)
                         {
                             var itemIndex = i;
-                            <tr @key="Value[itemIndex]">
+                            <tr @key="Value[itemIndex]" >
                                 <CascadingValue Value="FieldRole.ColumnValue" Name="RenderMode">
                                     <SimplyForm Value="Value[itemIndex]">
                                         @ChildContent
@@ -60,12 +60,13 @@ else
                 <CascadingValue Value="FieldRole.Input" Name="RenderMode">
                     <SimplyForm Name="@($"{Name}{beingEditedModelIndex}")" Value="beingEditedModel" OnSubmit="()=> OnFormSubmit(context)">
                         @ChildContent
+
                     </SimplyForm>
                 </CascadingValue>
             </Content>
             <Footer>
-                @*<button type="reset" class="btn btn-secondary" form="@($"{Name}{beingEditedModelIndex}")">Close</button>*@
                 <button type="submit" class="btn btn-primary" form="@($"{Name}{beingEditedModelIndex}")">Ok</button>
+                @*<button type="reset" class="btn btn-secondary" form="@($"{Name}{beingEditedModelIndex}")">Close</button>*@
             </Footer>
         </SimplyModal>
     }
@@ -170,9 +171,10 @@ else
         }
         else
         {
-            beingEditedModel.DeepCloneTo(Value[beingEditedModelIndex]);// = (TModel)beingEditedModel;
+            beingEditedModel.DeepCloneTo(Value[beingEditedModelIndex]);
         }
 
+        await ValueChanged.InvokeAsync(Value);
         if (Form != null) await Form.FieldValueChanged(Name);
 
         await modal.Hide();

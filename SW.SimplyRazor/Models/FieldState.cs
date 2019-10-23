@@ -10,7 +10,10 @@ namespace SW.SimplyRazor
 {
     public class FieldState : ISimplyField
     {
-        public dynamic ItemData { get; private set; }
+        //public dynamic ItemData { get; private set; }
+        public dynamic ModelData { get; }
+        //public Type ItemType { get; }
+        //public Type ModelType { get; }
 
         public FieldState(ISimplyField formField, object model) : this(formField, model.GetType(), model) { }
         private FieldState(ISimplyField formField, Type modelType, object model)
@@ -23,27 +26,26 @@ namespace SW.SimplyRazor
             Lookup = formField.Lookup;
             Text = formField.Text;
 
-            var childModelType = modelType;
-            ItemData = model;
+            ModelData = model;
 
             if (Name is null) return;
 
             var arr = Name.Split('.');
 
-            if (arr.Length > 1)
+            PropertyInfo = model.GetType().GetProperty(arr[0]);
+            for (int i = 1; i < arr.Length; i++)
             {
-                for (var i = 0; i < arr.Length - 1; i++)
-                {
-                    var pInfo = childModelType.GetProperty(arr[i]);
-                    childModelType = pInfo.PropertyType;
-                    if (ItemData != null) ItemData = pInfo.GetValue(ItemData);
-                };
-                PropertyInfo = childModelType.GetProperty(arr[arr.Length - 1]);
+                PropertyInfo = PropertyInfo.PropertyType.GetProperty(arr[i]);
             }
-            else
-            {
-                PropertyInfo = childModelType.GetProperty(Name);
-            }
+
+            //ItemType = modelType;
+
+            //if (arr.Length > 1)
+
+            //    for (int i = 0; i < arr.Length - 1; i++)
+
+            //        ItemType = ItemType.GetProperty(arr[i]).PropertyType;
+
 
             if (PropertyInfo.PropertyType == typeof(bool))
             {
@@ -55,7 +57,7 @@ namespace SW.SimplyRazor
             }
         }
 
-        public  PropertyInfo PropertyInfo { get; private set; }
+        public PropertyInfo PropertyInfo { get; }
         public string Id => $"{FormId}_{Name}".Replace(".", "_").ToLower();
         public string FormId { get; }
         public string Name { get; set; }
@@ -74,22 +76,58 @@ namespace SW.SimplyRazor
         //public string InputType { get; set; }
         public string InvalidFeedback { get; set; }
         public bool IsInvalid => InvalidFeedback != null;
-        public object Value => ItemData !=null ? PropertyInfo.GetValue(ItemData) : null;
+        public object Value
+        {
+            get
+            {
+                var arr = Name.Split('.');
+                object obj = ModelData;
+                if (arr.Length > 1)
+
+                    for (int i = 0; i < arr.Length - 1; i++)
+                    {
+                        if (obj != null) obj = obj.GetType().GetProperty(arr[i]).GetValue(obj);
+                    }
+
+                if (obj != null) return PropertyInfo.GetValue(obj);
+
+                return null;
+            }
+        }
+
+
         public bool TrySetValue(object value)
         {
-            try
-            {
-                //if (value==null) propertyInfo.SetValue(ItemData, default() );
-                var typedValue = value.ConvertObjectToType(PropertyInfo.PropertyType);
-                PropertyInfo.SetValue(ItemData, typedValue);
-                InvalidFeedback = null;
-                return true;
-            }
-            catch (Exception)
-            {
-                InvalidFeedback = "Failed to set value.";
-                return false;
-            }
+            //try
+            //{
+            //if (value==null) propertyInfo.SetValue(ItemData, default() );
+            var arr = Name.Split('.');
+            object obj = ModelData;
+            if (arr.Length > 1)
+
+                for (int i = 0; i < arr.Length - 1; i++)
+                {
+                    var nextType = obj.GetType().GetProperty(arr[i]).PropertyType;
+                    var nextObj = obj.GetType().GetProperty(arr[i]).GetValue(obj);
+                    if (nextObj == null)
+                    {
+                        nextObj = Activator.CreateInstance(nextType);
+                        obj.GetType().GetProperty(arr[i]).SetValue(obj, nextObj);
+                    }
+
+                    obj = nextObj;
+                }
+
+            var typedValue = value.ConvertObjectToType(PropertyInfo.PropertyType);
+            PropertyInfo.SetValue(obj, typedValue);
+            InvalidFeedback = null;
+            return true;
+            //}
+            //catch (Exception)
+            //{
+            //    InvalidFeedback = "Failed to set value.";
+            //    return false;
+            //}
         }
 
 

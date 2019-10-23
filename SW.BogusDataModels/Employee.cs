@@ -62,7 +62,7 @@ namespace SW.BogusDataModels
     {
 
 
-        static readonly Faker<Employee> testUsers = new Faker<Employee>()
+        static readonly Faker<Employee> testUsers = new Faker<Employee>("ar")
             //Optional: Call for objects that have complex initialization
             //.CustomInstantiator(f => new User(userIds++, f.Random.Replace("###-##-####")))
 
@@ -70,7 +70,7 @@ namespace SW.BogusDataModels
             .RuleFor(u => u.Gender, f => f.PickRandom<Gender>())
 
             //Basic rules using built-in generators
-            .RuleFor(u => u.FirstName, (f, u) => f.Name.FirstName(u.Gender))
+            .RuleFor(u => u.FirstName, (f, u) => f.Name.FirstName())
             .RuleFor(u => u.LastName, (f, u) => f.Name.LastName(u.Gender))
             //.RuleFor(u => u.Avatar, f => f.Internet.Avatar())
             .RuleFor(u => u.UserName, (f, u) => f.Internet.UserName(u.FirstName, u.LastName))
@@ -89,7 +89,7 @@ namespace SW.BogusDataModels
             //    Console.WriteLine("User Created! Id={0}", u.Id);
             //});
 
-        public static readonly List<Employee> Data = testUsers.Generate(1000); 
+        public static readonly List<Employee> Data = testUsers.Generate(1); 
 
     }
 

@@ -22,7 +22,7 @@ namespace SW.SimplyRazor.SampleWeb
 
         async public Task<SearchyResponse> Search(SearchyRequest request)
         {
-            await Task.Delay(TimeSpan.FromSeconds(3));
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
 
             return new SearchyResponse 
             { 

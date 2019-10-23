@@ -138,7 +138,7 @@
         fieldState = new FieldState(this, Model);
         Form.AddField(fieldState);
 
-        if ((RenderMode == FieldRole.Input) && (fieldState.Editor != null)) editorFragment = CreateEditor();
+        if (RenderMode == FieldRole.Input && fieldState.Editor != null) editorFragment = CreateEditor();
     }
 
     async Task OnChange(object value)
