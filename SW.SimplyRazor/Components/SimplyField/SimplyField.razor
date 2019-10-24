@@ -78,6 +78,9 @@
     [CascadingParameter(Name = "Model")]
     public object Model { get; set; }
 
+    [CascadingParameter(Name = "ModelType")]
+    public Type ModelType { get; set; }
+
     [CascadingParameter(Name = "RenderMode")]
     public FieldRole RenderMode { get; set; }
 
@@ -135,7 +138,10 @@
         //lookupService.Client.BaseAddress = new Uri(nav.BaseUri);
         //items = await lookupService.Search(Lookup);
 
-        fieldState = new FieldState(this, Model);
+        if (Model != null) fieldState = new FieldState(this, Model);
+        else if (ModelType != null) fieldState = new FieldState(this, ModelType);
+        else throw new ArgumentNullException();  
+        
         Form.AddField(fieldState);
 
         if (RenderMode == FieldRole.Input && fieldState.Editor != null) editorFragment = CreateEditor();
