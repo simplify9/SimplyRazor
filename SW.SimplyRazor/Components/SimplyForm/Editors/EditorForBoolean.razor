@@ -17,7 +17,7 @@
     public EventCallback<object> ValueChanged { get; set; }
 
     [Parameter]
-    public FieldState State { get; set; }
+    public ISimplyField State { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }

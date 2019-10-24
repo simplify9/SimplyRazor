@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace SW.SimplyRazor
@@ -14,5 +15,15 @@ namespace SW.SimplyRazor
         Type Editor { get; set; }
         FieldShowsOn ShowsOn { get; set; }
         string Lookup { get; set; }
+        string Id { get; }
+        object Value { get; }
+
+        bool IsInvalid { get; }
+
+        string InvalidFeedback { get; set; }
+
+        PropertyInfo PropertyInfo { get; }
+
+        dynamic Model { get; }
     }
 }

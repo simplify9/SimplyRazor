@@ -36,11 +36,11 @@
 
     public string Id => (Name == null) ? $"MainForm{Guid.NewGuid().ToString("N")}" : Name;
 
-    public IDictionary<string, FieldState> Fields { get; set; }
+    public IDictionary<string, ISimplyField> Fields { get; set; }
 
     protected override void OnInitialized()
     {
-        Fields = new Dictionary<string, FieldState>();
+        Fields = new Dictionary<string, ISimplyField>();
     }
 
     public async Task FieldValueChanged(string name)
@@ -48,7 +48,7 @@
         await ValueChanged.InvokeAsync(Value);
     }
 
-    public void AddField(FieldState formField)
+    public void AddField(ISimplyField formField)
     {
         if (formField.Name!=null) Fields.Add(formField.Name, formField);
     }

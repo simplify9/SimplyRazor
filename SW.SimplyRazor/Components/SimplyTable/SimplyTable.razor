@@ -1,8 +1,6 @@
 ﻿@typeparam TModel
 @implements ISimplyTable
 @namespace SW.SimplyRazor
-@using Humanizer
-@*@if (RenderMode != FieldRole.Input) { return; }*@
 
 <SimplyNotify Notification="DatalistReady" OnReceived="OnReceived"></SimplyNotify>
 
@@ -15,7 +13,6 @@
 @if (Value != null)
 {
     <table class="table table-bordered table-sm">
-
         <thead>
             <tr>
                 <CascadingValue Value="FieldRole.ColumnName" Name="RenderMode">
@@ -45,7 +42,6 @@
             }
         </tbody>
     </table>
-
 }
 
 @if (beingEditedModel != null)
@@ -55,7 +51,6 @@
             <CascadingValue Value="FieldRole.Input" Name="RenderMode">
                 <SimplyForm Name="@($"{Name}{beingEditedModelIndex}")" Value="beingEditedModel" OnSubmit="()=> OnFormSubmit(context)">
                     @Fields
-
                 </SimplyForm>
             </CascadingValue>
         </Content>
@@ -65,8 +60,6 @@
         </Footer>
     </SimplyModal>
 }
-
-
 
 @code {
 
@@ -103,7 +96,6 @@
 
     protected override void OnInitialized()
     {
-
         if (Name == null) Name = "MainTable";
         if (Value != null) return;
         if (Model == null) return;
@@ -121,7 +113,6 @@
         };
 
         Value = childModel == null ? null : (IList<TModel>)childModel;
-
     }
 
     void OnReceived(DatalistReady datalist)
@@ -147,10 +138,9 @@
     public Task EditModel(int index)
     {
         beingEditedModelIndex = index;
-        beingEditedModel = Value[index].DeepClone(); //JsonConvert.DeserializeObject<TModel>(JsonConvert.SerializeObject( collection[index]));
+        beingEditedModel = Value[index].DeepClone(); 
         StateHasChanged();
         return Task.CompletedTask;
-
     }
 
     public Task DeleteModel(int index)
@@ -162,16 +152,14 @@
 
     async Task OnFormSubmit(ISimplyModal modal)
     {
-
         if (beingEditedModelIndex < 0)
         {
             if (Value == null) Value = new List<TModel>();
             Value.Add((TModel)beingEditedModel);
         }
         else
-        {
+
             beingEditedModel.DeepCloneTo(Value[beingEditedModelIndex]);
-        }
 
         await ValueChanged.InvokeAsync(Value);
         if (Form != null) await Form.FieldValueChanged(Name);
@@ -184,17 +172,4 @@
         if (!visible) beingEditedModel = null;
         return Task.CompletedTask;
     }
-
-    //async Task OnFormReset(ISimplyModal modal)
-    //{
-    //    await modal.Close();
-
-    //    beingEditedModel = null;
-    //    //return Task.CompletedTask;
-    //}
-
-
-
-
-
 }

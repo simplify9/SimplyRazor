@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor
 {
-    public class FieldState : ISimplyField
+    public class FieldState //: ISimplyField
     {
         readonly string[] nameArray;
 
@@ -18,13 +18,13 @@ namespace SW.SimplyRazor
         }
         public FieldState(ISimplyField formField, Type modelType)
         {
-            Name = formField.Name;
-            Help = formField.Help;
-            FormId = formField.FormId;
-            ShowsOn = formField.ShowsOn;
-            Editor = formField.Editor;
-            Lookup = formField.Lookup;
-            Text = formField.Text;
+            //Name = formField.Name;
+            //Help = formField.Help;
+            //FormId = formField.FormId;
+            //ShowsOn = formField.ShowsOn;
+            //Editor = formField.Editor;
+            //Lookup = formField.Lookup;
+            //Text = formField.Text;
 
             ModelType = modelType;
 
@@ -55,7 +55,7 @@ namespace SW.SimplyRazor
         public PropertyInfo PropertyInfo { get; }
         public string Id => $"{FormId}_{Name}".Replace(".", "_").ToLower();
         public string FormId { get; }
-        public string Name { get; set; }
+        //public string Name { get; set; }
 
         string text = null;
         public string Text
@@ -64,10 +64,10 @@ namespace SW.SimplyRazor
             set => text = value;
         }
 
-        public Type Editor { get; set; }
-        public FieldShowsOn ShowsOn { get; set; }
-        public string Lookup { get; set; }
-        public string Help { get; set; }
+        //public Type Editor { get; set; }
+        //public FieldShowsOn ShowsOn { get; set; }
+       // public string Lookup { get; set; }
+       // public string Help { get; set; }
         public string InvalidFeedback { get; set; }
         public bool IsInvalid => InvalidFeedback != null;
         public object Value

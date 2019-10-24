@@ -2,27 +2,30 @@
 @implements ISimplyField
 @implements IDisposable
 
+@using System.Reflection
+@using Humanizer
+
 @{
     switch (RenderMode)
     {
         case FieldRole.Input:
             {
-                if (editorFragment != null && (fieldState.ShowsOn == FieldShowsOn.Always || fieldState.ShowsOn == FieldShowsOn.Edit))
+                if (editorFragment != null && (ShowsOn == FieldShowsOn.Always || ShowsOn == FieldShowsOn.Edit))
                 {
                     <div class="@((Grouped) ? "col" : "form-group")">
 
                         @editorFragment
 
-                        @if (fieldState.IsInvalid)
+                        @if (IsInvalid)
                         {
                             <div class="invalid-feedback">
-                                @fieldState.InvalidFeedback
+                                @InvalidFeedback
                             </div>
                         }
 
-                        @if (fieldState.Help != null)
+                        @if (Help != null)
                         {
-                            <small class="form-text text-muted">@fieldState.Help</small>
+                            <small class="form-text text-muted">@Help</small>
                         }
                     </div>
                 }
@@ -30,18 +33,18 @@
             }
         case FieldRole.ColumnValue:
             {
-                if (fieldState.ShowsOn == FieldShowsOn.Always || fieldState.ShowsOn == FieldShowsOn.List)
+                if (ShowsOn == FieldShowsOn.Always || ShowsOn == FieldShowsOn.List)
                 {
 
                     <td>
                         @if (ColumnValue == null)
                         {
-                            @fieldState.Value
+                            @Value
 
                         }
                         else
                         {
-                            @ColumnValue(fieldState)
+                            @ColumnValue(this)
                         }
                     </td>
 
@@ -51,17 +54,17 @@
 
         case FieldRole.ColumnName:
             {
-                if (fieldState.ShowsOn == FieldShowsOn.Always || fieldState.ShowsOn == FieldShowsOn.List)
+                if (ShowsOn == FieldShowsOn.Always || ShowsOn == FieldShowsOn.List)
                 {
                     <th scope="col">
                         @if (ColumnHeader == null)
                         {
-                            @fieldState.Text
+                            @Text
 
                         }
                         else
                         {
-                            @ColumnHeader(fieldState)
+                            @ColumnHeader(this)
                         }
                     </th>
                 }
@@ -76,7 +79,7 @@
     public ISimplyForm Form { get; set; }
 
     [CascadingParameter(Name = "Model")]
-    public object Model { get; set; }
+    public dynamic Model { get; set; }
 
     [CascadingParameter(Name = "ModelType")]
     public Type ModelType { get; set; }
@@ -97,13 +100,10 @@
     public Type Editor { get; set; }
 
     [Parameter]
-    public string Text { get; set; }
+    public RenderFragment<ISimplyField> ColumnHeader { get; set; }
 
     [Parameter]
-    public RenderFragment<FieldState> ColumnHeader { get; set; }
-
-    [Parameter]
-    public RenderFragment<FieldState> ColumnValue { get; set; }
+    public RenderFragment<ISimplyField> ColumnValue { get; set; }
 
     [Parameter]
     public FieldShowsOn ShowsOn { get; set; }
@@ -116,40 +116,120 @@
 
     public string FormId => Form.Id;
 
+    public PropertyInfo PropertyInfo { get; private set; }
+    public string Id => $"{FormId}_{Name}".Replace(".", "_").ToLower();
+
+
+    string text = null;
+
+    [Parameter]
+    public string Text
+    {
+        get => (text == null) ? Name?.Humanize() : Text;
+        set => text = value;
+    }
+
+    public string InvalidFeedback { get; set; }
+
+    public bool IsInvalid => InvalidFeedback != null;
+
+    public object Value
+    {
+        get
+        {
+            object obj = Model;
+
+            for (int i = 0; i < nameArray.Length - 1; i++)
+
+                if (obj != null) obj = obj.GetType().GetProperty(nameArray[i]).GetValue(obj);
+
+            if (obj != null) return PropertyInfo.GetValue(obj);
+
+            return null;
+        }
+    }
+
     RenderFragment editorFragment;
 
     RenderFragment CreateEditor() => builder =>
     {
-
-        builder.OpenComponent(0, fieldState.Editor);
-        builder.AddAttribute(1, "State", fieldState);
+        builder.OpenComponent(0, Editor);
+        builder.AddAttribute(1, "State", this);
         builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<object>(this, OnChange));
         builder.AddMultipleAttributes(3, UnmatchedAttributes);
         builder.CloseComponent();
 
     };
 
-
-    FieldState fieldState;
+    string[] nameArray;
 
     protected override void OnInitialized()
     {
 
-        //lookupService.Client.BaseAddress = new Uri(nav.BaseUri);
-        //items = await lookupService.Search(Lookup);
+        if (Model != null) ModelType = Model.GetType();
+        if (ModelType == null) throw new ArgumentNullException();
 
-        if (Model != null) fieldState = new FieldState(this, Model);
-        else if (ModelType != null) fieldState = new FieldState(this, ModelType);
-        else throw new ArgumentNullException();  
-        
-        Form.AddField(fieldState);
+        if (Name is null) return;
 
-        if (RenderMode == FieldRole.Input && fieldState.Editor != null) editorFragment = CreateEditor();
+        nameArray = Name.Split('.');
+
+        PropertyInfo = ModelType.GetProperty(nameArray[0]);
+
+        for (int i = 1; i < nameArray.Length; i++)
+
+            PropertyInfo = PropertyInfo.PropertyType.GetProperty(nameArray[i]);
+
+
+        if (PropertyInfo.PropertyType == typeof(bool))
+        {
+            if (Editor == null) Editor = typeof(EditorForBoolean);
+        }
+        else
+        {
+            if (Editor == null) Editor = (Lookup == null) ? typeof(EditorForText) : typeof(EditorForTextAsSelect);
+        }
+
+        Form.AddField(this);
+
+        if (RenderMode == FieldRole.Input && Editor != null) editorFragment = CreateEditor();
     }
 
     async Task OnChange(object value)
     {
-        if (fieldState.TrySetValue(value)) await Form.FieldValueChanged(fieldState.Name);
+        if (TrySetValue(value)) await Form.FieldValueChanged(Name);
+    }
+
+    bool TrySetValue(object value)
+    {
+
+        if (Model == null) Model = Activator.CreateInstance(ModelType);
+
+        object obj = Model;
+
+        for (int i = 0; i < nameArray.Length - 1; i++)
+        {
+            var targetProp = obj.GetType().GetProperty(nameArray[i]);
+            var nextType = targetProp.PropertyType;
+            var nextObj = targetProp.GetValue(obj);
+            if (nextObj == null)
+            {
+                nextObj = Activator.CreateInstance(nextType);
+                targetProp.SetValue(obj, nextObj);
+            }
+
+            obj = nextObj;
+        }
+
+        var typedValue = value.ConvertObjectToType(PropertyInfo.PropertyType);
+        PropertyInfo.SetValue(obj, typedValue);
+        InvalidFeedback = null;
+        return true;
+        //}
+        //catch (Exception)
+        //{
+        //    InvalidFeedback = "Failed to set value.";
+        //    return false;
+        //}
     }
 
     void IDisposable.Dispose()

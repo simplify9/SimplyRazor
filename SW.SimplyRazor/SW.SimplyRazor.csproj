@@ -18,6 +18,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\FieldState.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Components\SimplyEditor\SimplyEditorInterop.js" />
     <None Remove="Components\SimplyTags\SimplyTagsInterop.js" />
     <None Remove="Components\SimplyTypeahead\SimplyTypeaheadInterop.js" />
