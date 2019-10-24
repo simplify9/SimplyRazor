@@ -1,4 +1,5 @@
 ﻿@typeparam TModel
+@implements ISimplyTable
 @namespace SW.SimplyRazor
 @*@if (RenderMode != FieldRole.Input) { return; }*@
 
@@ -10,7 +11,7 @@
 
 @if (Value == null || Value.Count == 0)
 {
-    <p>Nothing to display, <button type="button" class="btn btn-link" @onclick="AddOnClick">click here</button> to add.</p>
+    <p>Nothing to display, <button type="button" class="btn btn-link" @onclick="() => AddModel()">click here</button> to add.</p>
 }
 else
 {
@@ -25,7 +26,7 @@ else
                             </SimplyForm>
                         </CascadingValue>
                         <th align="right" scope="col" style="width:95px;">
-                            <button type="button" class="btn btn-outline-secondary btn-sm float-right" @onclick="AddOnClick"><span class="oi oi-plus" /></button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm float-right" @onclick="() => AddModel()"><span class="oi oi-plus" /></button>
                         </th>
                     </tr>
                 </thead>
@@ -42,7 +43,7 @@ else
                                 </CascadingValue>
                                 <td align="right">
                                     <button @onclick="(()=> EditModel(itemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-pencil" /></button>
-                                    <button @onclick="(()=> Value.RemoveAt(itemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-x" /></button>
+                                    <button @onclick="(()=> DeleteModel(itemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-x" /></button>
                                 </td>
                             </tr>
                         }
@@ -148,17 +149,23 @@ else
     //    return Task.CompletedTask;
     //}
 
-    Task AddOnClick(EventArgs args)
+    public Task AddModel()
     {
         beingEditedModelIndex = -1;
         beingEditedModel = Activator.CreateInstance<TModel>();// (modelType);
         return Task.CompletedTask;
     }
 
-    Task EditModel(int index)
+    public Task EditModel(int index)
     {
         beingEditedModelIndex = index;
         beingEditedModel = Value[index].DeepClone(); //JsonConvert.DeserializeObject<TModel>(JsonConvert.SerializeObject( collection[index]));
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteModel(int index)
+    {
+        Value.RemoveAt(index);
         return Task.CompletedTask;
     }
 
