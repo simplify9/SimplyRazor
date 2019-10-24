@@ -25,9 +25,6 @@ else
                                 @ChildContent
                             </SimplyForm>
                         </CascadingValue>
-                        <th align="right" scope="col" style="width:95px;">
-                            <button type="button" class="btn btn-outline-secondary btn-sm float-right" @onclick="() => AddModel()"><span class="oi oi-plus" /></button>
-                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,16 +32,16 @@ else
                         for (var i = 0; i < Value.Count; i++)
                         {
                             var itemIndex = i;
-                            <tr @key="Value[itemIndex]" >
-                                <CascadingValue Value="FieldRole.ColumnValue" Name="RenderMode">
-                                    <SimplyForm Value="Value[itemIndex]">
-                                        @ChildContent
-                                    </SimplyForm>
+                            <tr @key="Value[itemIndex]">
+                                <CascadingValue Value="this" Name="Table">
+                                    <CascadingValue Value="itemIndex" Name="ItemIndex">
+                                        <CascadingValue Value="FieldRole.ColumnValue" Name="RenderMode">
+                                            <SimplyForm Value="Value[itemIndex]">
+                                                @ChildContent
+                                            </SimplyForm>
+                                        </CascadingValue>
+                                    </CascadingValue>
                                 </CascadingValue>
-                                <td align="right">
-                                    <button @onclick="(()=> EditModel(itemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-pencil" /></button>
-                                    <button @onclick="(()=> DeleteModel(itemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-x" /></button>
-                                </td>
                             </tr>
                         }
                     }
@@ -152,7 +149,8 @@ else
     public Task AddModel()
     {
         beingEditedModelIndex = -1;
-        beingEditedModel = Activator.CreateInstance<TModel>();// (modelType);
+        beingEditedModel = Activator.CreateInstance<TModel>();
+        StateHasChanged();
         return Task.CompletedTask;
     }
 
@@ -160,12 +158,15 @@ else
     {
         beingEditedModelIndex = index;
         beingEditedModel = Value[index].DeepClone(); //JsonConvert.DeserializeObject<TModel>(JsonConvert.SerializeObject( collection[index]));
+        StateHasChanged();
         return Task.CompletedTask;
+        
     }
 
     public Task DeleteModel(int index)
     {
         Value.RemoveAt(index);
+        StateHasChanged();
         return Task.CompletedTask;
     }
 

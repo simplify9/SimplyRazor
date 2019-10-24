@@ -1,13 +1,19 @@
 ﻿@page "/"
 @using SW.Searchy
 
-<SimplySearch TModel="Employee"  >
+<SimplySearch TModel="Employee">
     <SimplyFilter Field="Id" Text="Id" Type="@SearchyFilterConfigType.Int"></SimplyFilter>
     <SimplyFilter Field="HandlerName" Text="Handler" Type="@SearchyFilterConfigType.String"></SimplyFilter>
     <SimplyFilter Field="Started" Text="Date" Type="@SearchyFilterConfigType.Date"></SimplyFilter>
 </SimplySearch>
 
-<SimplyTable TModel="Employee" For="nameofsearch" >
+<SimplyTable TModel="Employee" For="nameofsearch">
+    <SimplyField>
+        <ColumnValue>
+            <SimplyAction Type="ActionType.TableEdit" />
+            <SimplyAction Type="ActionType.TableDelete" />
+        </ColumnValue>
+    </SimplyField>
     <SimplyField Name="FirstName" readonly></SimplyField>
     <SimplyField Name="LastName">
         <ColumnHeader>
@@ -25,7 +31,7 @@
     <SimplyField Name="Salary.Currency" />
 </SimplyTable>
 
-<SimplyPager   />
+<SimplyPager />
 
 @code{
 

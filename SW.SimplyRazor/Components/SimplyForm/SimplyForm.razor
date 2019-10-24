@@ -50,12 +50,12 @@
 
     public void AddField(FieldState formField)
     {
-        if (!(Name is null)) Fields.Add(formField.Name, formField);
+        if (formField.Name!=null) Fields.Add(formField.Name, formField);
     }
 
     public void RemoveField(string name)
     {
-        if (!(Name is null)) Fields.Remove(name);
+        if (name!=null) Fields.Remove(name);
     }
 
     async Task ValidateOnClick(EventArgs args)
