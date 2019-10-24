@@ -8,27 +8,33 @@
 </SimplySearch>
 
 <SimplyTable TModel="Employee" For="nameofsearch">
-    <SimplyField>
-        <ColumnValue>
-            <SimplyAction Type="ActionType.TableEdit" />
-            <SimplyAction Type="ActionType.TableDelete" />
-        </ColumnValue>
-    </SimplyField>
-    <SimplyField Name="FirstName" readonly></SimplyField>
-    <SimplyField Name="LastName">
-        <ColumnHeader>
-            L.N...
-        </ColumnHeader>
-        <ColumnValue>
-            @context.ModelData.LastName
-        </ColumnValue>
-    </SimplyField>
-    <SimplyField Name="Age" />
-    <SimplyField Name="Married" />
-    <SimplyField Name="EmploymentStatus" Lookup="intmock" />
-    <SimplyField Name="Country" Lookup="country" />
-    <SimplyField Name="Salary.Amount" />
-    <SimplyField Name="Salary.Currency" />
+    <Header>
+        <SimplyAction Type="ActionType.TableAdd" />
+    </Header>
+    <Fields>
+        <SimplyField>
+            <ColumnValue>
+                <SimplyAction Type="ActionType.TableEdit" />
+                <SimplyAction Type="ActionType.TableDelete" />
+            </ColumnValue>
+        </SimplyField>
+        <SimplyField Name="FirstName" readonly></SimplyField>
+        <SimplyField Name="LastName">
+            <ColumnHeader>
+                L.N...
+            </ColumnHeader>
+            <ColumnValue>
+                @context.ModelData.LastName
+            </ColumnValue>
+        </SimplyField>
+        <SimplyField Name="Age" />
+        <SimplyField Name="Married" />
+        <SimplyField Name="EmploymentStatus" Lookup="intmock" />
+        <SimplyField Name="Country" Lookup="country" />
+        <SimplyField Name="Salary.Amount" />
+        <SimplyField Name="Salary.Currency" />
+    </Fields>
+
 </SimplyTable>
 
 <SimplyPager />

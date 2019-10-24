@@ -1,74 +1,71 @@
 ﻿@typeparam TModel
 @implements ISimplyTable
 @namespace SW.SimplyRazor
+@using Humanizer
 @*@if (RenderMode != FieldRole.Input) { return; }*@
 
 <SimplyNotify Notification="DatalistReady" OnReceived="OnReceived"></SimplyNotify>
 
-<div class="clearfix mt-2 mb-1">
-    <label>@Text</label>
+<div>
+    <CascadingValue Value="this" Name="Table">
+        @Header
+    </CascadingValue>
 </div>
 
-@if (Value == null || Value.Count == 0)
+@if (Value != null)
 {
-    <p>Nothing to display, <button type="button" class="btn btn-link" @onclick="() => AddModel()">click here</button> to add.</p>
-}
-else
-{
-    <div class="row">
-        <div class="col">
-            <table class="table table-bordered table-sm">
-                <thead>
-                    <tr>
-                        <CascadingValue Value="FieldRole.ColumnName" Name="RenderMode">
-                            <SimplyForm Value="Value.First()">
-                                @ChildContent
-                            </SimplyForm>
-                        </CascadingValue>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
-                        for (var i = 0; i < Value.Count; i++)
-                        {
-                            var itemIndex = i;
-                            <tr @key="Value[itemIndex]">
-                                <CascadingValue Value="this" Name="Table">
-                                    <CascadingValue Value="itemIndex" Name="ItemIndex">
-                                        <CascadingValue Value="FieldRole.ColumnValue" Name="RenderMode">
-                                            <SimplyForm Value="Value[itemIndex]">
-                                                @ChildContent
-                                            </SimplyForm>
-                                        </CascadingValue>
-                                    </CascadingValue>
-                                </CascadingValue>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-}
+    <table class="table table-bordered table-sm">
 
-@{ if (beingEditedModel != null)
-    {
-        <SimplyModal OnVisibilityChanged="OnModalVisibilityChanged">
-            <Content>
-                <CascadingValue Value="FieldRole.Input" Name="RenderMode">
-                    <SimplyForm Name="@($"{Name}{beingEditedModelIndex}")" Value="beingEditedModel" OnSubmit="()=> OnFormSubmit(context)">
-                        @ChildContent
-
+        <thead>
+            <tr>
+                <CascadingValue Value="FieldRole.ColumnName" Name="RenderMode">
+                    <SimplyForm Value="Value.First()">
+                        @Fields
                     </SimplyForm>
                 </CascadingValue>
-            </Content>
-            <Footer>
-                <button type="submit" class="btn btn-primary" form="@($"{Name}{beingEditedModelIndex}")">Ok</button>
-                @*<button type="reset" class="btn btn-secondary" form="@($"{Name}{beingEditedModelIndex}")">Close</button>*@
-            </Footer>
-        </SimplyModal>
-    }
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                for (var i = 0; i < Value.Count; i++)
+                {
+                    var itemIndex = i;
+                    <tr @key="Value[itemIndex]">
+                        <CascadingValue Value="this" Name="Table">
+                            <CascadingValue Value="itemIndex" Name="ItemIndex">
+                                <CascadingValue Value="FieldRole.ColumnValue" Name="RenderMode">
+                                    <SimplyForm Value="Value[itemIndex]">
+                                        @Fields
+                                    </SimplyForm>
+                                </CascadingValue>
+                            </CascadingValue>
+                        </CascadingValue>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
 }
+
+@if (beingEditedModel != null)
+{
+    <SimplyModal OnVisibilityChanged="OnModalVisibilityChanged">
+        <Content>
+            <CascadingValue Value="FieldRole.Input" Name="RenderMode">
+                <SimplyForm Name="@($"{Name}{beingEditedModelIndex}")" Value="beingEditedModel" OnSubmit="()=> OnFormSubmit(context)">
+                    @Fields
+
+                </SimplyForm>
+            </CascadingValue>
+        </Content>
+        <Footer>
+            <button type="submit" class="btn btn-primary" form="@($"{Name}{beingEditedModelIndex}")">Ok</button>
+            @*<button type="reset" class="btn btn-secondary" form="@($"{Name}{beingEditedModelIndex}")">Close</button>*@
+        </Footer>
+    </SimplyModal>
+}
+
 
 
 @code {
@@ -95,19 +92,11 @@ else
     public string For { get; set; }
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment Fields { get; set; }
 
     [Parameter]
-    public string Text { get; set; }
+    public RenderFragment Header { get; set; }
 
-    [Parameter]
-    public bool Edit { get; set; }
-
-    [Parameter]
-    public bool Add { get; set; }
-
-    [Parameter]
-    public bool Delete { get; set; }
 
     object beingEditedModel = null;
     int beingEditedModelIndex;
@@ -119,19 +108,20 @@ else
         if (Value != null) return;
         if (Model == null) return;
 
-        Type arrayType = Model.GetType();
+        Type modelType = Model.GetType();
         var childModel = Model;
 
         var arr = Name.Split('.');
 
         for (var i = 0; i < arr.Length; i++)
         {
-            var pInfo = arrayType.GetProperty(arr[i]);
-            arrayType = pInfo.PropertyType;
+            var pInfo = modelType.GetProperty(arr[i]);
+            modelType = pInfo.PropertyType;
             if (childModel != null) childModel = pInfo.GetValue(childModel);
         };
 
-        Value = childModel == null ? new List<TModel>() : ((IEnumerable<TModel>)childModel).ToList();
+        Value = childModel == null ? null : (IList<TModel>)childModel;
+
     }
 
     void OnReceived(DatalistReady datalist)
@@ -160,7 +150,7 @@ else
         beingEditedModel = Value[index].DeepClone(); //JsonConvert.DeserializeObject<TModel>(JsonConvert.SerializeObject( collection[index]));
         StateHasChanged();
         return Task.CompletedTask;
-        
+
     }
 
     public Task DeleteModel(int index)
@@ -175,6 +165,7 @@ else
 
         if (beingEditedModelIndex < 0)
         {
+            if (Value == null) Value = new List<TModel>();
             Value.Add((TModel)beingEditedModel);
         }
         else
@@ -192,7 +183,6 @@ else
     {
         if (!visible) beingEditedModel = null;
         return Task.CompletedTask;
-
     }
 
     //async Task OnFormReset(ISimplyModal modal)
