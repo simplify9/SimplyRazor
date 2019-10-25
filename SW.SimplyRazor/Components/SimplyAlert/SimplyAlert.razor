@@ -1,0 +1,68 @@
+﻿@namespace SW.SimplyRazor
+@implements IDisposable
+@inject IJSRuntime JSRuntime
+
+@if (visible)
+{
+    <div @ref="alertRef" class="alert alert-warning fade show" role="alert">
+        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+@code {
+
+    System.Timers.Timer countdown;
+    bool visible;
+    ElementReference alertRef;
+
+    async protected override Task OnInitializedAsync()
+    {
+        visible = true;
+
+        if (countdown == null)
+        {
+            countdown = new System.Timers.Timer(3000);
+            countdown.Elapsed += async (s, e) => await OnDue();
+            countdown.AutoReset = false;
+        }
+
+        if (countdown.Enabled) countdown.Stop();
+        countdown.Start();
+
+    }
+
+    async protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("simplyAlertInterop.showAlert",
+                alertRef,
+                DotNetObjectReference.Create(this));
+        }
+    }
+
+    async Task OnDue()
+    {
+        await InvokeAsync(async () =>
+        {
+            if (visible)
+                await JSRuntime.InvokeVoidAsync("simplyAlertInterop.closeAlert", alertRef);
+        });
+    }
+
+    [JSInvokable]
+    public Task OnAlertClosed()
+    {
+        visible = false;
+        return Task.CompletedTask;
+    }
+
+    void IDisposable.Dispose()
+    {
+        countdown?.Dispose();
+    }
+
+}

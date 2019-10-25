@@ -1,0 +1,47 @@
+﻿@namespace SW.SimplyRazor
+@implements IDisposable
+
+
+
+
+@code {
+
+    System.Timers.Timer countdown;
+
+    Task OnUserMessage(UserMessage message)
+    {
+        if (countdown == null)
+        {
+            countdown = new System.Timers.Timer(5000);
+            countdown.Elapsed += OnDue;
+            countdown.AutoReset = false;
+        }
+
+        if (countdown.Enabled)
+        {
+            countdown.Stop();
+            countdown.Start();
+        }
+        else
+        {
+            countdown.Start();
+        }
+
+        return Task.CompletedTask;
+
+    }
+
+    void OnDue(object sender, System.Timers.ElapsedEventArgs e)
+    {
+        //InvokeAsync() =>
+        //{
+
+        //};
+    }
+
+    void IDisposable.Dispose()
+    {
+        countdown?.Dispose();
+    }
+
+}

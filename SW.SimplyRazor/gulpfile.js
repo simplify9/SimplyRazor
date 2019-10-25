@@ -3,6 +3,7 @@
 /// <reference path="components/simplytags/simplytagsinterop.js" />
 /// <reference path="components/simplytypeahead/simplytypeaheadinterop.js" />
 /// <reference path="components/simplyupload/simplyuploadinterop.js" />
+/// <reference path="components/simplyalert/simplyalertinterop.js" />
 /*
 Gulp file....
 */
@@ -29,6 +30,7 @@ gulp.task('js', function () {
         'components/simplytypeahead/simplytypeaheadinterop.js',
         'components/simplyupload/simplyuploadinterop.js',
         'components/simplymodal/SimplyModalInterop.js',
+        "components/simplyalert/simplyalertinterop.js"
 
     ])
         .pipe(concat('simply.razor.js'))
