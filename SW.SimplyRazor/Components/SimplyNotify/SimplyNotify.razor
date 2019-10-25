@@ -15,10 +15,9 @@
 
     async public Task Handle(Notification notification, string[] tags)
     {
-        Console.WriteLine("Pong 1");
+        //Console.WriteLine("Pong 1");
         await OnReceived.InvokeAsync(notification);
     }
-
 
     void IDisposable.Dispose()
     {

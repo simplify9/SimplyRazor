@@ -9,21 +9,14 @@ namespace SW.SimplyRazor
     public class NotifyService
     {
         readonly IServiceProvider sp;
+        public NotifyService(IServiceProvider sp) => this.sp = sp;
 
-        public NotifyService(IServiceProvider sp)
-        {
-            this.sp = sp;
-        }
+        public Task Publish<TNotification>(TNotification notification) => Publish(notification, null);
 
-        public Task Publish<TNotification>(TNotification notificationg)
-        {
-            return Publish(notificationg, null);
-        }
-
-        public async Task Publish<TNotification>(TNotification notification, params string[] tags)
+        public Task Publish<TNotification>(TNotification notification, params string[] tags)
         {
             var ns = sp.GetService<Notifier<TNotification>>();
-            await ns.Publish(notification, tags);
+            return ns.Publish(notification, tags);
         }
 
         public void Subscribe<TNotification>(Func<TNotification, string[], Task> func)
@@ -31,7 +24,6 @@ namespace SW.SimplyRazor
             var ns = sp.GetService<Notifier<TNotification>>();
             ns.Notify += func;
         }
-
         public void Unsubscribe<TNotification>(Func<TNotification, string[], Task> func)
         {
             var ns = sp.GetService<Notifier<TNotification>>();
@@ -39,21 +31,16 @@ namespace SW.SimplyRazor
         }
     }
 
-
-
-    internal class Notifier<TNotification> 
+    internal class Notifier<TNotification>
     {
         public event Func<TNotification, string[], Task> Notify;
-
         async public Task Publish(TNotification notification, string[] tags)
         {
             if (Notify != null)
             {
                 if (tags == null) tags = new string[] { };
-                 await Notify.Invoke(notification, tags);
+                await Notify.Invoke(notification, tags);
             }
         }
     }
-
-
 }
