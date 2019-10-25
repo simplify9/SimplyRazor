@@ -8,7 +8,7 @@ namespace SW.SimplyRazor
 {
     public class NotifyService
     {
-        private readonly IServiceProvider sp;
+        readonly IServiceProvider sp;
 
         public NotifyService(IServiceProvider sp)
         {

@@ -6,46 +6,27 @@
 @using SW.Searchy
 @using Humanizer
 
-
-
-@if (filters is null) return;
-
 <SimplyNotify Notification="PageIndexRequested" OnReceived="OnPageIndexRequested" />
 
-<CascadingValue Value="FilterConfigs" Name="FilterConfigs">
+<CascadingValue Value="filterConfigs" Name="FilterConfigs">
     @ChildContent
 </CascadingValue>
 
 <div class="row">
     <label for="filterSelect" class="col-auto col-form-label">Search</label>
     <div class="col-auto">
-
         <div class="input-group">
             <SimplySelect @bind-Value="filterValue"
                           EmptyText="Select filter"
-                          StringList="@(FilterConfigs.Select(e=>e.Text))">
-
-            </SimplySelect>
+                          StringList="@(filterConfigs.Select(e=>e.Text))" />
 
             <div class="input-group-append">
                 <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
             </div>
         </div>
-        @*<select @bind="filterValue" class="form-control" id="filterSelect">
-                <option value="0">Select a filter</option>
-                @{
-                    int itemIndex = 1;
-                    foreach (var item in FilterConfigs)
-                    {
-                        <option value="@itemIndex">@item.DisplayName</option>
-                        itemIndex++;
-                    }
-                }
-            </select>*@
     </div>
     <div class="col text-right mb-2">
         <button disabled="@searching" type="submit" class="btn btn-primary" @onclick="SearchOnClick">
-
             @if (searching)
             {
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -56,57 +37,45 @@
                 @:Search
             }
         </button>
-        
-        
-        
     </div>
 </div>
 
-@{
-    int lineIndex = 0;
-    foreach (var item in filters)
-    {
-        <div class="input-group mb-1">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="">@item.Text</span>
-            </div>
-            <SimplySelect @bind-value="item.Operator"
-                          EmptyText="Select condition"
-                          KeyValuePairList="@(SearchyFilterConfigType.RulesFor(item.Type).ToDictionary((e) => (int)e, (e)=> e.ToString().Humanize()))">
-
-            </SimplySelect>
-            @{switch (item.Type)
-                {
-                    case SearchyFilterConfigType.String:
-                        {
-
-                            <input type="text" class="form-control" @bind="item.ValueString" />
-
-                            break;
-                        }
-                    case SearchyFilterConfigType.Int:
-                        {
-                            <input @bind="item.ValueInt" type="number" class="form-control" />
-
-                            break;
-                        }
-                    case SearchyFilterConfigType.Date:
-                        {
-                            <input @bind="item.ValueDate" type="date" class="form-control" />
-                            break;
-                        }
-                }
-                int thisLine = lineIndex;
-                <div class="input-group-append">
-                    <button @onclick="@(e => filters.RemoveAt(thisLine))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
-                </div>
-            }
-
+@for (int i = 0; i < filters.Count; i++)
+{
+    int index = i;
+    <div class="input-group mb-1">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="">@filters[index].Text</span>
         </div>
+        <SimplySelect @bind-value="filters[index].Operator"
+                      EmptyText="Select condition"
+                      KeyValuePairList="@(SearchyFilterConfigType.RulesFor(filters[index].Type).ToDictionary((e) => (int)e, (e)=> e.ToString().Humanize()))">
 
-        lineIndex++;
-    }
+        </SimplySelect>
+        @switch (filters[index].Type)
+        {
+            case SearchyFilterConfigType.String:
+
+                <input type="text" class="form-control" @bind="filters[index].ValueString" />
+                break;
+
+            case SearchyFilterConfigType.Int:
+
+                <input @bind="filters[index].ValueInt" type="number" class="form-control" />
+                break;
+
+            case SearchyFilterConfigType.Date:
+
+                <input @bind="filters[index].ValueDate" type="date" class="form-control" />
+                break;
+
+        }
+        <div class="input-group-append">
+            <button @onclick="@(e => filters.RemoveAt(index))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
+        </div>
+    </div>
 }
+
 
 @code{
 
@@ -117,15 +86,14 @@
     public RenderFragment ChildContent { get; set; }
 
     int filterValue;
-    List<FilterState> filters;
-    List<ISearchyFilterConfig> FilterConfigs { get; set; }
-
+    List<FilterModel> filters;
+    List<ISearchyFilterConfig> filterConfigs { get; set; }
 
     Task FilterAddOnClick(MouseEventArgs e)
     {
         if (filterValue > 0)
         {
-            filters.Add(new FilterState(FilterConfigs[filterValue - 1]));
+            filters.Add(new FilterModel(filterConfigs[filterValue - 1]));
             filterValue = 0;
         }
         return Task.CompletedTask;
@@ -134,13 +102,13 @@
 
     protected async override Task OnInitializedAsync()
     {
+        filters = new List<FilterModel>();
 
-        FilterConfigs = new List<ISearchyFilterConfig>();
+        filterConfigs = new List<ISearchyFilterConfig>();
 
         searchyService.Client.BaseAddress = new Uri(nav.BaseUri);
-        FilterConfigs.AddRange(await searchyService.GetFilterConfigs(typeof(TModel).FullName));
+        filterConfigs.AddRange(await searchyService.GetFilterConfigs(typeof(TModel).FullName));
 
-        filters = new List<FilterState>();
     }
 
     bool searching;
@@ -187,6 +155,43 @@
     private async Task FilterOnInput(ChangeEventArgs args)
     {
         await StepperDeboucer.Debouce(() => { Console.WriteLine(args.Value); });
+    }
+
+    private class FilterModel : ISearchyFilterConfig, ISearchyFilterTyped
+    {
+        public FilterModel(ISearchyFilterConfig isfc)
+        {
+
+            Type = isfc.Type;
+            Text = isfc.Text;
+            Field = isfc.Field;
+            Required = isfc.Required;
+            Default = isfc.Default;
+            Rules = isfc.Rules;
+        }
+
+        public object Value { get; set; }
+        public SearchyRule Rule { get => (SearchyRule)Operator; set => Operator = (int)value; }
+        public string Type { get; set; }
+        public string Text { get; set; }
+        public string Field { get; set; }
+        public ICollection<SearchyRule> Rules { get; set; }
+        public bool Required { get; set; }
+        public bool Default { get; set; }
+        public int Operator { get; set; }
+        public bool? ValueBool { get; set; }
+        public byte? ValueByte { get; set; }
+        public int? ValueInt { get; set; }
+        public long? ValueLong { get; set; }
+        public decimal? ValueDecimal { get; set; }
+        public string ValueString { get; set; }
+        public DateTime? ValueDate { get; set; }
+        public byte[] ValueByteArray { get; set; }
+        public int[] ValueIntArray { get; set; }
+        public long[] ValueLongArray { get; set; }
+        public string[] ValueStringArray { get; set; }
+
+        //public string Value2 { get; set; }
     }
 
 }

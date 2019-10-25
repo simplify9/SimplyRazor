@@ -13,6 +13,7 @@ namespace SW.SimplyRazor
             serviceCollection.AddSingleton<Notifier<Ping>>();
             serviceCollection.AddSingleton<Notifier<DatalistReady>>();
             serviceCollection.AddSingleton<Notifier<PageIndexRequested>>();
+            serviceCollection.AddSingleton<Notifier<UserMessage>>();
 
             return serviceCollection.AddSingleton<NotifyService>();  
 

@@ -2,36 +2,58 @@
 @implements IDisposable
 @inject IJSRuntime JSRuntime
 
-@if (visible)
-{
-    <div @ref="alertRef" class="alert alert-warning fade show" role="alert">
-        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-}
+<div @ref="alertRef" class="alert @alertCss fade show" role="alert">
+    @((MarkupString)Body)
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 
 @code {
 
+    string alertCss;
     System.Timers.Timer countdown;
-    bool visible;
+    //bool visible;
     ElementReference alertRef;
 
-    async protected override Task OnInitializedAsync()
-    {
-        visible = true;
+    [CascadingParameter]
+    public ISimplyAlertHub AlertHub { get; set; }
 
-        if (countdown == null)
+    [CascadingParameter]
+    public int Index { get; set; }
+
+    [Parameter]
+    public string Body { get; set; }
+
+    [Parameter]
+    public AttentionLevel Level { get; set; }
+
+    protected override void OnInitialized()
+    {
+
+        switch (Level)
         {
-            countdown = new System.Timers.Timer(3000);
-            countdown.Elapsed += async (s, e) => await OnDue();
-            countdown.AutoReset = false;
+            case AttentionLevel.Error:
+                alertCss = "alert-danger";
+                break;
+
+            case AttentionLevel.Warning:
+                alertCss = "alert-warning";
+                break;
+
+            case AttentionLevel.Success:
+                alertCss = "alert-success";
+                break;
+
+            case 0:
+                alertCss = "alert-info";
+                break;
         }
 
-        if (countdown.Enabled) countdown.Stop();
+        countdown = new System.Timers.Timer(TimeSpan.FromSeconds(5).TotalMilliseconds);
+        countdown.Elapsed += async (s, e) => await OnDue();
+        countdown.AutoReset = false;
         countdown.Start();
-
     }
 
     async protected override Task OnAfterRenderAsync(bool firstRender)
@@ -46,17 +68,14 @@
 
     async Task OnDue()
     {
-        await InvokeAsync(async () =>
-        {
-            if (visible)
-                await JSRuntime.InvokeVoidAsync("simplyAlertInterop.closeAlert", alertRef);
-        });
+        await JSRuntime.InvokeVoidAsync("simplyAlertInterop.closeAlert", alertRef);
     }
 
     [JSInvokable]
     public Task OnAlertClosed()
     {
-        visible = false;
+        countdown.Stop();
+        AlertHub?.RemoveAlert(Index);
         return Task.CompletedTask;
     }
 

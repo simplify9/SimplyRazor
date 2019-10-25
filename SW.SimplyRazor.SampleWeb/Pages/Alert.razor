@@ -1,8 +1,26 @@
 ﻿@page "/alert"
+@inject NotifyService notify
 <h3>Alert</h3>
 
 <SimplyAlert></SimplyAlert>
 
+
+<SimplyAlertHub></SimplyAlertHub>
+
+
+<button @onclick="OnTestClick">Test</button>
+
+<p>
+    The Alert component covers the specific original event and public method, 
+    but does not provide any option. Still, the component will initialize both via JavaScript or the DATA API. 
+    In contrast with the original plugin is the fact that the component does not require the class alert-dismissible in order to work.
+</p>
+
 @code {
+
+    void OnTestClick(EventArgs args)
+    {
+        notify.Publish(new UserMessage { Body = $"Test {Guid.NewGuid().ToString("N")}", Level = AttentionLevel.Error });
+    }
 
 }

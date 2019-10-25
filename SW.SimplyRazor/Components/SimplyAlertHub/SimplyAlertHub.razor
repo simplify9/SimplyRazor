@@ -1,0 +1,42 @@
+﻿@namespace SW.SimplyRazor
+@implements ISimplyAlertHub
+
+<SimplyNotify Notification="UserMessage" OnReceived="OnUserMessageReceived" />
+
+@for (int i = 0; i < alerts?.Count; i++)
+{
+    var index = i;
+
+    <CascadingValue Value="this" Name="AlertHub">
+        <CascadingValue Value="index" Name="Index">
+            <SimplyAlert Body="@alerts[index].Body" Level="alerts[index].Level" ></SimplyAlert>
+        </CascadingValue>
+    </CascadingValue>
+}
+
+@code {
+
+    List<Alert> alerts;
+
+    protected override void OnInitialized()
+    {
+        alerts = new List<Alert>();
+    }
+
+    private class Alert
+    {
+        public string Body { get; set; }
+        public AttentionLevel Level { get; set; }
+    }
+
+    public void RemoveAlert(int index)
+    {
+        alerts.RemoveAt(index);
+    }
+
+    void OnUserMessageReceived(UserMessage message)
+    {
+        alerts.Add(new Alert { Level = message.Level, Body = message.Body });
+    }
+
+}
