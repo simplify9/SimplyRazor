@@ -12,6 +12,7 @@
     @ChildContent
 </CascadingValue>
 
+<SimplyAlertHub></SimplyAlertHub>
 <div class="row">
     <label for="filterSelect" class="col-auto col-form-label">Search</label>
     <div class="col-auto">
@@ -71,7 +72,7 @@
 
         }
         <div class="input-group-append">
-            <button @onclick="@(e => filters.RemoveAt(index))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
+            <button @onclick="@(e => RemoveFilter(index))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
         </div>
     </div>
 }
@@ -99,15 +100,29 @@
         return Task.CompletedTask;
     }
 
+    async Task RemoveFilter(int index)
+    {
+        if (filters[index].Required)
+            await notify.Publish(new UserMessage { Body = "This filter is required for search.", Level = AttentionLevel.Warning });
+        else
+            filters.RemoveAt(index);
+    }
+
 
     protected async override Task OnInitializedAsync()
     {
         filters = new List<FilterModel>();
-
         filterConfigs = new List<ISearchyFilterConfig>();
 
         searchyService.Client.BaseAddress = new Uri(nav.BaseUri);
         filterConfigs.AddRange(await searchyService.GetFilterConfigs(typeof(TModel).FullName));
+
+        foreach (var fc in filterConfigs)
+        {
+            if (fc.Default || fc.Required)
+                filters.Add(new FilterModel(fc));
+        }
+
 
     }
 

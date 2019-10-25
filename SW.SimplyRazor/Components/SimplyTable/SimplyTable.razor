@@ -10,7 +10,7 @@
     </CascadingValue>
 </div>
 
-@if (Value != null)
+@if (Value?.Count > 0)
 {
     <table class="table table-bordered table-sm">
         <thead>
@@ -23,22 +23,20 @@
             </tr>
         </thead>
         <tbody>
-            @{
-                for (var i = 0; i < Value.Count; i++)
-                {
-                    var itemIndex = i;
-                    <tr @key="Value[itemIndex]">
-                        <CascadingValue Value="this" Name="Table">
-                            <CascadingValue Value="itemIndex" Name="ItemIndex">
-                                <CascadingValue Value="FieldRole.ColumnValue" Name="RenderMode">
-                                    <SimplyForm Value="Value[itemIndex]">
-                                        @Fields
-                                    </SimplyForm>
-                                </CascadingValue>
+            @for (var i = 0; i < Value.Count; i++)
+            {
+                var itemIndex = i;
+                <tr @key="Value[itemIndex]">
+                    <CascadingValue Value="this" Name="Table">
+                        <CascadingValue Value="itemIndex" Name="ItemIndex">
+                            <CascadingValue Value="FieldRole.ColumnValue" Name="RenderMode">
+                                <SimplyForm Value="Value[itemIndex]">
+                                    @Fields
+                                </SimplyForm>
                             </CascadingValue>
                         </CascadingValue>
-                    </tr>
-                }
+                    </CascadingValue>
+                </tr>
             }
         </tbody>
     </table>
@@ -92,7 +90,6 @@
 
     [Parameter]
     public RenderFragment Header { get; set; }
-
 
     TModel beingEditedModel;
     int beingEditedModelIndex;
