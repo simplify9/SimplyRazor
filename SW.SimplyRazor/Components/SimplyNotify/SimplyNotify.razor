@@ -8,6 +8,9 @@
     [Parameter]
     public EventCallback<Notification> OnReceived { get; set; }
 
+    [Parameter]
+    public string Tag { get; set; }
+
     protected override void OnInitialized()
     {
         notify.Subscribe<Notification>(Handle);
@@ -15,8 +18,8 @@
 
     async public Task Handle(Notification notification, string[] tags)
     {
-        //Console.WriteLine("Pong 1");
-        await OnReceived.InvokeAsync(notification);
+        if (Tag == null || Tag != null && tags.Contains(Tag, StringComparer.InvariantCultureIgnoreCase))
+            await OnReceived.InvokeAsync(notification);
     }
 
     void IDisposable.Dispose()
