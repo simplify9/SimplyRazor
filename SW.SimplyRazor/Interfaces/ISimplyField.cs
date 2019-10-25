@@ -17,13 +17,9 @@ namespace SW.SimplyRazor
         string Lookup { get; set; }
         string Id { get; }
         object Value { get; }
-
         bool IsInvalid { get; }
-
         string InvalidFeedback { get; set; }
-
         PropertyInfo PropertyInfo { get; }
-
         dynamic Model { get; }
     }
 }
