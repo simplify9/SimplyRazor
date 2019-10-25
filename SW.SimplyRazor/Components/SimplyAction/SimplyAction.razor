@@ -10,13 +10,13 @@
 
     case ActionType.TableDelete:
         {
-            <button @onclick="(()=> Table.DeleteModel(ItemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-x" /></button>
+            <button @onclick="(()=> Table.RemoveModel(ItemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-x" /></button>
             break;
         }
 
     case ActionType.TableEdit:
         {
-            <button @onclick="(()=> Table.EditModel(ItemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-pencil" /></button>
+            <button @onclick="(()=> Table.ChangeModel(ItemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-pencil" /></button>
             break;
         }
     case ActionType.TableNavigate:

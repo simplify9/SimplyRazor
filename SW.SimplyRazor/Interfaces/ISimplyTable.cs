@@ -8,8 +8,8 @@ namespace SW.SimplyRazor
     public interface ISimplyTable
     {
         Task AddModel();
-        Task EditModel(int index);
-        Task DeleteModel(int index);
+        Task ChangeModel(int index);
+        Task RemoveModel(int index);
             
     }
 }
