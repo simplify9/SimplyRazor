@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using SW.PrimitiveTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace SW.BogusDataModels
         public Money Salary { get; set; }
         public int EmploymentStatus { get; set; }
         public string Country { get; set; }
-        public string Photo { get; set; }
+        public RemoteBlob Photo { get; set; }
         public ICollection<Leave> Leaves { get; set; }
 
         //public static IList<Employee> Sample = new List<Employee>

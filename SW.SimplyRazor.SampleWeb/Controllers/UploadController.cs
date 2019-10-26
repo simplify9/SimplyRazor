@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
+using SW.PrimitiveTypes;
 
 namespace SW.SimplyRazor.SampleWeb.Controllers
 {
@@ -29,14 +29,24 @@ namespace SW.SimplyRazor.SampleWeb.Controllers
             var fileId = Guid.NewGuid().ToString("N");
             var filePath = $"./uploads/{fileId}";
 
-            await Task.Delay(TimeSpan.FromSeconds(2)); 
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            var result = new RemoteBlob
+            {
+                MimeType = ur.File.ContentType,
+                Name = ur.File.FileName,
+                Size = Convert.ToInt32(ur.File.Length),
+                Uri = new Uri("http://cnn.com")
+            };
 
             using (var fs = System.IO.File.Create(filePath))
             {
+                //ur.File.
+
                 await ur.File.CopyToAsync(fs);
             };
             //return new BadRequestResult(); 
-            return new OkObjectResult(fileId);
+            return new OkObjectResult(result);
         }
 
         //// DELETE api/<controller>/5
@@ -50,5 +60,9 @@ namespace SW.SimplyRazor.SampleWeb.Controllers
             //public string Id { get; set; }
             public IFormFile File { get; set; }
         }
+
+
+
+
     }
 }

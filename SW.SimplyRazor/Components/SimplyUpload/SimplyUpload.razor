@@ -1,5 +1,6 @@
 ﻿@namespace SW.SimplyRazor
 @inject IJSRuntime JSRuntime
+@using SW.PrimitiveTypes
 
 <div class="input-group mb-3">
     <div class="custom-file">
@@ -42,7 +43,7 @@
     //public string Value { get; set; }
 
     [Parameter]
-    public EventCallback<string> ValueChanged { get; set; }
+    public EventCallback<RemoteBlob> ValueChanged { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedParameters { get; set; }
@@ -70,8 +71,8 @@
 
         try
         {
-            var id = await JSRuntime.InvokeAsync<string>("simplyUploadInterop.saveFile", inputRef);
-            await ValueChanged.InvokeAsync(id);
+            var rb = await JSRuntime.InvokeAsync<RemoteBlob>("simplyUploadInterop.saveFile", inputRef);
+            await ValueChanged.InvokeAsync(rb);
         }
         catch (Exception)
         {

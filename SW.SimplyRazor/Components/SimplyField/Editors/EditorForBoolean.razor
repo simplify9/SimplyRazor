@@ -6,7 +6,7 @@
                type="checkbox"
                class="custom-control-input @((State.IsInvalid ? "is-invalid" : null))"
                form="@State.FormId"
-               @onchange="(e)=> ValueChanged.InvokeAsync(e.Value)"
+               @onchange="e=> ValueChanged.InvokeAsync(e.Value)"
                @attributes="UnmatchedAttributes" />
 
         <label class="custom-control-label" for="@State.Id">@State.Text</label>

@@ -1,7 +1,7 @@
 ﻿@namespace SW.SimplyRazor
 @implements ISimplyField
 @implements IDisposable
-
+@using SW.PrimitiveTypes
 @using System.Reflection
 @using Humanizer
 
@@ -96,7 +96,6 @@
     [Parameter]
     public string Name { get; set; }
 
-    [Parameter]
     public Type Editor { get; set; }
 
     [Parameter]
@@ -117,8 +116,9 @@
     public string FormId => Form.Id;
 
     public PropertyInfo PropertyInfo { get; private set; }
-    public string Id => $"{FormId}_{Name}".Replace(".", "_").ToLower();
 
+    string id;
+    public string Id => id;
 
     string text = null;
 
@@ -169,6 +169,10 @@
         if (Model != null) ModelType = Model.GetType();
         if (ModelType == null) throw new ArgumentNullException();
 
+        id = Name == null
+            ? $"field{Guid.NewGuid().ToString("N")}"
+            : $"{FormId}_{Name}".Replace(".", "_").ToLower();
+
         if (Name is null) return;
 
         nameArray = Name.Split('.');
@@ -179,14 +183,17 @@
 
             PropertyInfo = PropertyInfo.PropertyType.GetProperty(nameArray[i]);
 
-
         if (PropertyInfo.PropertyType == typeof(bool))
         {
-            if (Editor == null) Editor = typeof(EditorForBoolean);
+            Editor = typeof(EditorForBoolean);
+        }
+        else if (PropertyInfo.PropertyType == typeof(RemoteBlob))
+        {
+            Editor = typeof(EditorForUpload);
         }
         else
         {
-            if (Editor == null) Editor = (Lookup == null) ? typeof(EditorForText) : typeof(EditorForTextAsSelect);
+            Editor = (Lookup == null) ? typeof(EditorForText) : typeof(EditorForTextAsSelect);
         }
 
         Form.AddField(this);

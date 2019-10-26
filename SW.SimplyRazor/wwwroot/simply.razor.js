@@ -15855,7 +15855,7 @@ return Tagify;
             //try {
 
             return fetch('api/upload', { method: "POST", body: formData })
-                .then(response => response.text());
+                .then(response => response.json());
                 //.then((body) => console.log(body));
             //}
             //catch (e) {

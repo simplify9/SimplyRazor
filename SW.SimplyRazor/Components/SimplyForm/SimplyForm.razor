@@ -34,12 +34,15 @@
     [Parameter]
     public AbstractValidator<TModel> Validator { get; set; }
 
-    public string Id => (Name == null) ? $"MainForm{Guid.NewGuid().ToString("N")}" : Name;
+    string id;
+    public string Id => id;
 
     public IDictionary<string, ISimplyField> Fields { get; set; }
 
+
     protected override void OnInitialized()
     {
+        id = Name == null ? $"Form{Guid.NewGuid().ToString("N")}" : Name;
         Fields = new Dictionary<string, ISimplyField>();
     }
 
@@ -50,12 +53,12 @@
 
     public void AddField(ISimplyField formField)
     {
-        if (formField.Name!=null) Fields.Add(formField.Name, formField);
+        if (formField.Name != null) Fields.Add(formField.Name, formField);
     }
 
     public void RemoveField(string name)
     {
-        if (name!=null) Fields.Remove(name);
+        if (name != null) Fields.Remove(name);
     }
 
     async Task ValidateOnClick(EventArgs args)
