@@ -18,6 +18,9 @@
         <SimplyField Name="Salary.Currency" />
     </FieldGroup>
     <SimplyTable Name="Leaves" TModel="Leave">
+        <Header>
+            <SimplyAction Type="ActionType.TableAdd" />
+        </Header>
         <Fields>
             <SimplyField Name="Reason" />
             <SimplyField Name="Days" min="1" max="100" pattern="[0-9]{5}" />

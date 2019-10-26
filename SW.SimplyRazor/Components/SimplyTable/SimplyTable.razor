@@ -1,6 +1,7 @@
 ﻿@typeparam TModel
 @implements ISimplyTable
 @namespace SW.SimplyRazor
+@using System.Reflection
 
 <SimplyNotify Notification="DatalistReady" OnReceived="OnReceived"></SimplyNotify>
 
@@ -93,6 +94,8 @@
 
     TModel beingEditedModel;
     int beingEditedModelIndex;
+    PropertyInfo propertyInfo;
+    string[] nameArray;
 
     protected override void OnInitialized()
     {
@@ -103,13 +106,13 @@
         Type modelType = Model.GetType();
         var childModel = Model;
 
-        var arr = Name.Split('.');
+        nameArray = Name.Split('.');
 
-        for (var i = 0; i < arr.Length; i++)
+        for (var i = 0; i < nameArray.Length; i++)
         {
-            var pInfo = modelType.GetProperty(arr[i]);
-            modelType = pInfo.PropertyType;
-            if (childModel != null) childModel = pInfo.GetValue(childModel);
+            propertyInfo = modelType.GetProperty(nameArray[i]);
+            modelType = propertyInfo.PropertyType;
+            if (childModel != null) childModel = propertyInfo.GetValue(childModel);
         };
 
         Value = childModel == null ? null : (IList<TModel>)childModel;
@@ -154,7 +157,27 @@
     {
         if (beingEditedModelIndex < 0)
         {
-            if (Value == null) Value = new List<TModel>();
+            if (Value == null)
+            {
+                object obj = Model;
+
+                for (int i = 0; i < nameArray.Length - 1; i++)
+                {
+                    var targetProp = obj.GetType().GetProperty(nameArray[i]);
+                    var nextType = targetProp.PropertyType;
+                    var nextObj = targetProp.GetValue(obj);
+                    if (nextObj == null)
+                    {
+                        nextObj = Activator.CreateInstance(nextType);
+                        targetProp.SetValue(obj, nextObj);
+                    }
+
+                    obj = nextObj;
+                }
+                Value = new List<TModel>();
+                propertyInfo.SetValue( obj, Value);
+            }
+            
             Value.Add((TModel)beingEditedModel);
             await OnItem.InvokeAsync(new TableItem<TModel> { Item = beingEditedModel, Flag = TableItemFlag.Added });
         }
@@ -163,7 +186,6 @@
             beingEditedModel.DeepCloneTo(Value[beingEditedModelIndex]);
             await OnItem.InvokeAsync(new TableItem<TModel> { Item = beingEditedModel, Flag = TableItemFlag.Changed });
         }
-
 
         await ValueChanged.InvokeAsync(Value);
         if (Form != null) await Form.FieldValueChanged(Name);
