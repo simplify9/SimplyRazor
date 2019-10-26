@@ -183,13 +183,23 @@
                 }
             }
 
+            await OnItem.InvokeAsync(new TableItem<TModel> 
+            { 
+                Item = beingEditedModel, 
+                Flag = TableItemFlag.Added 
+            });
+
             Value.Add((TModel)beingEditedModel);
-            await OnItem.InvokeAsync(new TableItem<TModel> { Item = beingEditedModel, Flag = TableItemFlag.Added });
         }
         else
         {
+            await OnItem.InvokeAsync(new TableItem<TModel> 
+            { 
+                Item = beingEditedModel, 
+                Flag = TableItemFlag.Changed 
+            });
+
             beingEditedModel.DeepCloneTo(Value[beingEditedModelIndex]);
-            await OnItem.InvokeAsync(new TableItem<TModel> { Item = beingEditedModel, Flag = TableItemFlag.Changed });
         }
 
         await ValueChanged.InvokeAsync(Value);

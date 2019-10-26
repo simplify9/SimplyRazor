@@ -13,9 +13,12 @@
 </CascadingValue>
 
 <SimplyAlertHub></SimplyAlertHub>
+
 <div class="row">
-    <label for="filterSelect" class="col-auto col-form-label">Search</label>
-    <div class="col-auto">
+    <div class="col-2">
+        <label for="filterSelect" class="col-auto col-form-label">Search</label>
+    </div>
+    <div class="col-8">
         <div class="input-group">
             <SimplySelect @bind-Value="filterValue"
                           EmptyText="Select filter"
@@ -26,20 +29,13 @@
             </div>
         </div>
     </div>
-    <div class="col text-right mb-2">
-        <button disabled="@searching" type="submit" class="btn btn-primary" @onclick="SearchOnClick">
-            @if (searching)
-            {
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                @:Searching...
-            }
-            else
-            {
-                @:Search
-            }
-        </button>
+    <div class="col-2">
+        <SimplyButton type="submit" Value="0"  OnClick="Search">
+            <Text>Search</Text>
+        </SimplyButton>
     </div>
 </div>
+
 
 @for (int i = 0; i < filters.Count; i++)
 {
@@ -126,11 +122,9 @@
 
     }
 
-    bool searching;
-
-    async Task Search(int pageIndex)
+    async Task Search(dynamic pageIndex)
     {
-        searching = true;
+        //searching = true;
         var typedFilters = filters.Select(f => (ISearchyFilterTyped)f).ToList();
         var sreq = new SearchyRequest
         {
@@ -151,12 +145,6 @@
             PageIndex = pageIndex
         });
 
-        searching = false;
-    }
-
-    async Task SearchOnClick(EventArgs e)
-    {
-        await Search(0);
     }
 
     async Task OnPageIndexRequested(PageIndexRequested indexRequested)

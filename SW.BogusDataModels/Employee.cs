@@ -26,7 +26,7 @@ namespace SW.BogusDataModels
         public string DisplayName { get; set; }
 
         public Gender Gender { get; set; }
-        public int Age { get; set; }
+        public int? Age { get; set; }
         public bool Married { get; set; }
         public Money Salary { get; set; }
         public int EmploymentStatus { get; set; }

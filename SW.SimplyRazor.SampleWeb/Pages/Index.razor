@@ -3,7 +3,7 @@
 
 <SimplySearch TModel="Employee">
     <SimplyFilter Field="Id" Text="Id" Type="@SearchyFilterConfigType.Int"></SimplyFilter>
-    <SimplyFilter Field="HandlerName" Text="Handler" Type="@SearchyFilterConfigType.String"></SimplyFilter>
+    <SimplyFilter Field="HandlerName" Default="true" Text="Handler" Type="@SearchyFilterConfigType.String"></SimplyFilter>
     <SimplyFilter Field="Started" Text="Date" Type="@SearchyFilterConfigType.Date"></SimplyFilter>
 </SimplySearch>
 
@@ -12,6 +12,14 @@
         <SimplyAction Type="ActionType.TableAdd" />
     </Header>
     <Fields>
+        <SimplyField>
+            <ColumnHeader>
+                Link
+            </ColumnHeader> 
+            <ColumnValue>
+                <a href="@($"edit/{context.Model.FirstName}")" >Edit</a>
+            </ColumnValue>
+        </SimplyField>
         <SimplyField>
             <ColumnValue>
                 <SimplyAction Type="ActionType.TableEdit" />

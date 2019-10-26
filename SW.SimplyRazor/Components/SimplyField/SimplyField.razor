@@ -227,10 +227,19 @@
             obj = nextObj;
         }
 
-        var typedValue = value.ConvertObjectToType(PropertyInfo.PropertyType);
-        PropertyInfo.SetValue(obj, typedValue);
-        InvalidFeedback = null;
-        return true;
+        try
+        {
+            var typedValue = value.ConvertValueToType(PropertyInfo.PropertyType);
+            PropertyInfo.SetValue(obj, typedValue);
+            InvalidFeedback = null;
+            return true;
+        }
+        catch (Exception)
+        {
+            InvalidFeedback = $"{value} is not {PropertyInfo.PropertyType.Name}";
+            return false;
+        }
+
         //}
         //catch (Exception)
         //{

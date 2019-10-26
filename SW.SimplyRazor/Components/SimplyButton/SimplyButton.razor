@@ -1,0 +1,52 @@
+﻿@namespace SW.SimplyRazor
+
+<button class="@cssClass" disabled="@working" type="submit" @onclick="ButtonOnClick" @attributes="UnmatchedAttributes">
+    @if (working)
+    {
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    }
+    else if (clicked)
+    {
+        @Clicked
+    }
+    else
+    {
+        @Text
+    }
+</button>
+
+@code {
+
+    bool working;
+    bool clicked;
+    string cssClass;
+
+    [Parameter]
+    public object Value { get; set; }
+
+    [Parameter]
+    public EventCallback<object> OnClick { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+    [Parameter]
+    public RenderFragment Text { get; set; }
+
+    [Parameter]
+    public RenderFragment Clicked { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Clicked == null) Clicked = Text;
+        cssClass = "btn btn-primary btn-block";
+    }
+
+    async Task ButtonOnClick(EventArgs args)
+    {
+        working = true;
+        await OnClick.InvokeAsync(Value);
+        working = false;
+        clicked = true;
+    }
+}
