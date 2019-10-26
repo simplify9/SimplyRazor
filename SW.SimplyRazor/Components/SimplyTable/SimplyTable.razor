@@ -159,25 +159,30 @@
         {
             if (Value == null)
             {
-                object obj = Model;
-
-                for (int i = 0; i < nameArray.Length - 1; i++)
-                {
-                    var targetProp = obj.GetType().GetProperty(nameArray[i]);
-                    var nextType = targetProp.PropertyType;
-                    var nextObj = targetProp.GetValue(obj);
-                    if (nextObj == null)
-                    {
-                        nextObj = Activator.CreateInstance(nextType);
-                        targetProp.SetValue(obj, nextObj);
-                    }
-
-                    obj = nextObj;
-                }
                 Value = new List<TModel>();
-                propertyInfo.SetValue( obj, Value);
+
+                if (propertyInfo != null)
+                {
+                    object obj = Model;
+
+                    for (int i = 0; i < nameArray.Length - 1; i++)
+                    {
+                        var targetProp = obj.GetType().GetProperty(nameArray[i]);
+                        var nextType = targetProp.PropertyType;
+                        var nextObj = targetProp.GetValue(obj);
+                        if (nextObj == null)
+                        {
+                            nextObj = Activator.CreateInstance(nextType);
+                            targetProp.SetValue(obj, nextObj);
+                        }
+
+                        obj = nextObj;
+                    }
+                    propertyInfo.SetValue(obj, Value);
+
+                }
             }
-            
+
             Value.Add((TModel)beingEditedModel);
             await OnItem.InvokeAsync(new TableItem<TModel> { Item = beingEditedModel, Flag = TableItemFlag.Added });
         }
