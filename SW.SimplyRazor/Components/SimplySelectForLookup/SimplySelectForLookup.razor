@@ -48,7 +48,7 @@ else
 
     async protected override Task OnInitializedAsync()
     {
-        lookupService.Client.BaseAddress = new Uri(nav.BaseUri);
+        lookupService.Client.BaseAddress = new Uri("http://localhost/");
         items = await lookupService.Search(Lookup);
     }
 

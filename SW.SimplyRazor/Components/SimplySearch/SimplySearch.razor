@@ -14,23 +14,19 @@
 
 <SimplyAlertHub></SimplyAlertHub>
 
-<div class="row">
-    <div class="col-2">
-        <label for="filterSelect" class="col-auto col-form-label">Search</label>
-    </div>
-    <div class="col-8">
-        <div class="input-group">
-            <SimplySelect @bind-Value="filterValue"
-                          EmptyText="Select filter"
-                          StringList="@(filterConfigs.Select(e=>e.Text))" />
+<div class="form-group row">
+    <label for="filterSelect" class="col-sm-1 col-form-label">Search</label>
+    <div class="col-sm-5 input-group ">
+        <SimplySelect @bind-Value="filterValue"
+                      EmptyText="Select filter"
+                      StringList="@(filterConfigs.Select(e=>e.Text))" />
 
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
-            </div>
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
         </div>
     </div>
-    <div class="col-2">
-        <SimplyButton type="submit" Value="0"  OnClick="Search">
+    <div class="col-sm-6 text-right">
+        <SimplyButton class="btn btn-secondary" type="submit" Value="0" OnClick="Search">
             <Text>Search</Text>
         </SimplyButton>
     </div>
@@ -110,7 +106,7 @@
         filters = new List<FilterModel>();
         filterConfigs = new List<ISearchyFilterConfig>();
 
-        searchyService.Client.BaseAddress = new Uri(nav.BaseUri);
+        searchyService.Client.BaseAddress = new Uri("http://localhost/");
         filterConfigs.AddRange(await searchyService.GetFilterConfigs(typeof(TModel).FullName));
 
         foreach (var fc in filterConfigs)

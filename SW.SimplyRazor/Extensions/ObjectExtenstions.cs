@@ -95,6 +95,7 @@ namespace SW.SimplyRazor
         public static dynamic ConvertValueToType(this object value, Type type)
         {
             if (value is null) return null;
+            if (value.GetType() == type) return value;
 
             var t = Nullable.GetUnderlyingType(type);
             if (t != null) 
@@ -104,8 +105,8 @@ namespace SW.SimplyRazor
             } 
 
             return Convert.ChangeType(value, type);
-
         }
+
         public static T DeepClone<T>(this T obj)
         {
             return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(obj));
