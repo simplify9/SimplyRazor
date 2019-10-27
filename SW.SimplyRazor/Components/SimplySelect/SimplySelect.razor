@@ -21,7 +21,7 @@
 @if (StringList != null)
 {
 
-    <select   @onchange="SelectValueChanged" class="form-control custom-select">
+    <select   @onchange="SelectValueChanged" class="form-control custom-select" @attributes="UnmatchedAttributes">
         @if (EmptyValue != null)
         {
             <option  selected="@(int.Parse(Value.ToString())==0 )" value="0">@EmptyText</option>
@@ -56,6 +56,9 @@
 
     [Parameter]
     public string EmptyText { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
 
 

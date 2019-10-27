@@ -14,6 +14,8 @@
 
 <SimplyAlertHub></SimplyAlertHub>
 
+<form id="searchform" @onsubmit="()=> Search(0)" ></form>
+
 <div class="form-group row">
     <label for="filterSelect" class="col-sm-1 col-form-label">Search</label>
     <div class="col-sm-5 input-group ">
@@ -26,45 +28,49 @@
         </div>
     </div>
     <div class="col-sm-6 text-right">
-        <SimplyButton class="btn btn-secondary" style="width: 120px;" type="submit" Value="0" OnClick="Search">
+        <SimplyButton form="searchform" class="btn btn-secondary" style="width: 120px;" type="submit" >
             <Text>Search</Text>
         </SimplyButton>
     </div>
 </div>
 
 
+
 @for (int i = 0; i < filters.Count; i++)
 {
     int index = i;
-    <div class="input-group mb-1">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="">@filters[index].Text</span>
-        </div>
-        <SimplySelect @bind-value="filters[index].Operator"
-                      EmptyText="Select condition"
-                      KeyValuePairList="@(SearchyFilterConfigType.RulesFor(filters[index].Type).ToDictionary((e) => (int)e, (e)=> e.ToString().Humanize()))">
+    <div class="form-group row">
+        <div class=" input-group col">
+            
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="">@filters[index].Text</span>
+            </div>
+            <SimplySelect required @bind-value="filters[index].Operator"
+                          EmptyText="Select rule"
+                          KeyValuePairList="@(SearchyFilterConfigType.RulesFor(filters[index].Type).ToDictionary(e => (int)e, e=> e.ToString().Humanize()))">
 
-        </SimplySelect>
-        @switch (filters[index].Type)
-        {
-            case SearchyFilterConfigType.String:
+            </SimplySelect>
+            @switch (filters[index].Type)
+            {
+                case SearchyFilterConfigType.String:
 
-                <input type="text" class="form-control" @bind="filters[index].ValueString" />
-                break;
+                    <input type="text" class="form-control" @bind="filters[index].ValueString" form="searchform" required="@filters[index].Required" />
+                    break;
 
-            case SearchyFilterConfigType.Int:
+                case SearchyFilterConfigType.Int:
 
-                <input @bind="filters[index].ValueInt" type="number" class="form-control" />
-                break;
+                    <input @bind="filters[index].ValueInt" type="number" class="form-control" form="searchform" required="@filters[index].Required" />
+                    break;
 
-            case SearchyFilterConfigType.Date:
+                case SearchyFilterConfigType.Date:
 
-                <input @bind="filters[index].ValueDate" type="date" class="form-control" />
-                break;
+                    <input @bind="filters[index].ValueDate" type="date" class="form-control" form="searchform" required="@filters[index].Required" />
+                    break;
 
-        }
-        <div class="input-group-append">
-            <button @onclick="@(e => RemoveFilter(index))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
+            }
+            <div class="input-group-append">
+                <button @onclick="@(e => RemoveFilter(index))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
+            </div>
         </div>
     </div>
 }
