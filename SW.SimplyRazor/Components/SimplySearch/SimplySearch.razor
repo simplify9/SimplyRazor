@@ -26,7 +26,7 @@
         </div>
     </div>
     <div class="col-sm-6 text-right">
-        <SimplyButton class="btn btn-secondary" type="submit" Value="0" OnClick="Search">
+        <SimplyButton class="btn btn-secondary" style="width: 120px;" type="submit" Value="0" OnClick="Search">
             <Text>Search</Text>
         </SimplyButton>
     </div>
@@ -106,7 +106,7 @@
         filters = new List<FilterModel>();
         filterConfigs = new List<ISearchyFilterConfig>();
 
-        searchyService.Client.BaseAddress = new Uri("http://localhost/");
+        searchyService.Client.BaseAddress = new Uri(nav.BaseUri);
         filterConfigs.AddRange(await searchyService.GetFilterConfigs(typeof(TModel).FullName));
 
         foreach (var fc in filterConfigs)

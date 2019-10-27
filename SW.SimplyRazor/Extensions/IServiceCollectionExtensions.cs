@@ -15,7 +15,7 @@ namespace SW.SimplyRazor
             serviceCollection.AddSingleton<Notifier<PageIndexRequested>>();
             serviceCollection.AddSingleton<Notifier<UserMessage>>();
 
-            return serviceCollection.AddSingleton<NotifyService>();  
+            return serviceCollection.AddScoped<NotifyService>();  
 
         }
     }

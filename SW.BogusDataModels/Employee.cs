@@ -90,7 +90,7 @@ namespace SW.BogusDataModels
             //    Console.WriteLine("User Created! Id={0}", u.Id);
             //});
 
-        public static readonly List<Employee> Data = testUsers.Generate(5); 
+        public static readonly List<Employee> Data = testUsers.Generate(5000); 
 
     }
 

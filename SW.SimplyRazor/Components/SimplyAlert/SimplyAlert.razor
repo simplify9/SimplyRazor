@@ -2,9 +2,9 @@
 @implements IDisposable
 @inject IJSRuntime JSRuntime
 
-<div @ref="alertRef" class="alert @alertCss fade show" role="alert">
+<div class="alert @alertCss fade show" role="alert">
     @((MarkupString)Body)
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <button type="button" class="close" @onclick="CloseAlert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
@@ -13,10 +13,8 @@
 
     string alertCss;
     System.Timers.Timer countdown;
-    //bool visible;
-    ElementReference alertRef;
 
-    [CascadingParameter]
+    [CascadingParameter(Name = "AlertHub")]
     public ISimplyAlertHub AlertHub { get; set; }
 
     [CascadingParameter]
@@ -56,26 +54,15 @@
         countdown.Start();
     }
 
-    async protected override Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await JSRuntime.InvokeVoidAsync("simplyAlertInterop.showAlert",
-                alertRef,
-                DotNetObjectReference.Create(this));
-        }
-    }
-
     async Task OnDue()
     {
-        await JSRuntime.InvokeVoidAsync("simplyAlertInterop.closeAlert", alertRef);
+        await InvokeAsync(() => AlertHub.RemoveAlert(Index));
     }
 
-    [JSInvokable]
-    public Task OnAlertClosed()
+    public Task CloseAlert(EventArgs args)
     {
         countdown.Stop();
-        AlertHub?.RemoveAlert(Index);
+        AlertHub.RemoveAlert(Index);
         return Task.CompletedTask;
     }
 
