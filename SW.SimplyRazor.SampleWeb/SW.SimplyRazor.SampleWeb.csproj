@@ -19,20 +19,19 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="8.5.0" />
     <PackageReference Include="Humanizer.Core" Version="2.7.9" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.8" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Include="Scrutor" Version="3.1.0" />
-    <PackageReference Include="SimplyWorks.I18n" Version="2019.10.17.3" />
-    <PackageReference Include="SimplyWorks.Lookup" Version="2019.10.17.1" />
-    <PackageReference Include="SimplyWorks.Searchy" Version="2019.10.21.5" />
-    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2019.10.26.1" />
+    <PackageReference Include="SimplyWorks.I18n" Version="2019.10.29.3" />
+    <PackageReference Include="SimplyWorks.ModelApi" Version="2019.10.29.3" />
+    <PackageReference Include="SimplyWorks.Searchy" Version="2019.10.28.1" />
+    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2019.10.27.1" />
 
 
   </ItemGroup>

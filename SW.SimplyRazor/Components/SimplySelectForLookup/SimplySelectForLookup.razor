@@ -1,6 +1,6 @@
 ﻿@typeparam TKey
 @namespace SW.SimplyRazor
-@inject LookupClient lookupService
+@inject IServiceProvider serviceProvider
 @inject NavigationManager nav
 
 @if (items == null)
@@ -48,8 +48,8 @@ else
 
     async protected override Task OnInitializedAsync()
     {
-        lookupService.Client.BaseAddress = new Uri("http://localhost/");
-        items = await lookupService.Search(Lookup);
+        var client = serviceProvider.GetService(Lookup);
+        items = await client.LookupList();
     }
 
     IEnumerable<KeyValuePair<object, string>> items;

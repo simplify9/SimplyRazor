@@ -1,9 +1,11 @@
 ﻿@page "/"
-@using SW.Searchy
+@inject IServiceProvider  serviceProvider
+@using SW.PrimitiveTypes
+
 
 <SimplySearch TModel="Employee">
-    <SimplyFilter Field="Id" Text="Id" Type="@SearchyFilterConfigType.Int"></SimplyFilter>
-    <SimplyFilter Field="HandlerName" Default="true" Text="Handler" Type="@SearchyFilterConfigType.String"></SimplyFilter>
+    <SimplyFilter Field="Id" Text="Id" Type="@SearchyFilterConfigType.Number"></SimplyFilter>
+    <SimplyFilter Field="HandlerName" Default="true" Text="Handler" Type="@SearchyFilterConfigType.Text"></SimplyFilter>
     <SimplyFilter Field="Started" Text="Date" Type="@SearchyFilterConfigType.Date"></SimplyFilter>
 </SimplySearch>
 
@@ -15,9 +17,9 @@
         <SimplyField>
             <ColumnHeader>
                 Link
-            </ColumnHeader> 
+            </ColumnHeader>
             <ColumnValue>
-                <a href="@($"edit/{context.Model.FirstName}")" >Edit</a>
+                <a href="@($"edit/{context.Model.FirstName}")">Edit</a>
             </ColumnValue>
         </SimplyField>
         <SimplyField>
@@ -37,7 +39,7 @@
         </SimplyField>
         <SimplyField Name="Age" />
         <SimplyField Name="Married" />
-        <SimplyField Name="EmploymentStatus" Lookup="intmock" />
+        <SimplyField Name="EmploymentStatus" Lookup="mockmodel" />
         <SimplyField Name="Country" Lookup="country" />
         <SimplyField Name="Salary.Amount" />
         <SimplyField Name="Salary.Currency" />
@@ -48,5 +50,8 @@
 <SimplyPager />
 
 @code{
+    protected override void OnInitialized()
+    {
 
+    }
 }

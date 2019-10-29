@@ -1,9 +1,10 @@
 ﻿@typeparam TModel
 @namespace SW.SimplyRazor
-@inject SearchyClient searchyService
+@inject MapiClient<TModel> searchyService
 @inject NavigationManager nav
 @inject NotifyService notify
-@using SW.Searchy
+@using SW.ModelApi
+
 @using Humanizer
 
 <SimplyNotify Notification="PageIndexRequested" OnReceived="OnPageIndexRequested" />
@@ -52,12 +53,12 @@
             </SimplySelect>
             @switch (filters[index].Type)
             {
-                case SearchyFilterConfigType.String:
+                case SearchyFilterConfigType.Text:
 
                     <input type="text" class="form-control" @bind="filters[index].ValueString" form="searchform" required="@filters[index].Required" />
                     break;
 
-                case SearchyFilterConfigType.Int:
+                case SearchyFilterConfigType.Number:
 
                     <input @bind="filters[index].ValueInt" type="number" class="form-control" form="searchform" required="@filters[index].Required" />
                     break;
@@ -112,13 +113,12 @@
         filters = new List<FilterModel>();
         filterConfigs = new List<ISearchyFilterConfig>();
 
-        searchyService.Client.BaseAddress = new Uri(nav.BaseUri);
-        filterConfigs.AddRange(await searchyService.GetFilterConfigs(typeof(TModel).FullName));
+        filterConfigs.AddRange(await searchyService.GetFilterConfigs());
 
         foreach (var fc in filterConfigs)
         {
             if (fc.Default || fc.Required)
-                filters.Add(new FilterModel(fc));
+                filters.Add(new FilterModel(fc) );
         }
 
 
@@ -135,7 +135,7 @@
             PageSize = 20
         };
 
-        var sres = await searchyService.Search<TModel>(sreq);
+        var sres = await searchyService.Search(sreq);
 
         await ValueChanged.InvokeAsync(sres.Result);
         await notify.Publish(new DatalistReady

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SW.BogusDataModels;
 using SW.I18n;
+using SW.ModelApi;
 using SW.PrimitiveTypes;
 
 namespace SW.SimplyRazor.SampleWeb 
 {
-    public class IntMockLookupService : ILookupService
+    public class IntMockLookupService : ILookable<MockModel>
     {
         public IntMockLookupService()
         {
@@ -16,12 +18,12 @@ namespace SW.SimplyRazor.SampleWeb
         public string[] Serves => new[] { "intmock" };
 
 
-        public Task<string> Get(string lookupServiceName, object key)
+        public Task<string> LookupValue(object key)
         {
             return Task.FromResult(""); //return Task.FromResult(i18NService.Countries.Get(key.ToString() ).Name);
         }
 
-        public Task<IEnumerable<KeyValuePair<object, string>>> Search(string lookup, string search = null, string filter = null)
+        public Task<IEnumerable<KeyValuePair<object, string>>> LookupList(string search = null, string filter = null)
         {
             //throw new NotImplementedException();
 

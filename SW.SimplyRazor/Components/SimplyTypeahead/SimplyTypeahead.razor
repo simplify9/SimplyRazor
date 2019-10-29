@@ -4,7 +4,7 @@
 @using System.Text.Json
 
 @inject IJSRuntime JSRuntime
-@inject LookupClient lookupServiceClient
+@inject IServiceProvider serviceProvider
 
 
 
@@ -21,7 +21,7 @@
 
 
     [Parameter]
-    public string LookupServiceName { get; set; }
+    public string Lookup { get; set; }
 
     [Parameter]
     public TKey Value { get; set; }
@@ -37,7 +37,7 @@
             return;
         }
 
-        inputValue = await lookupServiceClient.Get(LookupServiceName, Value);
+        inputValue = await serviceProvider.GetService(Lookup).LookupValue(Value);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -15,8 +15,9 @@ using Microsoft.AspNetCore.Http;
 
 using SW.I18n;
 using SW.PrimitiveTypes;
-using SW.Lookup;
 using SW.Searchy;
+using SW.ModelApi;
+using SW.BogusDataModels;
 
 namespace SW.SimplyRazor.SampleWeb
 {
@@ -37,14 +38,29 @@ namespace SW.SimplyRazor.SampleWeb
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; }); ;
             services.AddSingleton<WeatherForecastService>();
             //services.AddSingleton<ILookupService, CountryLookupService>();
-            services.AddSingleton<ILookupService, IntMockLookupService>();
-            services.AddSingleton<ISearchyService, EmployeeSearchService>();
+
 
 
             services.AddI18n();
-            services.AddHttpClient<LookupClient>();
-            services.AddHttpClient<SearchyClient>();
-            services.AddSimplyRazorServices(); 
+            services.AddModelApi();
+
+            services.AddHttpClient<MapiClient<Employee>>((sp, httpClient) => 
+            {
+                httpClient.BaseAddress = new Uri("https://localhost:5001");
+            });
+            services.AddHttpClient<MapiClient<MockModel>>((sp, httpClient) =>
+            {
+                httpClient.BaseAddress = new Uri("https://localhost:5001");
+            });
+            services.AddHttpClient<MapiClient<Country>>((sp, httpClient) =>
+            {
+                httpClient.BaseAddress = new Uri("https://localhost:5001");
+            });
+
+            services.AddSimplyRazorServices();
+            services.AddSingleton<IModelMapping>(sp => new ModelMapping<Employee>("employee"));
+            services.AddSingleton<IModelMapping>(sp => new ModelMapping<MockModel>("mockmodel"));
+            services.AddSingleton<IModelMapping>(sp => new ModelMapping<Country>("country"));
 
 
         }
@@ -65,9 +81,9 @@ namespace SW.SimplyRazor.SampleWeb
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            
+
             app.UseRouting();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapPost("/upload", async ctx =>

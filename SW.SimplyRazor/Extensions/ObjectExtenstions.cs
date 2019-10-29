@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿
 using System;
-
+using System.Text.Json;
 
 namespace SW.SimplyRazor 
 {
-    public static  class ObjectExtenstions
+    public static  class Object
     {
         //public static dynamic ConvertObjectToType(this object TargetObject, Type TargetType)
         //{
@@ -94,7 +94,13 @@ namespace SW.SimplyRazor
 
         public static dynamic ConvertValueToType(this object value, Type type)
         {
-            if (value is null) return null;
+
+            bool typeNullable = (Nullable.GetUnderlyingType(type) == null) ? false : true;
+
+            if (value is null && typeNullable) return null;
+
+            else if (value is null) return Activator.CreateInstance(type);  
+
             if (value.GetType() == type) return value;
 
             var t = Nullable.GetUnderlyingType(type);
@@ -109,12 +115,13 @@ namespace SW.SimplyRazor
 
         public static T DeepClone<T>(this T obj)
         {
-            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(obj));
+            return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(obj));
         }
 
         public static void DeepCloneTo(this object obj, object target)
         {
-             JsonConvert.PopulateObject(JsonConvert.SerializeObject(obj), target);
+            //JsonSerializer.
+             //JsonConvert.PopulateObject(JsonConvert.SerializeObject(obj), target);
         }
 
 

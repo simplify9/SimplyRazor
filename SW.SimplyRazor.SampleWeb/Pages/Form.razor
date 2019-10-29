@@ -1,5 +1,5 @@
 ﻿@page "/form"
-
+\
 <SimplyForm @bind-Value="FakeEmployees.Data[0]">
 
     <FieldGroup>
@@ -9,7 +9,7 @@
 
     <SimplyField Name="Age" />
     <SimplyField Name="Married" />
-    <SimplyField Name="EmploymentStatus" Lookup="intmock" />
+    <SimplyField Name="EmploymentStatus" Lookup="mockmodel" />
     <SimplyField Name="Country" Lookup="country" />
     <SimplyField Name="Photo"   />
 
