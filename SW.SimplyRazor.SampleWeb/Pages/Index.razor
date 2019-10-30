@@ -3,7 +3,7 @@
 @using SW.PrimitiveTypes
 
 
-<SimplySearch TModel="Employee">
+<SimplySearch PageSize="10" TModel="Employee">
     <SimplyFilter Field="Id" Text="Id" Type="@SearchyFilterConfigType.Number"></SimplyFilter>
     <SimplyFilter Field="HandlerName" Default="true" Text="Handler" Type="@SearchyFilterConfigType.Text"></SimplyFilter>
     <SimplyFilter Field="Started" Text="Date" Type="@SearchyFilterConfigType.Date"></SimplyFilter>

@@ -21,10 +21,10 @@
 @if (StringList != null)
 {
 
-    <select   @onchange="SelectValueChanged" class="form-control custom-select" @attributes="UnmatchedAttributes">
+    <select @onchange="SelectValueChanged" class="form-control custom-select" @attributes="UnmatchedAttributes">
         @if (EmptyText != null)
         {
-            <option  selected="@(int.Parse(Value.ToString())==0 )" value="0">@EmptyText</option>
+            <option selected="@(int.Parse(Value.ToString())==0 )" value="0">@EmptyText</option>
         }
         @{
             int itemIndex = 1;
@@ -71,6 +71,11 @@
         else if (typeof(TKey) == typeof(int))
         {
             Value = (TKey)(object)int.Parse(args.Value.ToString());
+            await ValueChanged.InvokeAsync(Value);
+        }
+        else if (typeof(TKey).BaseType == typeof(Enum))
+        {
+            Value = (TKey)(object)Enum.Parse(typeof(TKey), args.Value.ToString());
             await ValueChanged.InvokeAsync(Value);
         }
 
