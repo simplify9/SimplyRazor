@@ -34,8 +34,6 @@
     </div>
 </div>
 
-
-
 @for (int i = 0; i < filters.Count; i++)
 {
     int index = i;
@@ -53,12 +51,12 @@
             {
                 case SearchyFilterConfigType.Text:
 
-                    <input type="text" class="form-control" @bind="filters[index].ValueString" form="searchform" required="@filters[index].Required" />
+                    <input @bind="filters[index].ValueString" type="text" class="form-control"  form="searchform" required="@filters[index].Required" />
                     break;
 
                 case SearchyFilterConfigType.Number:
 
-                    <input @bind="filters[index].ValueInt" type="number" class="form-control" form="searchform" required="@filters[index].Required" />
+                    <input @bind="filters[index].ValueDecimal" type="number" class="form-control" form="searchform" required="@filters[index].Required" />
                     break;
 
                 case SearchyFilterConfigType.Date:
@@ -124,7 +122,7 @@
 
     bool searching;
 
-    async Task Search(dynamic pageIndex)
+    async Task Search(int pageIndex)
     {
 
         try
@@ -195,18 +193,12 @@
         public ICollection<SearchyRule> Rules { get; set; }
         public bool Required { get; set; }
         public bool Default { get; set; }
-        //public int Operator { get; set; }
-        public bool? ValueBool { get; set; }
-        public byte? ValueByte { get; set; }
-        public int? ValueInt { get; set; }
-        public long? ValueLong { get; set; }
         public decimal? ValueDecimal { get; set; }
         public string ValueString { get; set; }
         public DateTime? ValueDate { get; set; }
-        public byte[] ValueByteArray { get; set; }
-        public int[] ValueIntArray { get; set; }
-        public long[] ValueLongArray { get; set; }
+        public decimal[] ValueDecimalArray { get; set; }
         public string[] ValueStringArray { get; set; }
+        public DateTime[] ValueDateArray { get; set; }
 
     }
 
