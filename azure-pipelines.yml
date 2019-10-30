@@ -1,6 +1,4 @@
-# Docker
-# Build and push an image to Azure Container Registry
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
 trigger:
@@ -22,8 +20,8 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
-- stage: BuildDotNet
-  displayName: Build and push stage
+- stage: Build
+  displayName: Build DotNet Nuget and Dcoker
   jobs:  
   - job: BuildDotNet
     displayName: BuildDotNet
@@ -63,11 +61,6 @@ stages:
       inputs:
         command: push
         publishVstsFeed: 'e5fb2e9c-1207-48a4-8f7b-2e6b32308210'
-
-
-- stage: BuildDocker
-  displayName: Build and push stage
-  jobs:  
   - job: BuildDocker
     displayName: Build
     pool:
