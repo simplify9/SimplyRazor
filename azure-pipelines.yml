@@ -20,8 +20,8 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
-- stage: Build
-  displayName: Build DotNet Nuget and Dcoker
+- stage: BuildDotNet
+  displayName: Build and push DotNet Nuget
   jobs:  
   - job: BuildDotNet
     displayName: BuildDotNet
@@ -61,6 +61,11 @@ stages:
       inputs:
         command: push
         publishVstsFeed: 'e5fb2e9c-1207-48a4-8f7b-2e6b32308210'
+
+
+- stage: BuildDocker
+  displayName: Build and push SampleWeb Docker 
+  jobs:  
   - job: BuildDocker
     displayName: Build
     pool:

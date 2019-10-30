@@ -57,7 +57,6 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
     <PackageReference Include="SimplyWorks.ModelApi.Client" Version="2019.10.30.2" />
     <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2019.10.27.1" />
-
   </ItemGroup>
 
 </Project>
