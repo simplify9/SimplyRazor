@@ -27,7 +27,12 @@
 
     protected override void OnInitialized()
     {
-        FilterConfigs?.Add(this);
+        if (FilterConfigs != null)
+        {
+            if (Rules == null) Rules = new List<SearchyRule>();
+            if (Rules.Count == 0) Rules = SearchyFilterConfigType.RulesFor(Type);
+            FilterConfigs.Add(this);
+        }
     }
 
     public void Dispose()

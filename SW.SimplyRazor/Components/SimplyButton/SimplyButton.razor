@@ -1,7 +1,7 @@
 ﻿@namespace SW.SimplyRazor
 
-<button  disabled="@working" type="submit" @onclick="ButtonOnClick" @attributes="UnmatchedAttributes">
-    @if (working)
+<button  disabled="@Working" type="submit" @onclick="ButtonOnClick" @attributes="UnmatchedAttributes">
+    @if (Working)
     {
         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
     }
@@ -17,9 +17,12 @@
 
 @code {
 
-    bool working;
+    //bool working;
     bool clicked;
     string cssClass;
+
+    [Parameter]
+    public bool Working { get; set; }
 
     [Parameter]
     public object Value { get; set; }
@@ -44,9 +47,9 @@
 
     async Task ButtonOnClick(EventArgs args)
     {
-        working = true;
+        Working = true;
         await OnClick.InvokeAsync(Value);
-        working = false;
+        Working = false;
         clicked = true;
     }
 }

@@ -1,10 +1,9 @@
 ﻿@typeparam TModel
 @namespace SW.SimplyRazor
-@inject MapiClient<TModel> searchyService
+@inject MapiClientFactory mapiClientFactory
 @inject NavigationManager nav
 @inject NotifyService notify
 @using SW.ModelApi
-
 @using Humanizer
 
 <SimplyNotify Notification="PageIndexRequested" OnReceived="OnPageIndexRequested" />
@@ -15,7 +14,7 @@
 
 <SimplyAlertHub></SimplyAlertHub>
 
-<form id="searchform" @onsubmit="()=> Search(0)" ></form>
+<form id="searchform" @onsubmit="()=> Search(0)"></form>
 
 <div class="form-group row">
     <label for="filterSelect" class="col-sm-1 col-form-label">Search</label>
@@ -29,7 +28,7 @@
         </div>
     </div>
     <div class="col-sm-6 text-right">
-        <SimplyButton form="searchform" class="btn btn-secondary" style="width: 120px;" type="submit" >
+        <SimplyButton Working="searching" form="searchform" class="btn btn-secondary" style="width: 120px;" type="submit">
             <Text>Search</Text>
         </SimplyButton>
     </div>
@@ -42,15 +41,14 @@
     int index = i;
     <div class="form-group row">
         <div class=" input-group col">
-            
+
             <div class="input-group-prepend">
                 <span class="input-group-text" id="">@filters[index].Text</span>
             </div>
-            <SimplySelect required @bind-value="filters[index].Operator"
-                          EmptyText="Select rule"
-                          KeyValuePairList="@(SearchyFilterConfigType.RulesFor(filters[index].Type).ToDictionary(e => (int)e, e=> e.ToString().Humanize()))">
 
-            </SimplySelect>
+            <SimplySelect @bind-value="filters[index].Operator"
+                          KeyValuePairList="@(filters[index].Rules.ToDictionary(e => (int)e, e=> e.ToString().Humanize()))" />
+
             @switch (filters[index].Type)
             {
                 case SearchyFilterConfigType.Text:
@@ -112,41 +110,52 @@
     {
         filters = new List<FilterModel>();
         filterConfigs = new List<ISearchyFilterConfig>();
-
-        filterConfigs.AddRange(await searchyService.GetFilterConfigs());
+        var client = mapiClientFactory.GetClient<TModel>();
+        filterConfigs.AddRange(await client.GetFilterConfigs());
 
         foreach (var fc in filterConfigs)
-        {
-            if (fc.Default || fc.Required)
-                filters.Add(new FilterModel(fc) );
-        }
 
+            if (fc.Default || fc.Required) filters.Add(new FilterModel(fc) { Operator = (int)fc.Rules.First() });
 
     }
 
+    bool searching;
+
     async Task Search(dynamic pageIndex)
     {
-        //searching = true;
-        var typedFilters = filters.Select(f => (ISearchyFilterTyped)f).ToList();
-        var sreq = new SearchyRequest
+
+        try
         {
-            Conditions = new List<SearchyCondition> { new SearchyCondition(typedFilters) },
-            PageIndex = pageIndex,
-            PageSize = 20
-        };
+            searching = true;
+            var typedFilters = filters.Select(f => (ISearchyFilterTyped)f).ToList();
+            var sreq = new SearchyRequest
+            {
+                Conditions = new List<SearchyCondition> { new SearchyCondition(typedFilters) },
+                PageIndex = pageIndex,
+                PageSize = 20
+            };
 
-        var sres = await searchyService.Search(sreq);
+            var client = mapiClientFactory.GetClient<TModel>();
+            var sres = await client.Search(sreq);
 
-        await ValueChanged.InvokeAsync(sres.Result);
-        await notify.Publish(new DatalistReady
+            await ValueChanged.InvokeAsync(sres.Result);
+            await notify.Publish(new DatalistReady
+            {
+                Datalist = sres.Result,
+                TotalCount = sres.TotalCount,
+                Count = sres.Result.Count(),
+                PageSize = 20,
+                PageIndex = pageIndex
+            });
+        }
+        catch (Exception ex)
         {
-            Datalist = sres.Result,
-            TotalCount = sres.TotalCount,
-            Count = sres.Result.Count(),
-            PageSize = 20,
-            PageIndex = pageIndex
-        });
-
+            await notify.Publish(new UserMessage { Body = ex.Message, Level = AttentionLevel.Error });
+        }
+        finally
+        {
+            searching = false;
+        }
     }
 
     async Task OnPageIndexRequested(PageIndexRequested indexRequested)
@@ -196,7 +205,6 @@
         public long[] ValueLongArray { get; set; }
         public string[] ValueStringArray { get; set; }
 
-        //public string Value2 { get; set; }
     }
 
 }

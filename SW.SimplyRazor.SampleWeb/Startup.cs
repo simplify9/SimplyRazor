@@ -18,6 +18,7 @@ using SW.PrimitiveTypes;
 using SW.Searchy;
 using SW.ModelApi;
 using SW.BogusDataModels;
+using System.Net.Http;
 
 namespace SW.SimplyRazor.SampleWeb
 {
@@ -44,6 +45,9 @@ namespace SW.SimplyRazor.SampleWeb
             services.AddMapiModelMap<Employee>("employee");
             services.AddMapiModelMap<MockModel>("mockmodel");
             services.AddMapiModelMap<Country>("country");
+
+
+            //services.AddSingleton(sp => new MapiClient<Employee>(sp.GetService<HttpClient>()));
 
             services.AddHttpClient<MapiClient<Employee>>((sp, httpClient) =>
             {

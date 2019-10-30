@@ -4,9 +4,9 @@
 {
 
     <select @onchange="SelectValueChanged" class="form-control">
-        @if (EmptyValue != null)
+        @if (EmptyText != null)
         {
-            <option selected="@(Value.Equals(EmptyValue) )" value="@EmptyValue">@EmptyText</option>
+            <option selected="@(Value.Equals(default(TKey) ))" value="@(default(TKey))">@EmptyText</option>
         }
 
         @{
@@ -22,7 +22,7 @@
 {
 
     <select   @onchange="SelectValueChanged" class="form-control custom-select" @attributes="UnmatchedAttributes">
-        @if (EmptyValue != null)
+        @if (EmptyText != null)
         {
             <option  selected="@(int.Parse(Value.ToString())==0 )" value="0">@EmptyText</option>
         }
@@ -52,15 +52,14 @@
     public IEnumerable<string> StringList { get; set; }
 
     [Parameter]
-    public TKey EmptyValue { get; set; }
-
-    [Parameter]
     public string EmptyText { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
-
+    protected override void OnInitialized()
+    {
+    }
 
     async Task SelectValueChanged(ChangeEventArgs args)
     {
@@ -74,7 +73,7 @@
             Value = (TKey)(object)int.Parse(args.Value.ToString());
             await ValueChanged.InvokeAsync(Value);
         }
-        
+
     }
 
 
