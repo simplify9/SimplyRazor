@@ -47,7 +47,7 @@
             </div>
 
             <SimplySelect @bind-value="filters[index].Rule"
-                          KeyValuePairList="@(filters[index].Rules.ToDictionary(e => e, e=> e.ToString().Humanize()))" />
+                          KeyValuePairList="@(filters[index].Rules.ToDictionary(e => e, e=> e.Humanize()))" />
 
             @switch (filters[index].Type)
             {
