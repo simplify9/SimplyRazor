@@ -61,7 +61,7 @@
 
                 case SearchyFilterConfigType.Date:
 
-                    <input @bind="filters[index].ValueDate" type="date" class="form-control" form="searchform" required="@filters[index].Required" />
+                    <input @bind="filters[index].ValueDateTime" type="date" class="form-control" form="searchform" required="@filters[index].Required" />
                     break;
 
             }
@@ -128,10 +128,9 @@
         try
         {
             searching = true;
-            var typedFilters = filters.Select(f => (ISearchyFilterTyped)f).ToList();
-            var sreq = new SearchyRequest
+
+            var sreq = new SearchyRequest(new SearchyCondition(filters))
             {
-                Conditions = new List<SearchyCondition> { new SearchyCondition(typedFilters) },
                 PageIndex = pageIndex,
                 PageSize = PageSize
             };
@@ -193,12 +192,13 @@
         public ICollection<SearchyRule> Rules { get; set; }
         public bool Required { get; set; }
         public bool Default { get; set; }
+
         public decimal? ValueDecimal { get; set; }
         public string ValueString { get; set; }
-        public DateTime? ValueDate { get; set; }
+        public DateTime? ValueDateTime { get; set; }
         public decimal[] ValueDecimalArray { get; set; }
         public string[] ValueStringArray { get; set; }
-        public DateTime[] ValueDateArray { get; set; }
+        public DateTime[] ValueDateTimeArray { get; set; }
 
     }
 
