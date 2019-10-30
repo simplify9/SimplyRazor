@@ -141,7 +141,7 @@
     public Task ChangeModel(int index)
     {
         beingEditedModelIndex = index;
-        beingEditedModel = Value[index].DeepClone();
+        beingEditedModel = Object.DeepClone(Value[index]); //.DeepClone();
         StateHasChanged();
         return Task.CompletedTask;
     }
@@ -183,23 +183,23 @@
                 }
             }
 
-            await OnItem.InvokeAsync(new TableItem<TModel> 
-            { 
-                Item = beingEditedModel, 
-                Flag = TableItemFlag.Added 
+            await OnItem.InvokeAsync(new TableItem<TModel>
+            {
+                Item = beingEditedModel,
+                Flag = TableItemFlag.Added
             });
 
             Value.Add((TModel)beingEditedModel);
         }
         else
         {
-            await OnItem.InvokeAsync(new TableItem<TModel> 
-            { 
-                Item = beingEditedModel, 
-                Flag = TableItemFlag.Changed 
+            await OnItem.InvokeAsync(new TableItem<TModel>
+            {
+                Item = beingEditedModel,
+                Flag = TableItemFlag.Changed
             });
 
-            beingEditedModel.DeepCloneTo(Value[beingEditedModelIndex]);
+            Object.DeepClone(beingEditedModel, Value[beingEditedModelIndex]);
         }
 
         await ValueChanged.InvokeAsync(Value);

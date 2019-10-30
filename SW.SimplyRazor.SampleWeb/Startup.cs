@@ -37,14 +37,15 @@ namespace SW.SimplyRazor.SampleWeb
             services.AddRazorPages();
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; }); ;
             services.AddSingleton<WeatherForecastService>();
-            //services.AddSingleton<ILookupService, CountryLookupService>();
-
-
 
             services.AddI18n();
-            services.AddModelApi();
+            services.AddMapi();
+            services.AddMapiClientFactory();
+            services.AddMapiModelMap<Employee>("employee");
+            services.AddMapiModelMap<MockModel>("mockmodel");
+            services.AddMapiModelMap<Country>("country");
 
-            services.AddHttpClient<MapiClient<Employee>>((sp, httpClient) => 
+            services.AddHttpClient<MapiClient<Employee>>((sp, httpClient) =>
             {
                 httpClient.BaseAddress = new Uri("https://localhost:5001");
             });
@@ -57,11 +58,8 @@ namespace SW.SimplyRazor.SampleWeb
                 httpClient.BaseAddress = new Uri("https://localhost:5001");
             });
 
-            services.AddSimplyRazorServices();
-            services.AddSingleton<IModelMapping>(sp => new ModelMapping<Employee>("employee"));
-            services.AddSingleton<IModelMapping>(sp => new ModelMapping<MockModel>("mockmodel"));
-            services.AddSingleton<IModelMapping>(sp => new ModelMapping<Country>("country"));
 
+            services.AddSimplyRazorServices();
 
         }
 

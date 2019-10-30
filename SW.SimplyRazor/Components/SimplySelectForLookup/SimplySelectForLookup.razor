@@ -1,7 +1,8 @@
 ﻿@typeparam TKey
 @namespace SW.SimplyRazor
-@inject IServiceProvider serviceProvider
+@inject MapiClientFactory mapiClientFactory
 @inject NavigationManager nav
+@using SW.ModelApi
 
 @if (items == null)
 {
@@ -48,7 +49,7 @@ else
 
     async protected override Task OnInitializedAsync()
     {
-        var client = serviceProvider.GetService(Lookup);
+        var client = mapiClientFactory.GetClient(Lookup);
         items = await client.LookupList();
     }
 

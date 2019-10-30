@@ -229,7 +229,7 @@
 
         try
         {
-            var typedValue = value.ConvertValueToType(PropertyInfo.PropertyType);
+            var typedValue = Object.ConvertValueToType(value, PropertyInfo.PropertyType);
             PropertyInfo.SetValue(obj, typedValue);
             InvalidFeedback = null;
             return true;

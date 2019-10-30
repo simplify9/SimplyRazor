@@ -49,15 +49,15 @@
 
 
   <ItemGroup>
+    <PackageReference Include="DeepCloner" Version="0.10.2" />
     <PackageReference Include="FluentValidation" Version="8.5.0" />
     <PackageReference Include="Humanizer.Core" Version="2.7.9" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.0.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="3.0.0" />
-    <PackageReference Include="SimplyWorks.ModelApi.Client" Version="2019.10.29.3" />
+    <PackageReference Include="SimplyWorks.ModelApi.Client" Version="2019.10.30.2" />
     <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2019.10.27.1" />
-    <PackageReference Include="System.Text.Json" Version="4.6.0" />
+
   </ItemGroup>
 
 </Project>
