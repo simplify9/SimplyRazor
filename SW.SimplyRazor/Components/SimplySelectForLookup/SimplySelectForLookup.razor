@@ -12,16 +12,11 @@
 }
 else
 {
-    <select @onchange="SelectValueChanged" @attributes="UnmatchedAttributes">
-        @if (EmptyText != null)
-        {
-            <option selected="@(Value == null || emptyValue==Value.ToString())" value="@emptyValue">@EmptyText</option>
-        }
-        @foreach (var item in items)
-        {
-            <option selected="@(Value != null && item.Key.ToString()==Value.ToString() )" value="@item.Key">@item.Value</option>
-        }
-    </select>
+    <SimplySelect TKey="TKey" 
+                  @attributes="UnmatchedAttributes" 
+                  KeyValuePairList="items" 
+                  Value="Value" 
+                  ValueChanged="v => ValueChanged.InvokeAsync(v)" />
 }
 
 @code {
@@ -35,52 +30,21 @@ else
     [Parameter]
     public string Lookup { get; set; }
 
-    [Parameter]
-    public TKey EmptyValue { get; set; }
-
-    string emptyValue => EmptyValue == null ? " " : EmptyValue.ToString();
-
-    [Parameter]
-    public string EmptyText { get; set; }
-
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
-
 
     async protected override Task OnInitializedAsync()
     {
         var client = mapiClientFactory.GetClient(Lookup);
-        items = await client.LookupList();
-    }
+        items = new List<KeyValuePair<TKey, string>>();
 
-    IEnumerable<KeyValuePair<object, string>> items;
-
-    async Task SelectValueChanged(ChangeEventArgs args)
-    {
-        if (string.IsNullOrWhiteSpace(args.Value.ToString()))
+        IEnumerable<KeyValuePair<object, string>>  itemsRaw = await client.LookupList();
+        foreach (var i in itemsRaw)
         {
-            Value = default(TKey);
-            await ValueChanged.InvokeAsync(Value);
-        }
-        else
-        {
-            if (typeof(TKey) == typeof(string))
-            {
-                Value = (TKey)args.Value;
-                await ValueChanged.InvokeAsync(Value);
-            }
-            else if (typeof(TKey) == typeof(int))
-            {
-                Value = (TKey)(object)int.Parse(args.Value.ToString());
-                await ValueChanged.InvokeAsync(Value);
-            }
-            else if (typeof(TKey) == typeof(object))
-            {
-                Value = (TKey)args.Value;
-                await ValueChanged.InvokeAsync(Value);
-            }
+            items.Add(new KeyValuePair<TKey, string> (Object.ConvertValueToType(i.Key.ToString(), typeof(TKey)), i.Value));
         }
     }
 
+    ICollection<KeyValuePair<TKey, string>> items;
 
 }

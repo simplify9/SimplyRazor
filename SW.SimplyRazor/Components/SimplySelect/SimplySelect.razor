@@ -6,36 +6,19 @@
     <select @onchange="SelectValueChanged" class="form-control">
         @if (EmptyText != null)
         {
-            <option selected="@(Value.Equals(default(TKey) ))" value="@(default(TKey))">@EmptyText</option>
+            <option selected="@(Value == null || Value.Equals(default(TKey) ))" value=" ">@EmptyText</option>
         }
 
         @{
             foreach (var item in KeyValuePairList)
             {
-                <option selected="@(Value.Equals(item.Key) )" value="@item.Key">@item.Value</option>
+                <option selected="@(Value != null && Value.ToString()==item.Key.ToString() )" value="@item.Key">@item.Value</option>
             }
         }
     </select>
 }
 
-@if (StringList != null)
-{
 
-    <select @onchange="SelectValueChanged" class="form-control custom-select" @attributes="UnmatchedAttributes">
-        @if (EmptyText != null)
-        {
-            <option selected="@(int.Parse(Value.ToString())==0 )" value="0">@EmptyText</option>
-        }
-        @{
-            int itemIndex = 1;
-            foreach (var item in StringList)
-            {
-                <option selected="@(int.Parse(Value.ToString())==itemIndex )" value="@itemIndex">@item</option>
-                itemIndex++;
-            }
-        }
-    </select>
-}
 
 @code {
 
@@ -59,11 +42,27 @@
 
     protected override void OnInitialized()
     {
+        if (StringList != null)
+        {
+            var lst = new List<KeyValuePair<TKey, string>>();
+            int itemIndex = 1;
+            foreach (var item in StringList)
+            {
+                lst.Add(new KeyValuePair<TKey, string>((TKey)(object)itemIndex, item));
+                itemIndex++;
+            }
+            KeyValuePairList = lst.AsEnumerable();
+        }
     }
 
     async Task SelectValueChanged(ChangeEventArgs args)
     {
-        if (typeof(TKey) == typeof(string))
+        if (string.IsNullOrWhiteSpace(args.Value.ToString()))
+        {
+            Value = default(TKey);
+            await ValueChanged.InvokeAsync(Value);
+        }
+        else if (typeof(TKey) == typeof(string))
         {
             Value = (TKey)args.Value;
             await ValueChanged.InvokeAsync(Value);
@@ -76,6 +75,11 @@
         else if (typeof(TKey).BaseType == typeof(Enum))
         {
             Value = (TKey)(object)Enum.Parse(typeof(TKey), args.Value.ToString());
+            await ValueChanged.InvokeAsync(Value);
+        }
+        else if (typeof(TKey) == typeof(object))
+        {
+            Value = (TKey)args.Value;
             await ValueChanged.InvokeAsync(Value);
         }
 

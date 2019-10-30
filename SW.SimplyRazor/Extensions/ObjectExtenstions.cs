@@ -6,10 +6,18 @@ namespace SW.SimplyRazor
 {
     public static  class Object
     {
-        public static dynamic ConvertValueToType( object value, Type type)
-        {
 
-            bool typeNullable = (Nullable.GetUnderlyingType(type) == null) ? false : true;
+        private static Type GetNullableType(Type type)
+        {
+            if (type == typeof(string)) return typeof(string);
+            if (type == typeof(object)) return typeof(object);
+            return Nullable.GetUnderlyingType(type);
+        }
+
+        public static dynamic ConvertValueToType(object value, Type type)
+        {
+             
+            bool typeNullable = (GetNullableType(type) == null) ? false : true;
 
             if (value is null && typeNullable) return null;
 
@@ -17,7 +25,7 @@ namespace SW.SimplyRazor
 
             if (value.GetType() == type) return value;
 
-            var t = Nullable.GetUnderlyingType(type);
+            var t = GetNullableType(type);
             if (t != null) 
             {
                 type = t;

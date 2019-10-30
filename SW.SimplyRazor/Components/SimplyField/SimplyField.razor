@@ -234,7 +234,7 @@
             InvalidFeedback = null;
             return true;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             InvalidFeedback = $"{value} is not {PropertyInfo.PropertyType.Name}";
             return false;
