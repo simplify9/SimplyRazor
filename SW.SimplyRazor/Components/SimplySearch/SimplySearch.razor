@@ -24,7 +24,7 @@
     <div class="col-sm-5 input-group ">
         <SimplySelect @bind-Value="filterValue"
                       EmptyText="Select filter"
-                      StringList="@(filterConfigs.Select(e=>e.Text))" />
+                      Items="@(filterConfigs.Select(e=>e.Text).ToList())" />
 
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
@@ -40,7 +40,7 @@
 @for (int i = 0; i < filters.Count; i++)
 {
     int index = i;
-    <div class="form-group row">
+    <div class="form-group row" @key="filters[index]" >
         <div class=" input-group col">
 
             <div class="input-group-prepend">
@@ -48,7 +48,8 @@
             </div>
 
             <SimplySelect @bind-value="filters[index].Rule"
-                          KeyValuePairList="@(filters[index].Rules.ToDictionary(e => e, e=> e.Humanize()))" />
+                          Items="filters[index].Rules" 
+                          TKey="SearchyRule" />
 
             @switch (filters[index].Type)
             {

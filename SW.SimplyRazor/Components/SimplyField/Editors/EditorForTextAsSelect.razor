@@ -2,7 +2,7 @@
 
 <label for="@State.Id">@State.Text</label>
 
-<SimplySelectForLookup id="@State.Id"
+<SimplySelect id="@State.Id"
                        form="@State.FormId"
                        class="@cssClass"
                        ValueChanged="(e)=> ValueChanged.InvokeAsync(e)"
@@ -10,7 +10,6 @@
                        EmptyText="Select"
                        Lookup="@State.Lookup"
                        @attributes="UnmatchedAttributes" TKey="object" />
-
 
 @code {
 

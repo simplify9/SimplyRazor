@@ -1,23 +1,56 @@
 ﻿@typeparam TKey
 @namespace SW.SimplyRazor
-@if (KeyValuePairList != null)
-{
+@using System.Collections
+@using System.Linq
+@using Humanizer
+@inject MapiClientFactory mapiClientFactory
+@using SW.ModelApi
 
-    <select @onchange="SelectValueChanged" class="form-control">
-        @if (EmptyText != null)
+
+<select @onchange="SelectValueChanged" class="form-control">
+
+    @if (EmptyText != null)
+    {
+        <option selected="@(Value == null || Value.Equals(default(TKey) ))" value=" ">@EmptyText</option>
+    }
+
+    @if (Items == null)
+    {
+        <option>loading...</option>
+    }
+    else
+    {
+        int index = 1;
+        foreach (dynamic itemUntyped in Items)
         {
-            <option selected="@(Value == null || Value.Equals(default(TKey) ))" value=" ">@EmptyText</option>
-        }
+            dynamic key = null;
+            dynamic value = null;
 
-        @{
-            foreach (var item in KeyValuePairList)
+            Type enumerableType = itemUntyped.GetType();
+
+            if (enumerableType == typeof(string))
             {
-                <option selected="@(Value != null && Value.ToString()==item.Key.ToString() )" value="@item.Key">@item.Value</option>
+                key = index;
+                value = itemUntyped;
             }
-        }
-    </select>
-}
+            else if (enumerableType.BaseType == typeof(Enum))
+            {
+                key = itemUntyped;
+                value = ((Enum)itemUntyped).Humanize();
+            }
+            else
+            {
+                key = itemUntyped.Key;
+                value = itemUntyped.Value;
+            }
 
+            <option selected="@(Value != null && Value.ToString() == key.ToString() )" value="@key">@value</option>
+
+            index++;
+        }
+    }
+
+</select>
 
 
 @code {
@@ -29,10 +62,13 @@
     public EventCallback<TKey> ValueChanged { get; set; }
 
     [Parameter]
-    public IEnumerable<KeyValuePair<TKey, string>> KeyValuePairList { get; set; }
+    public IEnumerable Items { get; set; }
 
     [Parameter]
-    public IEnumerable<string> StringList { get; set; }
+    public EventCallback ItemsLoaded { get; set; }
+
+    [Parameter]
+    public string Lookup { get; set; }
 
     [Parameter]
     public string EmptyText { get; set; }
@@ -40,19 +76,27 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
-    protected override void OnInitialized()
+
+    async protected override Task OnInitializedAsync()
     {
-        if (StringList != null)
+
+        if (Lookup != null)
+        {
+            var client = mapiClientFactory.GetClient(Lookup);
+
+            Items = await client.LookupList();
+
+        }
+        else if (Items == null && typeof(TKey).BaseType == typeof(Enum))
         {
             var lst = new List<KeyValuePair<TKey, string>>();
-            int itemIndex = 1;
-            foreach (var item in StringList)
+            foreach (var item in Items)
             {
-                lst.Add(new KeyValuePair<TKey, string>((TKey)(object)itemIndex, item));
-                itemIndex++;
+                lst.Add(new KeyValuePair<TKey, string>((TKey)item, Enum.GetName(typeof(TKey), item).Humanize()));
             }
-            KeyValuePairList = lst.AsEnumerable();
+            Items = lst;
         }
+
     }
 
     async Task SelectValueChanged(ChangeEventArgs args)
