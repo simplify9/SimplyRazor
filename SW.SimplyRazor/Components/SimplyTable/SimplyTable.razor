@@ -16,7 +16,7 @@
     <table class="table table-bordered table-sm">
         <thead>
             <tr>
-                <CascadingValue Value="FieldRole.ColumnName" Name="RenderMode">
+                <CascadingValue IsFixed="true" Value="FieldRole.ColumnName" Name="RenderMode">
                     <SimplyForm Value="Value.First()">
                         @Fields
                     </SimplyForm>
@@ -28,9 +28,9 @@
             {
                 var itemIndex = i;
                 <tr @key="Value[itemIndex]">
-                    <CascadingValue Value="this" Name="Table">
+                    <CascadingValue  Value="this" Name="Table">
                         <CascadingValue Value="itemIndex" Name="ItemIndex">
-                            <CascadingValue Value="FieldRole.ColumnValue" Name="RenderMode">
+                            <CascadingValue IsFixed="true" Value="FieldRole.ColumnValue" Name="RenderMode">
                                 <SimplyForm Value="Value[itemIndex]">
                                     @Fields
                                 </SimplyForm>
@@ -47,10 +47,14 @@
 {
     <SimplyModal OnVisibilityChanged="OnModalVisibilityChanged">
         <Content>
-            <CascadingValue Value="FieldRole.Input" Name="RenderMode">
-                <SimplyForm Name="@($"{Name}{beingEditedModelIndex}")" Value="beingEditedModel" OnSubmit="()=> OnFormSubmit(context)">
-                    @Fields
-                </SimplyForm>
+            <CascadingValue  Value="this" Name="Table">
+                <CascadingValue Value="beingEditedModelIndex" Name="ItemIndex">
+                    <CascadingValue IsFixed="true" Value="FieldRole.Input" Name="RenderMode">
+                        <SimplyForm Name="@($"{Name}{beingEditedModelIndex}")" Value="beingEditedModel" OnSubmit="()=> OnFormSubmit(context)">
+                            @Fields
+                        </SimplyForm>
+                    </CascadingValue>
+                </CascadingValue>
             </CascadingValue>
         </Content>
         <Footer>
@@ -100,7 +104,12 @@
     protected override void OnInitialized()
     {
         if (Name == null) Name = "MainTable";
-        if (Value != null) return;
+        if (Value != null)
+        {
+            ItemData = new TableItemData(Value.Count);
+            return;
+        }
+
         if (Model == null) return;
 
         Type modelType = Model.GetType();
@@ -116,11 +125,13 @@
         };
 
         Value = childModel == null ? null : (IList<TModel>)childModel;
+        ItemData = new TableItemData(Value.Count);
     }
 
     void OnReceived(DatalistReady datalist)
     {
         Value = ((IEnumerable<TModel>)datalist.Datalist).ToList();
+        ItemData = new TableItemData(Value.Count);
     }
 
     //Task OnModalKeyDown(KeyboardEventArgs args)
@@ -213,4 +224,8 @@
         if (!visible) beingEditedModel = default(TModel);
         return Task.CompletedTask;
     }
+
+    public TableItemData ItemData { get; set; }
+
+
 }

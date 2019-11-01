@@ -1,77 +1,76 @@
 ﻿@namespace SW.SimplyRazor
 @implements ISimplyField
 @implements IDisposable
+@inject MapiClientFactory clientFactory
 @using SW.PrimitiveTypes
 @using System.Reflection
 @using Humanizer
+@using SW.ModelApi
 
-@{
-    switch (RenderMode)
-    {
-        case FieldRole.Input:
-            {
-                if (editorFragment != null && (ShowsOn == FieldShowsOn.Always || ShowsOn == FieldShowsOn.Edit))
+
+
+@switch (RenderMode)
+{
+    case FieldRole.Input:
+
+        if (editorFragment != null && (ShowsOn == FieldShowsOn.Always || ShowsOn == FieldShowsOn.Edit))
+        {
+            <div class="@((Grouped) ? "col" : "form-group")">
+
+                @editorFragment
+
+                @if (IsInvalid)
                 {
-                    <div class="@((Grouped) ? "col" : "form-group")">
-
-                        @editorFragment
-
-                        @if (IsInvalid)
-                        {
-                            <div class="invalid-feedback">
-                                @InvalidFeedback
-                            </div>
-                        }
-
-                        @if (Help != null)
-                        {
-                            <small class="form-text text-muted">@Help</small>
-                        }
+                    <div class="invalid-feedback">
+                        @InvalidFeedback
                     </div>
                 }
-                break;
-            }
-        case FieldRole.ColumnValue:
-            {
-                if (ShowsOn == FieldShowsOn.Always || ShowsOn == FieldShowsOn.List)
+
+                @if (Help != null)
                 {
+                    <small class="form-text text-muted">@Help</small>
+                }
+            </div>
+        }
+        break;
+    case FieldRole.ColumnValue:
 
-                    <td>
-                        @if (ColumnValue == null)
-                        {
-                            @Value
+        if (ShowsOn == FieldShowsOn.Always || ShowsOn == FieldShowsOn.List)
+        {
+            <td>
+                @if (ColumnValue == null)
+                {
+                    @DisplayValue
+                }
+                else
+                {
+                    @ColumnValue(this)
+                }
+            </td>
+        }
+        break;
 
-                        }
-                        else
-                        {
-                            @ColumnValue(this)
-                        }
-                    </td>
+
+    case FieldRole.ColumnName:
+
+        if (ShowsOn == FieldShowsOn.Always || ShowsOn == FieldShowsOn.List)
+        {
+            <th scope="col">
+                @if (ColumnHeader == null)
+                {
+                    @Text
 
                 }
-                break;
-            }
-
-        case FieldRole.ColumnName:
-            {
-                if (ShowsOn == FieldShowsOn.Always || ShowsOn == FieldShowsOn.List)
+                else
                 {
-                    <th scope="col">
-                        @if (ColumnHeader == null)
-                        {
-                            @Text
-
-                        }
-                        else
-                        {
-                            @ColumnHeader(this)
-                        }
-                    </th>
+                    @ColumnHeader(this)
                 }
-                break;
-            }
-    }
+            </th>
+        }
+        break;
+
 }
+
 
 @code {
 
@@ -89,6 +88,12 @@
 
     [CascadingParameter(Name = "Grouped")]
     public bool Grouped { get; set; }
+
+    [CascadingParameter(Name = "Table")]
+    public ISimplyTable Table { get; set; }
+
+    [CascadingParameter(Name = "ItemIndex")]
+    public int ItemIndex { get; set; }
 
     [Parameter]
     public string Lookup { get; set; }
@@ -133,6 +138,23 @@
 
     public bool IsInvalid => InvalidFeedback != null;
 
+
+
+
+    public object DisplayValue
+    {
+        get
+        {
+
+            if (Lookup != null && Table !=null)
+
+                return Table.ItemData?.GetLookupValue(ItemIndex, Name);
+
+            return Value;
+
+        }
+    }
+
     public object Value
     {
         get
@@ -163,7 +185,9 @@
 
     string[] nameArray;
 
-    protected override void OnInitialized()
+
+
+    async protected override Task OnInitializedAsync()
     {
 
         if (Model != null) ModelType = Model.GetType();
@@ -199,14 +223,22 @@
         Form.AddField(this);
 
         if (RenderMode == FieldRole.Input && Editor != null) editorFragment = CreateEditor();
+
+        if (RenderMode == FieldRole.ColumnValue && Table !=null)
+        {
+            if (Lookup != null)
+
+                Table.ItemData?.SetLookupValue(ItemIndex, Name, await clientFactory.GetClient(Lookup).LookupValue(Value));
+        }
+
     }
 
     async Task OnChange(object value)
     {
-        if (TrySetValue(value)) await Form.FieldValueChanged(Name);
+        if (await TrySetValue(value)) await Form.FieldValueChanged(Name);
     }
 
-    bool TrySetValue(object value)
+    async Task<bool> TrySetValue(object value)
     {
 
         if (Model == null) Model = Activator.CreateInstance(ModelType);
@@ -232,6 +264,11 @@
             var typedValue = Object.ConvertValueToType(value, PropertyInfo.PropertyType);
             PropertyInfo.SetValue(obj, typedValue);
             InvalidFeedback = null;
+
+            if (Table !=null && Lookup != null)
+
+                Table.ItemData.SetLookupValue(ItemIndex, Name, await clientFactory.GetClient(Lookup).LookupValue(Value));
+
             return true;
         }
         catch (Exception ex)
@@ -239,21 +276,10 @@
             InvalidFeedback = $"{value} is not {PropertyInfo.PropertyType.Name}";
             return false;
         }
-
-        //}
-        //catch (Exception)
-        //{
-        //    InvalidFeedback = "Failed to set value.";
-        //    return false;
-        //}
     }
 
     void IDisposable.Dispose()
     {
-        if (RenderMode == FieldRole.Input)
-        {
-            Form.RemoveField(Name);
-        }
-
+        Form.RemoveField(Name);
     }
 }

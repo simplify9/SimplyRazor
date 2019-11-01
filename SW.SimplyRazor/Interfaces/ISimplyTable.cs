@@ -10,6 +10,8 @@ namespace SW.SimplyRazor
         Task AddModel();
         Task ChangeModel(int index);
         Task RemoveModel(int index);
+
+        TableItemData ItemData { get; set; }
             
     }
 }

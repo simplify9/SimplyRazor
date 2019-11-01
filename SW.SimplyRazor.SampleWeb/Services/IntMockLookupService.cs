@@ -20,7 +20,7 @@ namespace SW.SimplyRazor.SampleWeb
 
         public Task<string> LookupValue(object key)
         {
-            return Task.FromResult(""); //return Task.FromResult(i18NService.Countries.Get(key.ToString() ).Name);
+            return Task.FromResult("sssssss"); //return Task.FromResult(i18NService.Countries.Get(key.ToString() ).Name);
         }
 
         public Task<IEnumerable<KeyValuePair<object, string>>> LookupList(string search = null, string filter = null)
