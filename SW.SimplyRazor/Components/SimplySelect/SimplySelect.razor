@@ -7,7 +7,7 @@
 @using SW.ModelApi
 
 
-<select @onchange="SelectValueChanged" class="form-control">
+<select @onchange="SelectValueChanged" class="form-control" @attributes="UnmatchedAttributes">
 
     @if (EmptyText != null)
     {
@@ -44,7 +44,7 @@
                 value = itemUntyped.Value;
             }
 
-            <option selected="@(Value != null && Value.ToString() == key.ToString() )" value="@key">@value</option>
+            <option selected="@(Value != null && Value.ToString() == ((object)key).ToString() )" value="@key">@value</option>
 
             index++;
         }
@@ -65,9 +65,6 @@
     public IEnumerable Items { get; set; }
 
     [Parameter]
-    public EventCallback ItemsLoaded { get; set; }
-
-    [Parameter]
     public string Lookup { get; set; }
 
     [Parameter]
@@ -76,16 +73,13 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
-
     async protected override Task OnInitializedAsync()
     {
-
-        if (Lookup != null)
+        if (Items == null && Lookup != null)
         {
             var client = mapiClientFactory.GetClient(Lookup);
 
             Items = await client.LookupList();
-
         }
         else if (Items == null && typeof(TKey).BaseType == typeof(Enum))
         {
