@@ -70,6 +70,12 @@ namespace SW.SimplyRazor.SampleWeb
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var svc = scope.ServiceProvider.GetServices(typeof(IModelApi)); 
+
+            } 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

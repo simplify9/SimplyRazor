@@ -1,0 +1,26 @@
+﻿@namespace SW.SimplyRazor
+@implements IDisposable
+@implements ISimplyColumn
+
+@code {
+
+    [CascadingParameter(Name = "Grid")]
+    public ISimplyGrid Grid { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Field { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Grid.AddColumn(this);
+    }
+
+    void IDisposable.Dispose()
+    {
+        Grid.RemoveColumn(this);
+    }
+
+}

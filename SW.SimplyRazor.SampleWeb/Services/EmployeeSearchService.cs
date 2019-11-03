@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor.SampleWeb
 {
-    public class EmployeeSearchService : ISearchable<Employee>
+    public class EmployeeSearchService : ISearchable<Employee>, IModelApi
     {
         public Task<IEnumerable<ISearchyFilterConfig>> GetFilterConfigs()
         {
@@ -47,9 +47,12 @@ namespace SW.SimplyRazor.SampleWeb
         {
             await Task.Delay(TimeSpan.FromMilliseconds(500));
 
+            var result = FakeEmployees.Data.AsQueryable().Search(request.Conditions, null, request.PageSize, request.PageIndex);
+
             return new SearchyResponse<Employee>
             {
-                Result = FakeEmployees.Data.AsQueryable().Search(request.Conditions, null, request.PageSize, request.PageIndex)
+                Result = result,
+                TotalCount = FakeEmployees.Data.AsQueryable().Search(request.Conditions).Count()
             };
         }
     }

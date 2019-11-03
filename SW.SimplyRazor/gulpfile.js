@@ -4,6 +4,7 @@
 /// <reference path="components/simplytypeahead/simplytypeaheadinterop.js" />
 /// <reference path="components/simplyupload/simplyuploadinterop.js" />
 /// <reference path="components/simplyalert/simplyalertinterop.js" />
+/// <reference path="node_modules/tabulator-tables/dist/js/tabulator.min.js" />
 /*
 Gulp file....
 */
@@ -24,13 +25,15 @@ gulp.task('js', function () {
         'node_modules/bs-custom-file-input/dist/bs-custom-file-input.js',
         'node_modules/@tarekraafat/autocomplete.js/dist/js/autocomplete.js',
         'node_modules/bootstrap.native/dist/bootstrap-native-v4.js',
+        'node_modules/tabulator-tables/dist/js/tabulator.min.js',
 
         'components/simplyeditor/simplyeditorinterop.js',
         'components/simplytags/simplytagsinterop.js',
         'components/simplytypeahead/simplytypeaheadinterop.js',
         'components/simplyupload/simplyuploadinterop.js',
         'components/simplymodal/SimplyModalInterop.js',
-        "components/simplyalert/simplyalertinterop.js"
+        'components/simplyalert/simplyalertinterop.js',
+        'components/simplygrid/simplygridinterop.js',
 
     ])
         .pipe(concat('simply.razor.js'))
@@ -42,7 +45,9 @@ gulp.task('css', function () {
     return gulp.src([
         'node_modules/quill/dist/quill.snow.css',
         'node_modules/@yaireo/tagify/dist/tagify.css',
-        'components/simplytypeahead/simplytypeahead.css'
+        'node_modules/tabulator-tables/dist/css/bootstrap/tabulator_bootstrap.min.css',
+        'components/simplytypeahead/simplytypeahead.css',
+
     ])
         .pipe(concat('simply.razor.css'))
         .pipe(gulp.dest('wwwroot'));

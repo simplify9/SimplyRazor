@@ -1,0 +1,46 @@
+﻿@typeparam TModel
+@namespace SW.SimplyRazor
+@implements ISimplyGrid
+@inject IJSRuntime JSRuntime
+
+<CascadingValue Value="this" Name="Grid">
+    @ChildContent
+</CascadingValue>
+
+<div @ref="tableElementRef" id="example-table"></div>
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+
+    ElementReference tableElementRef;
+    SimplyGridInterop wrapper;
+
+    protected override void OnInitialized()
+    {
+        columns = new List<ISimplyColumn>();
+    }
+
+    async protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            wrapper = new SimplyGridInterop(this, JSRuntime);
+            await wrapper.Initialize(tableElementRef, columns);
+        }
+    }
+
+    List<ISimplyColumn> columns;
+
+    public void AddColumn(ISimplyColumn column)
+    {
+        columns.Add(column);
+    }
+    public void RemoveColumn(ISimplyColumn column)
+    {
+        columns.Remove(column);
+    }
+
+}

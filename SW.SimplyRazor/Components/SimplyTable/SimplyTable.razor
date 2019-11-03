@@ -125,7 +125,7 @@
         };
 
         Value = childModel == null ? null : (IList<TModel>)childModel;
-        ItemData = new TableItemData(Value.Count);
+        if (Value!=null) ItemData = new TableItemData(Value.Count);
     }
 
     void OnReceived(DatalistReady datalist)

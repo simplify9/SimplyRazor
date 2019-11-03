@@ -1,27 +1,23 @@
 ﻿@namespace SW.SimplyRazor
+@inject NotifyService notify
 
-<button  disabled="@Working" type="submit" @onclick="ButtonOnClick" @attributes="UnmatchedAttributes">
+<button disabled="@Working" type="submit" @onclick="ButtonOnClick" @attributes="UnmatchedAttributes">
     @if (Working)
     {
         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
     }
-    else if (clicked)
-    {
-        @Clicked
-    }
     else
     {
-        @Text
+        @ChildContent
     }
 </button>
 
 @code {
 
     bool clicked;
-    string cssClass;
 
-    [Parameter]
-    public bool Working { get; set; }
+
+    bool Working;
 
     [Parameter]
     public object Value { get; set; }
@@ -33,22 +29,28 @@
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
     [Parameter]
-    public RenderFragment Text { get; set; }
+    public RenderFragment ChildContent { get; set; }
 
-    [Parameter]
-    public RenderFragment Clicked { get; set; }
+
 
     protected override void OnInitialized()
     {
-        if (Clicked == null) Clicked = Text;
-        cssClass = "btn btn-primary btn-block";
     }
 
     async Task ButtonOnClick(EventArgs args)
     {
-        Working = true;
-        await OnClick.InvokeAsync(Value);
-        Working = false;
-        clicked = true;
+        try
+        {
+            Working = true;
+            await OnClick.InvokeAsync(Value);
+            Working = false;
+            clicked = true;
+        }
+        catch (Exception ex)
+        {
+
+            await notify.Publish(new UserMessage { Body = ex.Message, Level = AttentionLevel.Error });
+        }
+
     }
 }

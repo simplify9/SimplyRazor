@@ -17,7 +17,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="8.5.0" />
+    <PackageReference Include="FluentValidation" Version="8.5.1" />
     <PackageReference Include="Humanizer.Core" Version="2.7.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0">
@@ -28,10 +28,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Include="Scrutor" Version="3.1.0" />
-    <PackageReference Include="SimplyWorks.I18n.Mapi" Version="2019.10.29.4" />
-    <PackageReference Include="SimplyWorks.ModelApi" Version="2019.10.30.2" />
-    <PackageReference Include="SimplyWorks.Searchy" Version="2019.10.28.1" />
-    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2019.10.30.2" />
+    <PackageReference Include="SimplyWorks.I18n.Mapi" Version="2019.11.3.4" />
+    <PackageReference Include="SimplyWorks.ModelApi" Version="2019.11.3.6" />
+    <PackageReference Include="SimplyWorks.Searchy" Version="2019.11.3.2" />
+    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2019.11.3.2" />
 
 
   </ItemGroup>
