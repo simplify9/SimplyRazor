@@ -3,13 +3,20 @@
 @inject MapiClientFactory mapiClientFactory
 @inject NavigationManager nav
 @inject NotifyService notify
+@implements ISimplySearch
+@inject IJSRuntime JSRuntime
 @using SW.ModelApi
 @using Humanizer
 
 <SimplyNotify Notification="PageIndexRequested" OnReceived="OnPageIndexRequested" />
 
 <CascadingValue Value="filterConfigs" Name="FilterConfigs">
-    @ChildContent
+    @Filters
+</CascadingValue>
+
+
+<CascadingValue Value="this" Name="Search">
+    @Columns
 </CascadingValue>
 
 <SimplyAlertHub></SimplyAlertHub>
@@ -31,57 +38,62 @@
         </div>
     </div>
     <div class="col-sm-6 text-right">
-        <SimplyButton form="searchform" class="btn btn-secondary" style="width: 120px;" type="submit" >Search</SimplyButton>
+        <SimplyButton form="searchform" class="btn btn-secondary" style="width: 120px;" type="submit">Search</SimplyButton>
     </div>
 </div>
 
 @for (int i = 0; i < filters.Count; i++)
 {
     int index = i;
-    <div class="form-group row" @key="filters[index]" >
-        <div class=" input-group col">
+<div class="form-group row" @key="filters[index]">
+    <div class=" input-group col">
 
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="">@filters[index].Text</span>
-            </div>
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="">@filters[index].Text</span>
+        </div>
 
-            <SimplySelect @bind-value="filters[index].Rule"
-                          Items="filters[index].Rules" 
-                          TKey="SearchyRule" />
+        <SimplySelect @bind-value="filters[index].Rule"
+                      Items="filters[index].Rules"
+                      TKey="SearchyRule" />
 
-            @switch (filters[index].Type)
+        @switch (filters[index].Type)
             {
                 case SearchyFilterConfigType.Text:
 
-                    <input @bind="filters[index].ValueString" type="text" class="form-control"  form="searchform" required="@filters[index].Required" />
+        <input @bind="filters[index].ValueString" type="text" class="form-control" form="searchform" required="@filters[index].Required" />
                     break;
 
                 case SearchyFilterConfigType.Number:
 
-                    <input @bind="filters[index].ValueDecimal" type="number" class="form-control" form="searchform" required="@filters[index].Required" />
+        <input @bind="filters[index].ValueDecimal" type="number" class="form-control" form="searchform" required="@filters[index].Required" />
                     break;
 
                 case SearchyFilterConfigType.Date:
 
-                    <input @bind="filters[index].ValueDateTime" type="date" class="form-control" form="searchform" required="@filters[index].Required" />
+        <input @bind="filters[index].ValueDateTime" type="date" class="form-control" form="searchform" required="@filters[index].Required" />
                     break;
 
             }
-            <div class="input-group-append">
-                <button @onclick="@(e => RemoveFilter(index))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
-            </div>
+        <div class="input-group-append">
+            <button @onclick="@(e => RemoveFilter(index))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
         </div>
     </div>
+</div>
 }
+
+<div @ref="tableElementRef" ></div>
 
 
 @code{
 
-    //[Parameter]
-    //public EventCallback<IEnumerable<TModel>> ValueChanged { get; set; }
+        //[Parameter]
+        //public EventCallback<IEnumerable<TModel>> ValueChanged { get; set; }
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment Filters { get; set; }
+
+    [Parameter]
+    public RenderFragment Columns { get; set; }
 
     [Parameter]
     public int PageSize { get; set; }
@@ -111,6 +123,8 @@
 
     protected async override Task OnInitializedAsync()
     {
+        columns = new List<ISimplyColumn>();
+
         filters = new List<FilterModel>();
         filterConfigs = new List<ISearchyFilterConfig>();
         var client = mapiClientFactory.GetClient<TModel>();
@@ -121,6 +135,20 @@
             if (fc.Default || fc.Required) filters.Add(new FilterModel(fc) { Rule = fc.Rules.First() });
 
     }
+
+    async protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            wrapper = new SimplySearchInterop(this, JSRuntime);
+            await wrapper.Initialize(tableElementRef, columns);
+        }
+    }
+
+
+    ElementReference tableElementRef;
+    SimplySearchInterop wrapper;
+
 
     bool searching;
 
@@ -202,6 +230,17 @@
         public string[] ValueStringArray { get; set; }
         public DateTime[] ValueDateTimeArray { get; set; }
 
+    }
+
+    List<ISimplyColumn> columns;
+
+    public void AddColumn(ISimplyColumn column)
+    {
+        columns.Add(column);
+    }
+    public void RemoveColumn(ISimplyColumn column)
+    {
+        columns.Remove(column);
     }
 
 }

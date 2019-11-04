@@ -4,23 +4,27 @@
 
 @code {
 
-    [CascadingParameter(Name = "Grid")]
-    public ISimplyGrid Grid { get; set; }
+    [CascadingParameter(Name = "Search")]
+    public ISimplySearch Search { get; set; }
 
     [Parameter]
-    public string Title { get; set; }
+    public string Title 
+    { 
+        get; 
+        set; 
+    }
 
     [Parameter]
     public string Field { get; set; }
 
     protected override void OnInitialized()
     {
-        Grid.AddColumn(this);
+        Search.AddColumn(this);
     }
 
     void IDisposable.Dispose()
     {
-        Grid.RemoveColumn(this);
+        Search.RemoveColumn(this);
     }
 
 }

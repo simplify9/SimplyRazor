@@ -33,7 +33,7 @@ gulp.task('js', function () {
         'components/simplyupload/simplyuploadinterop.js',
         'components/simplymodal/SimplyModalInterop.js',
         'components/simplyalert/simplyalertinterop.js',
-        'components/simplygrid/simplygridinterop.js',
+        'components/simplysearch/simplysearchinterop.js',
 
     ])
         .pipe(concat('simply.razor.js'))

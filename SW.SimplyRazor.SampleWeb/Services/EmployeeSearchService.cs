@@ -47,7 +47,7 @@ namespace SW.SimplyRazor.SampleWeb
         {
             await Task.Delay(TimeSpan.FromMilliseconds(500));
 
-            var result = FakeEmployees.Data.AsQueryable().Search(request.Conditions, null, request.PageSize, request.PageIndex);
+            var result = FakeEmployees.Data.AsQueryable().Search(request.Conditions, request.Sorts, request.PageSize, request.PageIndex);
 
             return new SearchyResponse<Employee>
             {
