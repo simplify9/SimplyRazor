@@ -136,7 +136,7 @@
     {
         if (firstRender)
         {
-            wrapper = new SimplySearchInterop(this, JSRuntime);
+            wrapper = new SimplySearchInterop(this, JSRuntime, notify);
             await wrapper.Initialize(tableElementRef, columns);
         }
     }

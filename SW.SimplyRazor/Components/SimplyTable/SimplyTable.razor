@@ -3,7 +3,6 @@
 @namespace SW.SimplyRazor
 @using System.Reflection
 
-<SimplyNotify Notification="DatalistReady" OnReceived="OnReceived"></SimplyNotify>
 
 <div>
     <CascadingValue Value="this" Name="Table">
@@ -128,11 +127,11 @@
         if (Value!=null) ItemData = new TableItemData(Value.Count);
     }
 
-    void OnReceived(DatalistReady datalist)
-    {
-        Value = ((IEnumerable<TModel>)datalist.Datalist).ToList();
-        ItemData = new TableItemData(Value.Count);
-    }
+    //void OnReceived(DatalistReady datalist)
+    //{
+    //    Value = ((IEnumerable<TModel>)datalist.Datalist).ToList();
+    //    ItemData = new TableItemData(Value.Count);
+    //}
 
     //Task OnModalKeyDown(KeyboardEventArgs args)
     //{

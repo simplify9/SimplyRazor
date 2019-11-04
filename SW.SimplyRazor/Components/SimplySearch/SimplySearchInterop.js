@@ -1,10 +1,11 @@
 ﻿(function () {
     window.simplySearchInterop = {
 
-        init: function (element, id, columns, url) {
+        init: function (element, id, dotNetRef, columns, url) {
 
             //create Tabulator on DOM element with id "example-table"
             window[id] = new Tabulator(element, {
+                placeholder: "No Data Available", //display message to user on empty table
                 //pagination: "remote", //enable remote pagination
                 ajaxProgressiveLoad: "scroll", //enable progressive loading
                 ajaxProgressiveLoadScrollMargin: 300, //triger next ajax load when scroll bar is 300px or less from the bottom of the table.
@@ -20,12 +21,12 @@
                 //    "data" : "result"
                 //},
                 ajaxURL: "https://localhost:5001/mapi/sw.bogusdatamodels.employee?",
-                ajaxConfig: "GET",
-                ajaxContentType: "json",
-                ajaxParams: {
-                    searchyFilters: []
-                    //key2: "value2"
-                }, //ajax parameters
+                //ajaxConfig: "GET",
+                //ajaxContentType: "json",
+                //ajaxParams: {
+                //    searchyFilters: []
+                //    //key2: "value2"
+                //}, //ajax parameters
                 ajaxURLGenerator: function (url, config, params) {
                     //url - the url from the ajaxURL property or setData function
                     //config - the request config object from the ajaxConfig property
@@ -45,6 +46,10 @@
                     };
 
                     return rq; //return the tableData property of a response json object
+                },
+                ajaxError: function (error) {
+
+                    dotNetRef.invokeMethodAsync('ReportError', error);
                 },
                 //ajaxRequestFunc: (url, config, params) =>
                 //{
@@ -83,7 +88,7 @@
                 //    //});
                 //},
                 height: 400, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-                //data: tabledata, //assign data to table
+                data: [], //assign data to table
                 layout: "fitColumns", //fit columns to width of table (optional)
                 columns: columns,
                 rowClick: function (e, row) { //trigger an alert message when the row is clicked

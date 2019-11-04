@@ -13,12 +13,14 @@ namespace SW.SimplyRazor
     {
         private readonly ISimplySearch search;
         private readonly IJSRuntime runtime;
+        private readonly NotifyService notify;
         private readonly string id;
 
-        public SimplySearchInterop(ISimplySearch search, IJSRuntime runtime)
+        public SimplySearchInterop(ISimplySearch search, IJSRuntime runtime, NotifyService notify)
         {
             this.search = search;
             this.runtime = runtime;
+            this.notify = notify;
             id = $"tabulator_{Guid.NewGuid().ToString("N")}";
         }
 
@@ -27,33 +29,24 @@ namespace SW.SimplyRazor
             //var newCols = columns.Select(e => new { e.Field, e.Title  });
 
 
-            await runtime.InvokeVoidAsync("simplySearchInterop.init", element, id, columns);
+            await runtime.InvokeVoidAsync("simplySearchInterop.init", element, id, DotNetObjectReference.Create(this), columns);
 
         }
 
-        async public Task SetFilter(IEnumerable<FilterModel> filters)
+        async public Task SetFilter(IEnumerable<ISearchyFilterTyped> filters)
         {
             var filtersQueryString = string.Join("&", filters.Select(f => new SearchyFilter(f).ToString()).ToArray()); ; 
             await runtime.InvokeVoidAsync("simplySearchInterop.setFilter", id, filtersQueryString);
         }
 
-        //private class TabulatorFilter
-        //{
-        //    public TabulatorFilter(FilterModel filterModel)
-        //    {
-        //        //Field = filterModel.Field;
-                
-        //        //switch (filterModel.Rule)
-        //        //{
-        //        //    case SearchyRule.EqualsTo:
-        //        //        Type = "=";
-        //        //}
-        //    }
+        [JSInvokable]
+        async public Task ReportError(object error)
+        {
+            await notify.Publish(new UserMessage { Level = AttentionLevel.Error, Body = "Errors encountered." });
+        }
 
-        //    public string Field { get; set; }
-        //    public string Type { get; set; }
-        //    public object Value { get; set; }
-        //}
+
+
 
 
 
