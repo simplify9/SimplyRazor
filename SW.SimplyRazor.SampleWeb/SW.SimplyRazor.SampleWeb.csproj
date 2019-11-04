@@ -31,7 +31,7 @@
     <PackageReference Include="SimplyWorks.I18n.Mapi" Version="2019.11.3.4" />
     <PackageReference Include="SimplyWorks.ModelApi" Version="2019.11.4.2" />
     <PackageReference Include="SimplyWorks.Searchy" Version="2019.11.3.2" />
-    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2019.11.4.2" />
+    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2019.11.4.3" />
 
 
   </ItemGroup>

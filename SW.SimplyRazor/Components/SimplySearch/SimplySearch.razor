@@ -8,14 +8,10 @@
 @using SW.ModelApi
 @using Humanizer
 
-<SimplyNotify Notification="PageIndexRequested" OnReceived="OnPageIndexRequested" />
-
-<CascadingValue Value="filterConfigs" Name="FilterConfigs">
-    @Filters
-</CascadingValue>
 
 
 <CascadingValue Value="this" Name="Search">
+    @Filters
     @Columns
 </CascadingValue>
 
@@ -24,7 +20,7 @@
 @if (filterConfigs.Count == 0) return;
 
 
-<form id="searchform" @onsubmit="()=> Search(0)"></form>
+<form id="searchform" @onsubmit="()=> Search()"></form>
 
 <div class="form-group row">
     <label for="filterSelect" class="col-sm-1 col-form-label">Search</label>
@@ -86,8 +82,8 @@
 
 @code{
 
-        //[Parameter]
-        //public EventCallback<IEnumerable<TModel>> ValueChanged { get; set; }
+    //[Parameter]
+    //public EventCallback<IEnumerable<TModel>> ValueChanged { get; set; }
 
     [Parameter]
     public RenderFragment Filters { get; set; }
@@ -100,7 +96,7 @@
 
     int filterValue;
     List<FilterModel> filters;
-    List<ISearchyFilterConfig> filterConfigs { get; set; }
+    
 
     Task FilterAddOnClick(object e)
     {
@@ -152,31 +148,14 @@
 
     bool searching;
 
-    async Task Search(int pageIndex)
+    async Task Search()
     {
 
         try
         {
-            searching = true;
 
-            var sreq = new SearchyRequest(new SearchyCondition(filters))
-            {
-                PageIndex = pageIndex,
-                PageSize = PageSize
-            };
+            await wrapper.SetFilter(filters);  
 
-            var client = mapiClientFactory.GetClient<TModel>();
-            var sres = await client.Search(sreq);
-
-            //await ValueChanged.InvokeAsync(sres.Result);
-            await notify.Publish(new DatalistReady
-            {
-                Datalist = sres.Result,
-                TotalCount = sres.TotalCount,
-                Count = sres.Result.Count(),
-                PageSize = sreq.PageSize,
-                PageIndex = pageIndex
-            });
         }
         catch (Exception ex)
         {
@@ -188,10 +167,10 @@
         }
     }
 
-    async Task OnPageIndexRequested(PageIndexRequested indexRequested)
-    {
-        await Search(indexRequested.Index);
-    }
+    //async Task OnPageIndexRequested(PageIndexRequested indexRequested)
+    //{
+    //    await Search(indexRequested.Index);
+    //}
 
     Debouncer StepperDeboucer = new Debouncer(1000); // one second
 
@@ -201,36 +180,18 @@
         await StepperDeboucer.Debouce(() => { Console.WriteLine(args.Value); });
     }
 
-    private class FilterModel : ISearchyFilterConfig, ISearchyFilterTyped
+    List<ISearchyFilterConfig> filterConfigs;
+
+    public void AddFilterConfig(ISearchyFilterConfig filter)
     {
-        public FilterModel(ISearchyFilterConfig isfc)
-        {
-
-            Type = isfc.Type;
-            Text = isfc.Text;
-            Field = isfc.Field;
-            Required = isfc.Required;
-            Default = isfc.Default;
-            Rules = isfc.Rules;
-        }
-
-        public object Value { get; set; }
-        public SearchyRule Rule { get; set; }
-        public string Type { get; set; }
-        public string Text { get; set; }
-        public string Field { get; set; }
-        public ICollection<SearchyRule> Rules { get; set; }
-        public bool Required { get; set; }
-        public bool Default { get; set; }
-
-        public decimal? ValueDecimal { get; set; }
-        public string ValueString { get; set; }
-        public DateTime? ValueDateTime { get; set; }
-        public decimal[] ValueDecimalArray { get; set; }
-        public string[] ValueStringArray { get; set; }
-        public DateTime[] ValueDateTimeArray { get; set; }
-
+        filterConfigs.Add(filter); 
     }
+
+    public void RemoveFilterConfig(ISearchyFilterConfig filter)
+    {
+        filterConfigs.Remove(filter); 
+    }
+
 
     List<ISimplyColumn> columns;
 

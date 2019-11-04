@@ -4,8 +4,8 @@
 
 @code {
 
-    [CascadingParameter(Name = "FilterConfigs")]
-    public IList<ISearchyFilterConfig> FilterConfigs { get; set; }
+    [CascadingParameter(Name = "Search")]
+    public ISimplySearch Search { get; set; }
 
     [Parameter]
     public string Type { get; set; }
@@ -27,17 +27,17 @@
 
     protected override void OnInitialized()
     {
-        if (FilterConfigs != null)
-        {
-            if (Rules == null) Rules = new List<SearchyRule>();
-            if (Rules.Count == 0) Rules = SearchyFilterConfigType.RulesFor(Type);
-            FilterConfigs.Add(this);
-        }
+        
+        if (Rules == null) Rules = new List<SearchyRule>();
+        if (Rules.Count == 0) Rules = SearchyFilterConfigType.RulesFor(Type);
+
+        Search.AddFilterConfig(this);
+
     }
 
     public void Dispose()
     {
-        FilterConfigs?.Remove(this);
+        Search.RemoveFilterConfig(this);
     }
 
 }

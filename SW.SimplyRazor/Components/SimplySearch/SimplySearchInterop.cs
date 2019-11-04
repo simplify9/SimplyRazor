@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using SW.PrimitiveTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,32 @@ namespace SW.SimplyRazor
             await runtime.InvokeVoidAsync("simplySearchInterop.init", element, id, columns);
 
         }
+
+        async public Task SetFilter(IEnumerable<FilterModel> filters)
+        {
+            var filtersQueryString = string.Join("&", filters.Select(f => new SearchyFilter(f).ToString()).ToArray()); ; 
+            await runtime.InvokeVoidAsync("simplySearchInterop.setFilter", id, filtersQueryString);
+        }
+
+        //private class TabulatorFilter
+        //{
+        //    public TabulatorFilter(FilterModel filterModel)
+        //    {
+        //        //Field = filterModel.Field;
+                
+        //        //switch (filterModel.Rule)
+        //        //{
+        //        //    case SearchyRule.EqualsTo:
+        //        //        Type = "=";
+        //        //}
+        //    }
+
+        //    public string Field { get; set; }
+        //    public string Type { get; set; }
+        //    public object Value { get; set; }
+        //}
+
+
 
 
     }

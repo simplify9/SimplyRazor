@@ -1,7 +1,7 @@
 ﻿(function () {
     window.simplySearchInterop = {
 
-        init: function (element, id, columns, dotNetRef) {
+        init: function (element, id, columns, url) {
 
             //create Tabulator on DOM element with id "example-table"
             window[id] = new Tabulator(element, {
@@ -9,6 +9,7 @@
                 ajaxProgressiveLoad: "scroll", //enable progressive loading
                 ajaxProgressiveLoadScrollMargin: 300, //triger next ajax load when scroll bar is 300px or less from the bottom of the table.
                 ajaxSorting: true, //send sort data to the server instead of processing locally
+                //ajaxFiltering: true, 
                 paginationSize: 20, //optional parameter to request a certain number of rows per page
                 //paginationDataSent: {
                 //    "page": "pageNumber", //change page request parameter to "pageNo"
@@ -18,12 +19,12 @@
                 //    "last_page": "totalPages", //change last_page parameter name to "max_pages"
                 //    "data" : "result"
                 //},
-                //ajaxURL: "https://localhost:5001/mapi/sw.bogusdatamodels.employee/",
+                ajaxURL: "https://localhost:5001/mapi/sw.bogusdatamodels.employee?",
                 ajaxConfig: "GET",
                 ajaxContentType: "json",
                 ajaxParams: {
-                    count: true,
-                    key2: "value2"
+                    searchyFilters: []
+                    //key2: "value2"
                 }, //ajax parameters
                 ajaxURLGenerator: function (url, config, params) {
                     //url - the url from the ajaxURL property or setData function
@@ -31,7 +32,7 @@
                     //params - the params object from the ajaxParams property, this will also include any pagination, filter and sorting properties based on table setup
                     const sortStr = params.sorters.map(s => `sort=${s.field}:${(s.dir == "asc") ? 1 : 2}`).join('&');
                     //return request url
-                    return url + `?count=true&page=${params.page - 1}&size=${params.size}&${sortStr}`; //encode parameters as a json object
+                    return url + `count=true&page=${params.page - 1}&size=${params.size}&${sortStr}`; //encode parameters as a json object
                 },
                 ajaxResponse: function (url, params, response) {
                     //url - the URL of the request
@@ -94,10 +95,10 @@
 
         },
 
-        hideModal: function (element) {
+        setFilter: function (id, filtersQueryString) {
 
-
-
+            window[id].setData(`https://localhost:5001/mapi/sw.bogusdatamodels.employee?${filtersQueryString}&`);
+            //window[id].setFilter(filters);
         }
     }
 

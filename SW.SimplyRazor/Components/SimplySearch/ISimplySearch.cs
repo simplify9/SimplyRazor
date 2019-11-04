@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SW.PrimitiveTypes;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,5 +9,8 @@ namespace SW.SimplyRazor
     {
         void AddColumn(ISimplyColumn column);
         void RemoveColumn(ISimplyColumn column);
+
+        void AddFilterConfig(ISearchyFilterConfig filter);
+        void RemoveFilterConfig(ISearchyFilterConfig filter);
     }
 }
