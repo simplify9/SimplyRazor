@@ -1,13 +1,14 @@
 ﻿@page "/"
-@inject IServiceProvider  serviceProvider
+
 @using SW.PrimitiveTypes
 
+<SimplyAlertHub></SimplyAlertHub>
 
 <SimplySearch PageSize="10" TModel="Employee">
     <Filters>
-        <SimplyFilter Field="Id" Text="Id" Type="@SearchyFilterConfigType.Number"></SimplyFilter>
-        <SimplyFilter Field="HandlerName" Default="true" Text="Handler" Type="@SearchyFilterConfigType.Text"></SimplyFilter>
-        <SimplyFilter Field="Started" Text="Date" Type="@SearchyFilterConfigType.Date"></SimplyFilter>
+        <SimplyFilter Field="Id" Text="Id" Type="@SearchyDataType.Number"></SimplyFilter>
+        <SimplyFilter Field="HandlerName" Default="true" Text="Handler" Type="@SearchyDataType.Text"></SimplyFilter>
+        <SimplyFilter Field="Started" Text="Date" Type="@SearchyDataType.Date"></SimplyFilter>
     </Filters>
     <Columns>
         <SimplyColumn Field="id" Title="Id" />
@@ -15,52 +16,14 @@
         <SimplyColumn Field="lastName" Title="Last Name" />
         <SimplyColumn Field="Age" />
         <SimplyColumn Field="Married" />
-        <SimplyColumn Field="EmploymentStatus"  />
-        <SimplyColumn Field="Country"  />
+        <SimplyColumn Field="EmploymentStatus" />
+        <SimplyColumn Field="Country" />
         <SimplyColumn Field="Salary.Amount" />
         <SimplyColumn Field="Salary.Currency" />
     </Columns>
 </SimplySearch>
 
-@*<SimplyTable TModel="Employee" For="nameofsearch">
-    <Header>
-        <SimplyAction Type="ActionType.TableAdd" />
-    </Header>
-    <Fields>
-        <SimplyField>
-            <ColumnHeader>
-                Link
-            </ColumnHeader>
-            <ColumnValue>
-                <a href="@($"edit/{context.Model.FirstName}")">Edit</a>
-            </ColumnValue>
-        </SimplyField>
-        <SimplyField>
-            <ColumnValue>
-                <SimplyAction Type="ActionType.TableEdit" />
-                <SimplyAction Type="ActionType.TableDelete" />
-            </ColumnValue>
-        </SimplyField>
-        <SimplyField Name="FirstName" readonly></SimplyField>
-        <SimplyField Name="LastName">
-            <ColumnHeader>
-                L.N...
-            </ColumnHeader>
-            <ColumnValue>
-                @context.Model.LastName
-            </ColumnValue>
-        </SimplyField>
-        <SimplyField Name="Age" />
-        <SimplyField Name="Married" />
-        <SimplyField Name="EmploymentStatus" Lookup="mockmodel" />
-        <SimplyField Name="Country" Lookup="country" />
-        <SimplyField Name="Salary.Amount" />
-        <SimplyField Name="Salary.Currency" />
-    </Fields>
 
-</SimplyTable>
-
-<SimplyPager />*@
 
 @code{
     protected override void OnInitialized()

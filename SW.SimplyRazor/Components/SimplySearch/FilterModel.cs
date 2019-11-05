@@ -5,9 +5,9 @@ using System.Text;
 
 namespace SW.SimplyRazor
 {
-    public class FilterModel : ISearchyFilterConfig, ISearchyFilterTyped
+    public class FilterModel : ISearchyFilterSetup, ISearchyFilterTyped
     {
-        public FilterModel(ISearchyFilterConfig isfc)
+        public FilterModel(ISearchyFilterSetup isfc)
         {
             Type = isfc.Type;
             Text = isfc.Text;

@@ -12,31 +12,31 @@ namespace SW.SimplyRazor.SampleWeb
 {
     public class EmployeeSearchService : ISearchable<Employee>, IModelApi
     {
-        public Task<IEnumerable<ISearchyFilterConfig>> GetFilterConfigs()
+        public Task<IEnumerable<ISearchyFilterSetup>> GetFilterConfigs()
         {
-            IEnumerable<ISearchyFilterConfig> result = new List<ISearchyFilterConfig>
+            IEnumerable<ISearchyFilterSetup> result = new List<ISearchyFilterSetup>
             {
-                new SearchyFilterConfig
+                new SearchyFilterSetup
                 {
                     Field = "Id",
                     Text = "Id",
-                    Type = SearchyFilterConfigType.Number,
-                    Rules=SearchyFilterConfigType.RulesFor(SearchyFilterConfigType.Number)
+                    Type = SearchyDataType.Number,
+                    Rules=SearchyDataType.RulesFor(SearchyDataType.Number)
                 },
-                new SearchyFilterConfig
+                new SearchyFilterSetup
                 {
                     Field = "FirstName",
                     Text = "First Name",
-                    Type = SearchyFilterConfigType.Text,
+                    Type = SearchyDataType.Text,
                     Required = true,
-                    Rules=SearchyFilterConfigType.RulesFor(SearchyFilterConfigType.Text)
+                    Rules=SearchyDataType.RulesFor(SearchyDataType.Text)
                 },
-                new SearchyFilterConfig
+                new SearchyFilterSetup
                 {
                     Field = "LastName",
                     Text = "Last Name",
-                    Type = SearchyFilterConfigType.Text ,
-                    Rules=SearchyFilterConfigType.RulesFor(SearchyFilterConfigType.Text)
+                    Type = SearchyDataType.Text ,
+                    Rules=SearchyDataType.RulesFor(SearchyDataType.Text)
                 },
             };
 

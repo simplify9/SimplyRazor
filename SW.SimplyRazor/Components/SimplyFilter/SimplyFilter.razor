@@ -1,5 +1,5 @@
 ﻿@namespace SW.SimplyRazor
-@implements ISearchyFilterConfig
+@implements ISearchyFilterSetup
 @implements IDisposable
 
 @code {
@@ -29,7 +29,7 @@
     {
         
         if (Rules == null) Rules = new List<SearchyRule>();
-        if (Rules.Count == 0) Rules = SearchyFilterConfigType.RulesFor(Type);
+        if (Rules.Count == 0) Rules = SearchyDataType.RulesFor(Type);
 
         Search.AddFilterConfig(this);
 

@@ -10,7 +10,7 @@ namespace SW.SimplyRazor
         void AddColumn(ISimplyColumn column);
         void RemoveColumn(ISimplyColumn column);
 
-        void AddFilterConfig(ISearchyFilterConfig filter);
-        void RemoveFilterConfig(ISearchyFilterConfig filter);
+        void AddFilterConfig(ISearchyFilterSetup filter);
+        void RemoveFilterConfig(ISearchyFilterSetup filter);
     }
 }

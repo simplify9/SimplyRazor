@@ -13,9 +13,6 @@
     @Columns
 </CascadingValue>
 
-<SimplyAlertHub></SimplyAlertHub>
-
-
 
 
 <form id="searchform" @onsubmit="()=> Search()"></form>
@@ -52,17 +49,17 @@
 
             @switch (filters[index].Type)
             {
-                case SearchyFilterConfigType.Text:
+                case SearchyDataType.Text:
 
                     <input @bind="filters[index].ValueString" type="text" class="form-control" form="searchform" required="@filters[index].Required" />
                     break;
 
-                case SearchyFilterConfigType.Number:
+                case SearchyDataType.Number:
 
                     <input @bind="filters[index].ValueDecimal" type="number" class="form-control" form="searchform" required="@filters[index].Required" />
                     break;
 
-                case SearchyFilterConfigType.Date:
+                case SearchyDataType.Date:
 
                     <input @bind="filters[index].ValueDateTime" type="date" class="form-control" form="searchform" required="@filters[index].Required" />
                     break;
@@ -118,7 +115,7 @@
         columns = new List<ISimplyColumn>();
 
         filters = new List<FilterModel>();
-        filterConfigs = new List<ISearchyFilterConfig>();
+        filterConfigs = new List<ISearchyFilterSetup>();
         var client = mapiClientFactory.GetClient<TModel>();
         filterConfigs.AddRange(await client.GetFilterConfigs());
 
@@ -142,8 +139,6 @@
 
     ElementReference tableElementRef;
     SimplySearchInterop wrapper;
-
-
     bool searching;
 
     async Task Search()
@@ -174,18 +169,17 @@
     //    await StepperDeboucer.Debouce(() => { Console.WriteLine(args.Value); });
     //}
 
-    List<ISearchyFilterConfig> filterConfigs;
+    List<ISearchyFilterSetup> filterConfigs;
 
-    public void AddFilterConfig(ISearchyFilterConfig filter)
+    public void AddFilterConfig(ISearchyFilterSetup filter)
     {
         filterConfigs.Add(filter);
     }
 
-    public void RemoveFilterConfig(ISearchyFilterConfig filter)
+    public void RemoveFilterConfig(ISearchyFilterSetup filter)
     {
         filterConfigs.Remove(filter);
     }
-
 
     List<ISimplyColumn> columns;
 

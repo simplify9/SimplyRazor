@@ -28,8 +28,8 @@ namespace SW.SimplyRazor
 
         async public Task Initialize(ElementReference element, IEnumerable<ISimplyColumn> columns)
         {
-            //var newCols = columns.Select(e => new { e.Field, e.Title  });
-            await runtime.InvokeVoidAsync("simplySearchInterop.init", element, id, DotNetObjectReference.Create(this), columns, url);
+            var newCols = columns.Select(e => new { Field = $"{e.Field.Substring(0,1).ToLower()}{e.Field.Substring(1, e.Field.Length - 1)}", Title = e.Field });
+            await runtime.InvokeVoidAsync("simplySearchInterop.init", element, id, DotNetObjectReference.Create(this), newCols, url);
         }
 
         async public Task SetFilter(IEnumerable<ISearchyFilterTyped> filters)
