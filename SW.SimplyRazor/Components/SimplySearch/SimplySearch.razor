@@ -16,14 +16,14 @@
     <div class="col-sm-5 input-group ">
         <SimplySelect @bind-Value="filterValue"
                       EmptyText="Select filter"
-                      Items="@(filterConfigs.Select(e=>e.Text).ToList())" />
+                      Items="@(filterSetup.Select(e=>e.Text).ToList())" />
 
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
         </div>
     </div>
     <div class="col-sm-6 text-right">
-        <SimplyButton OnClick="() => Search()" class="btn btn-secondary" style="width: 120px;" >Search</SimplyButton>
+        <SimplyButton OnClick="() => Search()" class="btn btn-secondary" style="width: 120px;">Search</SimplyButton>
     </div>
 </div>
 
@@ -45,17 +45,17 @@
             {
                 case SearchyDataType.Text:
 
-                    <input @bind="filters[index].ValueString" type="text" class="form-control"  />
+                    <input @bind="filters[index].ValueString" type="text" class="form-control" />
                     break;
 
                 case SearchyDataType.Number:
 
-                    <input @bind="filters[index].ValueDecimal" type="number" class="form-control"  />
+                    <input @bind="filters[index].ValueDecimal" type="number" class="form-control" />
                     break;
 
                 case SearchyDataType.Date:
 
-                    <input @bind="filters[index].ValueDateTime" type="date" class="form-control"  />
+                    <input @bind="filters[index].ValueDateTime" type="date" class="form-control" />
                     break;
 
             }
@@ -68,9 +68,7 @@
 
 <div @ref="tableElementRef" />
 
-
 @code{
-
 
     [Parameter]
     public RenderFragment Filters { get; set; }
@@ -83,13 +81,16 @@
 
     int filterValue;
     List<FilterModel> filters;
-
+    ElementReference tableElementRef;
+    SimplySearchInterop wrapper;
+    List<ISearchyFilterSetup> filterSetup;
+    List<ISimplyColumn> columns;
 
     Task FilterAddOnClick(object e)
     {
         if (filterValue > 0)
         {
-            filters.Add(new FilterModel(filterConfigs[filterValue - 1]));
+            filters.Add(new FilterModel(filterSetup[filterValue - 1]));
             filterValue = 0;
         }
         return Task.CompletedTask;
@@ -103,20 +104,18 @@
             filters.RemoveAt(index);
     }
 
-
     protected async override Task OnInitializedAsync()
     {
         columns = new List<ISimplyColumn>();
 
         filters = new List<FilterModel>();
-        filterConfigs = new List<ISearchyFilterSetup>();
+        filterSetup = new List<ISearchyFilterSetup>();
         var client = mapiClientFactory.GetClient<TModel>();
-        filterConfigs.AddRange(await client.GetFilterSetup());
+        filterSetup.AddRange(await client.GetFilterSetup());
 
-        foreach (var fc in filterConfigs)
+        foreach (var fc in filterSetup)
 
             if (fc.Default || fc.Required) filters.Add(new FilterModel(fc) { Rule = fc.Rules.First() });
-
     }
 
     async protected override Task OnAfterRenderAsync(bool firstRender)
@@ -130,36 +129,27 @@
         }
     }
 
-    ElementReference tableElementRef;
-    SimplySearchInterop wrapper;
-
     async Task Search()
     {
         await wrapper.SetFilter(filters);
     }
 
-
     //Debouncer StepperDeboucer = new Debouncer(1000); // one second
-
 
     //private async Task FilterOnInput(ChangeEventArgs args)
     //{
     //    await StepperDeboucer.Debouce(() => { Console.WriteLine(args.Value); });
     //}
 
-    List<ISearchyFilterSetup> filterConfigs;
-
-    public void AddFilterConfig(ISearchyFilterSetup filter)
+    public void AddFilterSetup(ISearchyFilterSetup filter)
     {
-        filterConfigs.Add(filter);
+        filterSetup.Add(filter);
     }
 
-    public void RemoveFilterConfig(ISearchyFilterSetup filter)
+    public void RemoveFilterSetup(ISearchyFilterSetup filter)
     {
-        filterConfigs.Remove(filter);
+        filterSetup.Remove(filter);
     }
-
-    List<ISimplyColumn> columns;
 
     public void AddColumn(ISimplyColumn column)
     {
@@ -168,6 +158,11 @@
     public void RemoveColumn(ISimplyColumn column)
     {
         columns.Remove(column);
+    }
+
+    public Task RowClick(object data)
+    {
+        return Task.CompletedTask;
     }
 
 }

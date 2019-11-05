@@ -16044,7 +16044,7 @@ _.prototype.connectToTables=function(t){var e=this.table.modules.comms.getConnec
                 layout: "fitColumns", //fit columns to width of table (optional)
                 columns: columns,
                 rowClick: function (e, row) { //trigger an alert message when the row is clicked
-                    //alert("Row " + row.getData().id + " Clicked!!!!");
+                    dotNetRef.invokeMethodAsync('RowClick', row._row.data);
                 },
             });
 

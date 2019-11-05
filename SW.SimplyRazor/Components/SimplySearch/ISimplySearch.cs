@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks; 
 
 namespace SW.SimplyRazor
 {
@@ -9,8 +10,8 @@ namespace SW.SimplyRazor
     {
         void AddColumn(ISimplyColumn column);
         void RemoveColumn(ISimplyColumn column);
-
-        void AddFilterConfig(ISearchyFilterSetup filter);
-        void RemoveFilterConfig(ISearchyFilterSetup filter);
+        void AddFilterSetup(ISearchyFilterSetup filter);
+        void RemoveFilterSetup(ISearchyFilterSetup filter);
+        Task RowClick(object data);
     }
 }

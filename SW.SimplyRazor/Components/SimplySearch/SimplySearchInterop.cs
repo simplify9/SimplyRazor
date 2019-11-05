@@ -44,7 +44,12 @@ namespace SW.SimplyRazor
             await notify.Publish(new UserMessage { Level = AttentionLevel.Error, Body = "Errors encountered." });
         }
 
-
+        [JSInvokable]
+        async public Task RowClick(object data)
+        {
+            await search.RowClick(data);
+            //await notify.Publish(new UserMessage { Level = AttentionLevel.Error, Body = "Errors encountered." });
+        }
 
 
 
