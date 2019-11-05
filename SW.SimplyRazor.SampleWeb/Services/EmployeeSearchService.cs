@@ -12,7 +12,7 @@ namespace SW.SimplyRazor.SampleWeb
 {
     public class EmployeeSearchService : ISearchable<Employee>, IModelApi
     {
-        public Task<IEnumerable<ISearchyFilterSetup>> GetFilterConfigs()
+        public Task<IEnumerable<ISearchyFilterSetup>> GetFilterSetup()
         {
             IEnumerable<ISearchyFilterSetup> result = new List<ISearchyFilterSetup>
             {

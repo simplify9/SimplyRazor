@@ -29,7 +29,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Include="Scrutor" Version="3.1.0" />
     <PackageReference Include="SimplyWorks.I18n.Mapi" Version="2019.11.3.4" />
-    <PackageReference Include="SimplyWorks.ModelApi" Version="2019.11.5.3" />
+    <PackageReference Include="SimplyWorks.ModelApi" Version="2019.11.5.4" />
     <PackageReference Include="SimplyWorks.Searchy" Version="2019.11.3.2" />
     <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2019.11.5.2" />
 

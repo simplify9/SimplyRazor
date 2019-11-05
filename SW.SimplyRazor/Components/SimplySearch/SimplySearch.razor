@@ -1,21 +1,15 @@
 ﻿@typeparam TModel
 @namespace SW.SimplyRazor
 @inject MapiClientFactory mapiClientFactory
-@inject NavigationManager nav
 @inject NotifyService notify
 @implements ISimplySearch
 @inject IJSRuntime JSRuntime
 @using SW.ModelApi
 
-
 <CascadingValue Value="this" Name="Search">
     @Filters
     @Columns
 </CascadingValue>
-
-
-
-<form id="searchform" @onsubmit="()=> Search()"></form>
 
 <div class="form-group row">
     <label for="filterSelect" class="col-sm-1 col-form-label">Search</label>
@@ -29,7 +23,7 @@
         </div>
     </div>
     <div class="col-sm-6 text-right">
-        <SimplyButton form="searchform" class="btn btn-secondary" style="width: 120px;" type="submit">Search</SimplyButton>
+        <SimplyButton OnClick="() => Search()" class="btn btn-secondary" style="width: 120px;" >Search</SimplyButton>
     </div>
 </div>
 
@@ -51,17 +45,17 @@
             {
                 case SearchyDataType.Text:
 
-                    <input @bind="filters[index].ValueString" type="text" class="form-control" form="searchform" required="@filters[index].Required" />
+                    <input @bind="filters[index].ValueString" type="text" class="form-control"  />
                     break;
 
                 case SearchyDataType.Number:
 
-                    <input @bind="filters[index].ValueDecimal" type="number" class="form-control" form="searchform" required="@filters[index].Required" />
+                    <input @bind="filters[index].ValueDecimal" type="number" class="form-control"  />
                     break;
 
                 case SearchyDataType.Date:
 
-                    <input @bind="filters[index].ValueDateTime" type="date" class="form-control" form="searchform" required="@filters[index].Required" />
+                    <input @bind="filters[index].ValueDateTime" type="date" class="form-control"  />
                     break;
 
             }
@@ -117,7 +111,7 @@
         filters = new List<FilterModel>();
         filterConfigs = new List<ISearchyFilterSetup>();
         var client = mapiClientFactory.GetClient<TModel>();
-        filterConfigs.AddRange(await client.GetFilterConfigs());
+        filterConfigs.AddRange(await client.GetFilterSetup());
 
         foreach (var fc in filterConfigs)
 
@@ -136,28 +130,12 @@
         }
     }
 
-
     ElementReference tableElementRef;
     SimplySearchInterop wrapper;
-    bool searching;
 
     async Task Search()
     {
-
-        try
-        {
-
-            await wrapper.SetFilter(filters);
-
-        }
-        catch (Exception ex)
-        {
-            await notify.Publish(new UserMessage { Body = ex.Message, Level = AttentionLevel.Error });
-        }
-        finally
-        {
-            searching = false;
-        }
+        await wrapper.SetFilter(filters);
     }
 
 

@@ -1,8 +1,8 @@
 ﻿@namespace SW.SimplyRazor
 @inject NotifyService notify
 
-<button disabled="@Working" type="submit" @onclick="ButtonOnClick" @attributes="UnmatchedAttributes">
-    @if (Working)
+<button disabled="@working" type="button" @onclick="ButtonOnClick" @attributes="UnmatchedAttributes">
+    @if (working)
     {
         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
     }
@@ -17,7 +17,7 @@
     bool clicked;
 
 
-    bool Working;
+    bool working;
 
     [Parameter]
     public object Value { get; set; }
@@ -41,16 +41,14 @@
     {
         try
         {
-            Working = true;
+            working = true;
             await OnClick.InvokeAsync(Value);
-            Working = false;
+            working = false;
             clicked = true;
         }
         catch (Exception ex)
         {
-
             await notify.Publish(new UserMessage { Body = ex.Message, Level = AttentionLevel.Error });
         }
-
     }
 }
