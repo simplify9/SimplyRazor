@@ -6,8 +6,6 @@
 @implements ISimplySearch
 @inject IJSRuntime JSRuntime
 @using SW.ModelApi
-@using Humanizer
-
 
 
 <CascadingValue Value="this" Name="Search">
@@ -17,7 +15,7 @@
 
 <SimplyAlertHub></SimplyAlertHub>
 
-@if (filterConfigs.Count == 0) return;
+
 
 
 <form id="searchform" @onsubmit="()=> Search()"></form>
@@ -41,49 +39,47 @@
 @for (int i = 0; i < filters.Count; i++)
 {
     int index = i;
-<div class="form-group row" @key="filters[index]">
-    <div class=" input-group col">
+    <div class="form-group row" @key="filters[index]">
+        <div class=" input-group col">
 
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="">@filters[index].Text</span>
-        </div>
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="">@filters[index].Text</span>
+            </div>
 
-        <SimplySelect @bind-value="filters[index].Rule"
-                      Items="filters[index].Rules"
-                      TKey="SearchyRule" />
+            <SimplySelect @bind-value="filters[index].Rule"
+                          Items="filters[index].Rules"
+                          TKey="SearchyRule" />
 
-        @switch (filters[index].Type)
+            @switch (filters[index].Type)
             {
                 case SearchyFilterConfigType.Text:
 
-        <input @bind="filters[index].ValueString" type="text" class="form-control" form="searchform" required="@filters[index].Required" />
+                    <input @bind="filters[index].ValueString" type="text" class="form-control" form="searchform" required="@filters[index].Required" />
                     break;
 
                 case SearchyFilterConfigType.Number:
 
-        <input @bind="filters[index].ValueDecimal" type="number" class="form-control" form="searchform" required="@filters[index].Required" />
+                    <input @bind="filters[index].ValueDecimal" type="number" class="form-control" form="searchform" required="@filters[index].Required" />
                     break;
 
                 case SearchyFilterConfigType.Date:
 
-        <input @bind="filters[index].ValueDateTime" type="date" class="form-control" form="searchform" required="@filters[index].Required" />
+                    <input @bind="filters[index].ValueDateTime" type="date" class="form-control" form="searchform" required="@filters[index].Required" />
                     break;
 
             }
-        <div class="input-group-append">
-            <button @onclick="@(e => RemoveFilter(index))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
+            <div class="input-group-append">
+                <button @onclick="@(e => RemoveFilter(index))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
+            </div>
         </div>
     </div>
-</div>
 }
 
-<div @ref="tableElementRef" ></div>
+<div @ref="tableElementRef" />
 
 
 @code{
 
-    //[Parameter]
-    //public EventCallback<IEnumerable<TModel>> ValueChanged { get; set; }
 
     [Parameter]
     public RenderFragment Filters { get; set; }
@@ -96,7 +92,7 @@
 
     int filterValue;
     List<FilterModel> filters;
-    
+
 
     Task FilterAddOnClick(object e)
     {
@@ -134,10 +130,12 @@
 
     async protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && tableElementRef.Id != null)
         {
-            wrapper = new SimplySearchInterop(this, JSRuntime, notify);
+
+            wrapper = new SimplySearchInterop(this, JSRuntime, notify, mapiClientFactory.GetClient<TModel>().GetUri().ToString());
             await wrapper.Initialize(tableElementRef, columns);
+
         }
     }
 
@@ -154,7 +152,7 @@
         try
         {
 
-            await wrapper.SetFilter(filters);  
+            await wrapper.SetFilter(filters);
 
         }
         catch (Exception ex)
@@ -167,29 +165,25 @@
         }
     }
 
-    //async Task OnPageIndexRequested(PageIndexRequested indexRequested)
+
+    //Debouncer StepperDeboucer = new Debouncer(1000); // one second
+
+
+    //private async Task FilterOnInput(ChangeEventArgs args)
     //{
-    //    await Search(indexRequested.Index);
+    //    await StepperDeboucer.Debouce(() => { Console.WriteLine(args.Value); });
     //}
-
-    Debouncer StepperDeboucer = new Debouncer(1000); // one second
-
-
-    private async Task FilterOnInput(ChangeEventArgs args)
-    {
-        await StepperDeboucer.Debouce(() => { Console.WriteLine(args.Value); });
-    }
 
     List<ISearchyFilterConfig> filterConfigs;
 
     public void AddFilterConfig(ISearchyFilterConfig filter)
     {
-        filterConfigs.Add(filter); 
+        filterConfigs.Add(filter);
     }
 
     public void RemoveFilterConfig(ISearchyFilterConfig filter)
     {
-        filterConfigs.Remove(filter); 
+        filterConfigs.Remove(filter);
     }
 
 

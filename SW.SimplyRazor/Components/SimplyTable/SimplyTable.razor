@@ -142,7 +142,7 @@
 
     public Task AddModel()
     {
-        beingEditedModelIndex = -1;
+        beingEditedModelIndex = (Value == null) ? 0 : Value.Count;
         beingEditedModel = Activator.CreateInstance<TModel>();
         StateHasChanged();
         return Task.CompletedTask;
@@ -151,7 +151,7 @@
     public Task ChangeModel(int index)
     {
         beingEditedModelIndex = index;
-        beingEditedModel = Object.DeepClone(Value[index]); //.DeepClone();
+        beingEditedModel = Object.DeepClone(Value[index]); 
         StateHasChanged();
         return Task.CompletedTask;
     }
@@ -165,7 +165,7 @@
 
     async Task OnFormSubmit(ISimplyModal modal)
     {
-        if (beingEditedModelIndex < 0)
+        if (beingEditedModelIndex == 0 && Value == null || beingEditedModelIndex == Value.Count)
         {
             if (Value == null)
             {

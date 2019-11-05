@@ -3,7 +3,6 @@
 
         init: function (element, id, dotNetRef, columns, url) {
 
-            //create Tabulator on DOM element with id "example-table"
             window[id] = new Tabulator(element, {
                 placeholder: "No Data Available", //display message to user on empty table
                 //pagination: "remote", //enable remote pagination
@@ -20,7 +19,7 @@
                 //    "last_page": "totalPages", //change last_page parameter name to "max_pages"
                 //    "data" : "result"
                 //},
-                ajaxURL: "https://localhost:5001/mapi/sw.bogusdatamodels.employee?",
+                ajaxURL: `${url}?`,
                 //ajaxConfig: "GET",
                 //ajaxContentType: "json",
                 //ajaxParams: {
@@ -100,9 +99,9 @@
 
         },
 
-        setFilter: function (id, filtersQueryString) {
+        setFilter: function (id, filtersQueryString, url) {
 
-            window[id].setData(`https://localhost:5001/mapi/sw.bogusdatamodels.employee?${filtersQueryString}&`);
+            window[id].setData(`${url}?${filtersQueryString}&`);
             //window[id].setFilter(filters);
         }
     }
