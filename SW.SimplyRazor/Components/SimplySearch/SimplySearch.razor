@@ -4,6 +4,7 @@
 @inject NotifyService notify
 @implements ISimplySearch
 @inject IJSRuntime JSRuntime
+@using System.Text.Json 
 @using SW.ModelApi
 
 <CascadingValue Value="this" Name="Search">
@@ -79,6 +80,12 @@
     [Parameter]
     public int PageSize { get; set; }
 
+    [Parameter]
+    public string Index { get; set; }
+
+    [Parameter]
+    public string Height { get; set; }
+
     int filterValue;
     List<FilterModel> filters;
     ElementReference tableElementRef;
@@ -115,13 +122,14 @@
 
         foreach (var fc in filterSetup)
 
-            if (fc.Default || fc.Required) filters.Add(new FilterModel(fc) { Rule = fc.Rules.First() });
+            if (fc.Default || fc.Required) filters.Add(new FilterModel(fc));
     }
 
     async protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && tableElementRef.Id != null)
         {
+
 
             wrapper = new SimplySearchInterop(this, JSRuntime, notify, mapiClientFactory.GetClient<TModel>().GetUri().ToString());
             await wrapper.Initialize(tableElementRef, columns);
@@ -160,8 +168,10 @@
         columns.Remove(column);
     }
 
-    public Task RowClick(object data)
+    public Task RowClick(object index)
     {
+        //var item = JsonSerializer.Deserialize<TModel>(data.ToString(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
         return Task.CompletedTask;
     }
 

@@ -91,7 +91,7 @@
                 layout: "fitColumns", //fit columns to width of table (optional)
                 columns: columns,
                 rowClick: function (e, row) { //trigger an alert message when the row is clicked
-                    dotNetRef.invokeMethodAsync('RowClick', row._row.data);
+                    dotNetRef.invokeMethodAsync('RowClick', row._row.data['id']);
                 },
             });
 

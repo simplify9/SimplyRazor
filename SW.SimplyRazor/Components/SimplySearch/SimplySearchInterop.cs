@@ -28,27 +28,30 @@ namespace SW.SimplyRazor
 
         async public Task Initialize(ElementReference element, IEnumerable<ISimplyColumn> columns)
         {
-            var newCols = columns.Select(e => new { Field = $"{e.Field.Substring(0,1).ToLower()}{e.Field.Substring(1, e.Field.Length - 1)}", Title = e.Field });
+            var newCols = columns.Select(e => new { Field = $"{e.Field.Substring(0,1).ToLower()}{e.Field.Substring(1)}", Title = e.Field });
             await runtime.InvokeVoidAsync("simplySearchInterop.init", element, id, DotNetObjectReference.Create(this), newCols, url);
         }
 
         async public Task SetFilter(IEnumerable<ISearchyFilterTyped> filters)
         {
-            var filtersQueryString = string.Join("&", filters.Select(f => new SearchyFilter(f).ToString()).ToArray()); ; 
+            var filtersQueryString = string.Join("&", filters.Select(f => new SearchyFilter(f).ToString())); ; 
             await runtime.InvokeVoidAsync("simplySearchInterop.setFilter", id, filtersQueryString, url);
         }
 
         [JSInvokable]
         async public Task ReportError(object error)
         {
-            await notify.Publish(new UserMessage { Level = AttentionLevel.Error, Body = "Errors encountered." });
+            await notify.Publish(new UserMessage 
+            { 
+                Level = AttentionLevel.Error, 
+                Body = "Errors encountered." 
+            });
         }
 
         [JSInvokable]
         async public Task RowClick(object data)
         {
-            await search.RowClick(data);
-            //await notify.Publish(new UserMessage { Level = AttentionLevel.Error, Body = "Errors encountered." });
+            await search.RowClick(data.ToString());
         }
 
 

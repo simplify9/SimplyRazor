@@ -1,6 +1,7 @@
 ﻿using SW.PrimitiveTypes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace SW.SimplyRazor
@@ -15,6 +16,8 @@ namespace SW.SimplyRazor
             Required = isfc.Required;
             Default = isfc.Default;
             Rules = isfc.Rules;
+
+            Rule = isfc.Rules.First();
         }
 
         public object Value { get; set; }
