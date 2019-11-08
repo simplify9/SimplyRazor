@@ -18,22 +18,22 @@ namespace SW.SimplyRazor.SampleWeb
         public string[] Serves => new[] { "intmock" };
 
 
-        public Task<string> LookupValue(object key)
+        public Task<string> LookupValue(string key)
         {
             return Task.FromResult("sssssss"); //return Task.FromResult(i18NService.Countries.Get(key.ToString() ).Name);
         }
 
-        public Task<IEnumerable<KeyValuePair<object, string>>> LookupList(string searchPhrase = "", SearchyRequest  searchyRequest = null)
+        public Task<IDictionary<string, string>> LookupList(string searchPhrase = null, SearchyRequest  searchyRequest = null)
         {
             //throw new NotImplementedException();
 
-            IEnumerable<KeyValuePair<object, string>> result = new List<KeyValuePair<object, string>>()
+            IDictionary<string, string> result = new Dictionary<string, string>()
             {
-                new KeyValuePair<object, string> (1,"Text1"),
-                new KeyValuePair<object, string> (2, "Text2"),
-                new KeyValuePair<object, string> (3,"Text3"),
-                new KeyValuePair<object, string> (4,"Text4"),
-                new KeyValuePair<object, string> (5,"Text5"),
+                { "1","Text1" },
+                { "2", "Text2" },
+                { "3","Text3" },
+                { "4","Text4" },
+                { "5","Text5" },
 
             };
 

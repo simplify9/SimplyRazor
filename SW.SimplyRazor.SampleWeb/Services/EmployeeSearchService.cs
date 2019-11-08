@@ -43,7 +43,7 @@ namespace SW.SimplyRazor.SampleWeb
             return Task.FromResult(result);
         }
 
-        async public Task<SearchyResponse<Employee>> Search(SearchyRequest request)
+        async public Task<ISearchyResponse<Employee>> Search(SearchyRequest request)
         {
             await Task.Delay(TimeSpan.FromMilliseconds(500));
 
