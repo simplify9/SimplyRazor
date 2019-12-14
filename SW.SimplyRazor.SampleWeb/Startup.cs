@@ -41,7 +41,7 @@ namespace SW.SimplyRazor.SampleWeb
 
             services.AddI18n();
             services.AddMapi();
-            services.AddMapiClientFactory();
+            //services.AddMapiClientFactory();
             services.AddMapiModelMap<Employee>("employee");
             services.AddMapiModelMap<MockModel>("mockmodel");
             services.AddMapiModelMap<Country>("country");
@@ -71,11 +71,11 @@ namespace SW.SimplyRazor.SampleWeb
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
-            using (var scope = app.ApplicationServices.CreateScope())
-            {
-                var svc = scope.ServiceProvider.GetServices(typeof(IModelApi)); 
+            //using (var scope = app.ApplicationServices.CreateScope())
+            //{
+            //    var svc = scope.ServiceProvider.GetServices(typeof(IModelApi)); 
 
-            } 
+            //} 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

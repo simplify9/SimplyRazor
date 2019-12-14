@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor.SampleWeb
 {
-    public class EmployeeSearchService : ISearchable<Employee>, IModelApi
+    public class EmployeeSearchService : ISearchable<Employee>, IMapi
     {
         public Task<IEnumerable<ISearchyFilterSetup>> GetFilterSetup()
         {

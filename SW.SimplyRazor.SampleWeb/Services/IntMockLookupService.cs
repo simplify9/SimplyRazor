@@ -9,7 +9,7 @@ using SW.PrimitiveTypes;
 
 namespace SW.SimplyRazor.SampleWeb 
 {
-    public class IntMockLookupService : ILookable<MockModel>, IModelApi
+    public class IntMockLookupService : ILookable<MockModel>, IMapi
     {
         public IntMockLookupService()
         {

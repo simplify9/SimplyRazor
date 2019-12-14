@@ -5,7 +5,7 @@
 @using SW.ModelApi
 
 @inject IJSRuntime JSRuntime
-@inject MapiClientFactory mapiClientFactory
+@inject IServiceProvider serviceProvider
 
 
 
@@ -38,7 +38,9 @@
             return;
         }
 
-        inputValue = await mapiClientFactory.GetClient(Lookup).LookupValue(Value);
+        dynamic mapiClient = serviceProvider.GetClient(Lookup);
+
+        inputValue = await mapiClient.LookupValue(Value);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

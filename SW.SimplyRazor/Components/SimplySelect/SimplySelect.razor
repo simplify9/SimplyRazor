@@ -3,7 +3,7 @@
 @using System.Collections
 @using System.Linq
 @using Humanizer
-@inject MapiClientFactory mapiClientFactory
+@inject IServiceProvider serviceProvider
 @using SW.ModelApi
 
 
@@ -77,9 +77,9 @@
     {
         if (Items == null && Lookup != null)
         {
-            var client = mapiClientFactory.GetClient(Lookup);
+            dynamic mapiClient = serviceProvider.GetClient(Lookup);
 
-            Items = await client.LookupList();
+            Items = await mapiClient.LookupList();
         }
         else if (Items == null && typeof(TKey).BaseType == typeof(Enum))
         {

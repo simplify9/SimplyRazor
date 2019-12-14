@@ -1,7 +1,7 @@
 ﻿@namespace SW.SimplyRazor
 @implements ISimplyField
 @implements IDisposable
-@inject MapiClientFactory clientFactory
+@inject IServiceProvider serviceProvider
 @using SW.PrimitiveTypes
 @using System.Reflection
 @using Humanizer
@@ -143,7 +143,7 @@
         get
         {
 
-            if (Lookup != null && Table !=null)
+            if (Lookup != null && Table != null)
 
                 return Table.ItemData?.GetLookupValue(ItemIndex, Name);
 
@@ -219,11 +219,16 @@
 
         if (RenderMode == FieldRole.Input && Editor != null) editorFragment = CreateEditor();
 
-        if (RenderMode == FieldRole.ColumnValue && Table !=null)
+        if (RenderMode == FieldRole.ColumnValue && Table != null)
         {
             if (Lookup != null)
+            {
+                dynamic mapiClient = serviceProvider.GetClient(Lookup);
 
-                Table.ItemData?.SetLookupValue(ItemIndex, Name, await clientFactory.GetClient(Lookup).LookupValue(Value));
+                Table.ItemData?.SetLookupValue(ItemIndex, Name, await mapiClient.LookupValue(Value));
+
+            }
+
         }
 
     }
@@ -260,9 +265,13 @@
             PropertyInfo.SetValue(obj, typedValue);
             InvalidFeedback = null;
 
-            if (Table !=null && Lookup != null)
+            if (Table != null && Lookup != null)
+            {
+                dynamic mapiClient = serviceProvider.GetClient(Lookup);
+                Table.ItemData.SetLookupValue(ItemIndex, Name, await mapiClient.LookupValue(Value));
 
-                Table.ItemData.SetLookupValue(ItemIndex, Name, await clientFactory.GetClient(Lookup).LookupValue(Value));
+            }
+
 
             return true;
         }

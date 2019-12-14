@@ -1,6 +1,6 @@
 ﻿@typeparam TModel
 @namespace SW.SimplyRazor
-@inject MapiClientFactory mapiClientFactory
+@inject IServiceProvider serviceProvider
 @inject NotifyService notify
 @implements ISimplySearch
 @inject IJSRuntime JSRuntime
@@ -117,7 +117,7 @@
 
         filters = new List<FilterModel>();
         filterSetup = new List<ISearchyFilterSetup>();
-        var client = mapiClientFactory.GetClient<TModel>();
+        var client = serviceProvider.GetService<MapiClient<TModel>>();
         filterSetup.AddRange(await client.GetFilterSetup());
 
         foreach (var fc in filterSetup)
@@ -131,7 +131,7 @@
         {
 
 
-            wrapper = new SimplySearchInterop(this, JSRuntime, notify, mapiClientFactory.GetClient<TModel>().GetUri().ToString());
+            wrapper = new SimplySearchInterop(this, JSRuntime, notify, serviceProvider.GetRequiredService<MapiClient<TModel>>().GetUri().ToString());
             await wrapper.Initialize(tableElementRef, columns);
 
         }
