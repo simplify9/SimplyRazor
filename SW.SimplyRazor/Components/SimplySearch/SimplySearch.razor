@@ -1,6 +1,6 @@
 ﻿@typeparam TModel
 @namespace SW.SimplyRazor
-@inject IServiceProvider serviceProvider
+@inject MapiClient<TModel> mapiClient
 @inject NotifyService notify
 @implements ISimplySearch
 @inject IJSRuntime JSRuntime
@@ -71,6 +71,9 @@
 
 @code{
 
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
     [Parameter]
     public RenderFragment Filters { get; set; }
 
@@ -113,12 +116,15 @@
 
     protected async override Task OnInitializedAsync()
     {
+
+
+
         columns = new List<ISimplyColumn>();
 
         filters = new List<FilterModel>();
         filterSetup = new List<ISearchyFilterSetup>();
-        var client = serviceProvider.GetService<MapiClient<TModel>>();
-        filterSetup.AddRange(await client.GetFilterSetup());
+        
+        filterSetup.AddRange(await mapiClient.GetFilterSetup());
 
         foreach (var fc in filterSetup)
 
@@ -130,8 +136,14 @@
         if (firstRender && tableElementRef.Id != null)
         {
 
+            var userIdentity = (await authenticationStateTask).User.Identity as ClaimsIdentity;
 
-            wrapper = new SimplySearchInterop(this, JSRuntime, notify, serviceProvider.GetRequiredService<MapiClient<TModel>>().GetUri().ToString());
+            string jwt = string.Empty;
+            
+            if (userIdentity.IsAuthenticated)
+                jwt = userIdentity.GenerateJwt();
+
+            wrapper = new SimplySearchInterop(this, JSRuntime, notify, mapiClient.GetUri().ToString(), jwt);
             await wrapper.Initialize(tableElementRef, columns);
 
         }

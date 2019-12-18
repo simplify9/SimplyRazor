@@ -9,9 +9,9 @@
   "author": "Simplify9",
   "license": "ISC",
   "dependencies": {
-    "@tarekraafat/autocomplete.js": "^7.1.0",
-    "@yaireo/tagify": "^2.30.0",
-    "bootstrap": "^4.3.1",
+    "@tarekraafat/autocomplete.js": "^7.2.0",
+    "@yaireo/tagify": "^2.31.6",
+    "bootstrap": "^4.4.1",
     "bootstrap.native": "^2.0.27",
     "bs-custom-file-input": "^1.3.2",
     "gulp": "^4.0.2",
@@ -21,6 +21,6 @@
     "gulp-sass": "^4.0.2",
     "gulp-uglify": "^3.0.2",
     "quill": "^1.3.7",
-    "tabulator-tables": "^4.4.3"
+    "tabulator-tables": "^4.5.2"
   }
 }

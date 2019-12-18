@@ -15,27 +15,32 @@ namespace SW.SimplyRazor
         private readonly IJSRuntime runtime;
         private readonly NotifyService notify;
         private readonly string url;
+        private readonly string jwt;
         private readonly string id;
+        private readonly string correlationId;
 
-        public SimplySearchInterop(ISimplySearch search, IJSRuntime runtime, NotifyService notify, string url)
+
+        public SimplySearchInterop(ISimplySearch search, IJSRuntime runtime, NotifyService notify, string url, string jwt)
         {
             this.search = search;
             this.runtime = runtime;
             this.notify = notify;
             this.url = url;
+            this.jwt = jwt;
             id = $"tabulator_{Guid.NewGuid().ToString("N")}";
+            correlationId = Guid.NewGuid().ToString("N");   
         }
 
         async public Task Initialize(ElementReference element, IEnumerable<ISimplyColumn> columns)
         {
-            var newCols = columns.Select(e => new { Field = $"{e.Field.Substring(0,1).ToLower()}{e.Field.Substring(1)}", Title = e.Field });
+            var newCols = columns.Select(e => new { e.Field, Title = e.Field });
             await runtime.InvokeVoidAsync("simplySearchInterop.init", element, id, DotNetObjectReference.Create(this), newCols, url);
         }
 
         async public Task SetFilter(IEnumerable<ISearchyFilterTyped> filters)
         {
             var filtersQueryString = string.Join("&", filters.Select(f => new SearchyFilter(f).ToString())); ; 
-            await runtime.InvokeVoidAsync("simplySearchInterop.setFilter", id, filtersQueryString, url);
+            await runtime.InvokeVoidAsync("simplySearchInterop.setFilter", id, filtersQueryString, url, jwt, correlationId);
         }
 
         [JSInvokable]

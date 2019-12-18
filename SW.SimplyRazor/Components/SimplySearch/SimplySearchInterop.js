@@ -4,6 +4,8 @@
         init: function (element, id, dotNetRef, columns, url) {
 
             window[id] = new Tabulator(element, {
+
+                index: "Id",
                 placeholder: "No Data Available", //display message to user on empty table
                 //pagination: "remote", //enable remote pagination
                 ajaxProgressiveLoad: "scroll", //enable progressive loading
@@ -19,29 +21,27 @@
                 //    "last_page": "totalPages", //change last_page parameter name to "max_pages"
                 //    "data" : "result"
                 //},
-                ajaxURL: `${url}?`,
+                //ajaxURL: false,
                 //ajaxConfig: "GET",
                 //ajaxContentType: "json",
                 //ajaxParams: {
                 //    searchyFilters: []
                 //    //key2: "value2"
                 //}, //ajax parameters
-                ajaxURLGenerator: function (url, config, params) {
-                    //url - the url from the ajaxURL property or setData function
-                    //config - the request config object from the ajaxConfig property
-                    //params - the params object from the ajaxParams property, this will also include any pagination, filter and sorting properties based on table setup
-                    const sortStr = params.sorters.map(s => `sort=${s.field}:${(s.dir == "asc") ? 1 : 2}`).join('&');
-                    //return request url
-                    return url + `count=true&page=${params.page - 1}&size=${params.size}&${sortStr}`; //encode parameters as a json object
-                },
+                //ajaxURLGenerator: false, //function (url, config, params) {
+
+                //const sortStr = params.sorters.map(s => `sort=${s.field}:${(s.dir == "asc") ? 1 : 2}`).join('&');
+
+                //return url + `count=true&page=${params.page - 1}&size=${params.size}&${sortStr}`; //encode parameters as a json object
+                //},
                 ajaxResponse: function (url, params, response) {
                     //url - the URL of the request
                     //params - the parameters passed with the request
                     //response - the JSON object returned in the body of the response.
-                    
+
                     const rq = {
-                        data: response.result,
-                        last_page: Math.ceil(response.totalCount / 20)
+                        data: response.Result,
+                        last_page: Math.ceil(response.TotalCount / 20)
                     };
 
                     return rq; //return the tableData property of a response json object
@@ -99,9 +99,16 @@
 
         },
 
-        setFilter: function (id, filtersQueryString, url) {
+        setFilter: function (id, filtersQueryString, url, jwt, correlationId) {
 
-            window[id].setData(`${url}?${filtersQueryString}&`);
+            var ajaxConfig = {
+                headers: {
+                    "request-user-token": jwt, //set specific content type
+                    "request-correlation-id": correlationId
+                },
+            };
+
+            window[id].setData(`${url}?${filtersQueryString}&`, {}, ajaxConfig);
             //window[id].setFilter(filters);
         }
     }

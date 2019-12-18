@@ -12,6 +12,13 @@ namespace SW.SimplyRazor.SampleWeb
 {
     public class EmployeeSearchService : ISearchable<Employee>, IMapi
     {
+        private readonly IRequestContext requestContext;
+
+        public EmployeeSearchService(IRequestContext requestContext)
+        {
+            this.requestContext = requestContext;
+        }
+
         public Task<IEnumerable<ISearchyFilterSetup>> GetFilterSetup()
         {
             IEnumerable<ISearchyFilterSetup> result = new List<ISearchyFilterSetup>

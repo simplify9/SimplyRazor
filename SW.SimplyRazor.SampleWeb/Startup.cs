@@ -35,6 +35,12 @@ namespace SW.SimplyRazor.SampleWeb
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers().AddJsonOptions(config =>
+            {
+                config.JsonSerializerOptions.PropertyNamingPolicy = null;
+            });
+            
+            
             services.AddRazorPages();
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; }); ;
             services.AddSingleton<WeatherForecastService>();
@@ -46,20 +52,24 @@ namespace SW.SimplyRazor.SampleWeb
             services.AddMapiModelMap<MockModel>("mockmodel");
             services.AddMapiModelMap<Country>("country");
 
-
+            services.AddHttpContextAccessor(); 
             //services.AddSingleton(sp => new MapiClient<Employee>(sp.GetService<HttpClient>()));
 
             services.AddHttpClient<MapiClient<Employee>>((sp, httpClient) =>
             {
-                httpClient.BaseAddress = new Uri("https://localhost:5001");
+                var httpContext = sp.GetService<IHttpContextAccessor>().HttpContext;
+                var httpRequest = httpContext.Request;
+                httpClient.BaseAddress = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}");
             });
             services.AddHttpClient<MapiClient<MockModel>>((sp, httpClient) =>
             {
-                httpClient.BaseAddress = new Uri("https://localhost:5001");
+                var httpRequest = sp.GetService<IHttpContextAccessor>().HttpContext.Request;
+                httpClient.BaseAddress = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}");
             });
             services.AddHttpClient<MapiClient<Country>>((sp, httpClient) =>
             {
-                httpClient.BaseAddress = new Uri("https://localhost:5001");
+                var httpRequest = sp.GetService<IHttpContextAccessor>().HttpContext.Request;
+                httpClient.BaseAddress = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}");
             });
 
 
