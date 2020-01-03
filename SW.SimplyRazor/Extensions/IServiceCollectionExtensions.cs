@@ -1,7 +1,7 @@
 ﻿
 
 using Microsoft.Extensions.DependencyInjection;
-using SW.ModelApi;
+
 
 namespace SW.SimplyRazor
 {
@@ -15,7 +15,12 @@ namespace SW.SimplyRazor
             serviceCollection.AddSingleton<Notifier<PageIndexRequested>>();
             serviceCollection.AddSingleton<Notifier<UserMessage>>();
 
+
+            serviceCollection.AddHttpClient<ApiService>();
+
             return serviceCollection.AddScoped<NotifyService>();  
+
+
 
         }
 

@@ -1,11 +1,11 @@
 ﻿@namespace SW.SimplyRazor
 @implements ISimplyField
 @implements IDisposable
-@inject IServiceProvider serviceProvider
+@inject ApiService apiClient
 @using SW.PrimitiveTypes
 @using System.Reflection
 @using Humanizer
-@using SW.ModelApi
+
 
 
 
@@ -223,9 +223,9 @@
         {
             if (Lookup != null)
             {
-                dynamic mapiClient = serviceProvider.GetClient(Lookup);
+                apiClient.HttpClient.BaseAddress = new Uri(Lookup);
 
-                Table.ItemData?.SetLookupValue(ItemIndex, Name, await mapiClient.LookupValue(Value));
+                Table.ItemData?.SetLookupValue(ItemIndex, Name, await apiClient.LookupValue(Value));
 
             }
 
@@ -267,8 +267,8 @@
 
             if (Table != null && Lookup != null)
             {
-                dynamic mapiClient = serviceProvider.GetClient(Lookup);
-                Table.ItemData.SetLookupValue(ItemIndex, Name, await mapiClient.LookupValue(Value));
+                apiClient.HttpClient.BaseAddress = new Uri(Lookup);
+                Table.ItemData.SetLookupValue(ItemIndex, Name, await apiClient.LookupValue(Value));
 
             }
 

@@ -103,7 +103,7 @@
 
             var ajaxConfig = {
                 headers: {
-                    "request-user-token": jwt, //set specific content type
+                    "Authorization": `Bearer ${jwt}`, //set specific content type
                     "request-correlation-id": correlationId
                 },
             };

@@ -16,7 +16,7 @@ namespace SW.SimplyRazor
 
         void AddColumn(ISimplyColumn column);
         void RemoveColumn(ISimplyColumn column);
-        void AddFilterSetup(ISearchyFilterSetup filter);
+        Task AddFilterSetup(ISearchyFilterSetup filter);
         void RemoveFilterSetup(ISearchyFilterSetup filter);
         Task RowClick(object data);
     }

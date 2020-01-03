@@ -2,10 +2,10 @@
 @implements ISimplyTypeahead
 @namespace SW.SimplyRazor
 @using System.Text.Json
-@using SW.ModelApi
+
 
 @inject IJSRuntime JSRuntime
-@inject IServiceProvider serviceProvider
+@inject ApiService apiClient
 
 
 
@@ -38,9 +38,9 @@
             return;
         }
 
-        dynamic mapiClient = serviceProvider.GetClient(Lookup);
+        apiClient.HttpClient.BaseAddress= new Uri(Lookup);
 
-        inputValue = await mapiClient.LookupValue(Value);
+        inputValue = await apiClient.LookupValue(Value);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -3,8 +3,8 @@
 @using System.Collections
 @using System.Linq
 @using Humanizer
-@inject IServiceProvider serviceProvider
-@using SW.ModelApi
+@inject ApiService apiClient
+
 
 
 <select @onchange="SelectValueChanged" class="form-control" @attributes="UnmatchedAttributes">
@@ -77,9 +77,9 @@
     {
         if (Items == null && Lookup != null)
         {
-            dynamic mapiClient = serviceProvider.GetClient(Lookup);
+            apiClient.HttpClient.BaseAddress = new Uri(Lookup);
 
-            Items = await mapiClient.LookupList();
+            Items = await apiClient.LookupList();
         }
         else if (Items == null && typeof(TKey).BaseType == typeof(Enum))
         {

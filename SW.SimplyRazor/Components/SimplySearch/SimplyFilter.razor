@@ -25,13 +25,13 @@
     [Parameter]
     public ICollection<SearchyRule> Rules { get; set; }
 
-    protected override void OnInitialized()
+    async protected override Task OnInitializedAsync()
     {
         
         if (Rules == null) Rules = new List<SearchyRule>();
         if (Rules.Count == 0) Rules = SearchyDataType.RulesFor(Type);
 
-        Search.AddFilterSetup(this);
+        await Search.AddFilterSetup(this);
 
     }
 

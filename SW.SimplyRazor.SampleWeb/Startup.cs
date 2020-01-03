@@ -12,13 +12,8 @@ using Microsoft.Extensions.Hosting;
 using BlazorLob3.Data;
 using System.IO;
 using Microsoft.AspNetCore.Http;
-
 using SW.I18n;
-using SW.PrimitiveTypes;
-using SW.Searchy;
-using SW.ModelApi;
-using SW.BogusDataModels;
-using System.Net.Http;
+using SW.CqApi;
 
 namespace SW.SimplyRazor.SampleWeb
 {
@@ -46,34 +41,36 @@ namespace SW.SimplyRazor.SampleWeb
             services.AddSingleton<WeatherForecastService>();
 
             services.AddI18n();
-            services.AddMapi();
+            services.AddCqApi(typeof(I18nService).Assembly, typeof(Startup).Assembly);
+            
             //services.AddMapiClientFactory();
-            services.AddMapiModelMap<Employee>("employee");
-            services.AddMapiModelMap<MockModel>("mockmodel");
-            services.AddMapiModelMap<Country>("country");
+            //services.AddMapiModelMap<Employee>("employee");
+            //services.AddMapiModelMap<MockModel>("mockmodel");
+            //services.AddMapiModelMap<Country>("country");
 
             services.AddHttpContextAccessor(); 
             //services.AddSingleton(sp => new MapiClient<Employee>(sp.GetService<HttpClient>()));
 
-            services.AddHttpClient<MapiClient<Employee>>((sp, httpClient) =>
-            {
-                var httpContext = sp.GetService<IHttpContextAccessor>().HttpContext;
-                var httpRequest = httpContext.Request;
-                httpClient.BaseAddress = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}");
-            });
-            services.AddHttpClient<MapiClient<MockModel>>((sp, httpClient) =>
-            {
-                var httpRequest = sp.GetService<IHttpContextAccessor>().HttpContext.Request;
-                httpClient.BaseAddress = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}");
-            });
-            services.AddHttpClient<MapiClient<Country>>((sp, httpClient) =>
-            {
-                var httpRequest = sp.GetService<IHttpContextAccessor>().HttpContext.Request;
-                httpClient.BaseAddress = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}");
-            });
-
+            //services.AddHttpClient<MapiClient<Employee>>((sp, httpClient) =>
+            //{
+            //    var httpContext = sp.GetService<IHttpContextAccessor>().HttpContext;
+            //    var httpRequest = httpContext.Request;
+            //    httpClient.BaseAddress = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}");
+            //});
+            //services.AddHttpClient<MapiClient<MockModel>>((sp, httpClient) =>
+            //{
+            //    var httpRequest = sp.GetService<IHttpContextAccessor>().HttpContext.Request;
+            //    httpClient.BaseAddress = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}");
+            //});
+            //services.AddHttpClient<MapiClient<Country>>((sp, httpClient) =>
+            //{
+            //    var httpRequest = sp.GetService<IHttpContextAccessor>().HttpContext.Request;
+            //    httpClient.BaseAddress = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}");
+            //});
+            
 
             services.AddSimplyRazorServices();
+            services.AddAuthentication().AddJwtBearer();
 
         }
 
@@ -81,11 +78,7 @@ namespace SW.SimplyRazor.SampleWeb
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
-            //using (var scope = app.ApplicationServices.CreateScope())
-            //{
-            //    var svc = scope.ServiceProvider.GetServices(typeof(IModelApi)); 
 
-            //} 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -99,9 +92,8 @@ namespace SW.SimplyRazor.SampleWeb
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapPost("/upload", async ctx =>

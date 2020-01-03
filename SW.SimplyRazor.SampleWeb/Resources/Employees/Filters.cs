@@ -1,25 +1,16 @@
-﻿using SW.BogusDataModels;
-using SW.ModelApi;
-using SW.PrimitiveTypes;
-using SW.Searchy;
+﻿using SW.PrimitiveTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-
-namespace SW.SimplyRazor.SampleWeb
+namespace SW.SimplyRazor.SampleWeb.Resources.Employees
 {
-    public class EmployeeSearchService : ISearchable<Employee>, IMapi
+
+    [HandlerName("filters")]
+    public class Filters : IQueryHandler
     {
-        private readonly IRequestContext requestContext;
-
-        public EmployeeSearchService(IRequestContext requestContext)
-        {
-            this.requestContext = requestContext;
-        }
-
-        public Task<IEnumerable<ISearchyFilterSetup>> GetFilterSetup()
+        async public Task<object> Handle()
         {
             IEnumerable<ISearchyFilterSetup> result = new List<ISearchyFilterSetup>
             {
@@ -47,20 +38,7 @@ namespace SW.SimplyRazor.SampleWeb
                 },
             };
 
-            return Task.FromResult(result);
-        }
-
-        async public Task<ISearchyResponse<Employee>> Search(SearchyRequest request)
-        {
-            await Task.Delay(TimeSpan.FromMilliseconds(500));
-
-            var result = FakeEmployees.Data.AsQueryable().Search(request.Conditions, request.Sorts, request.PageSize, request.PageIndex);
-
-            return new SearchyResponse<Employee>
-            {
-                Result = result,
-                TotalCount = FakeEmployees.Data.AsQueryable().Search(request.Conditions).Count()
-            };
+            return result;
         }
     }
 }

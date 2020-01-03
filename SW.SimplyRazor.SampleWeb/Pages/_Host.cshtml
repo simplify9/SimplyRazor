@@ -20,7 +20,7 @@
 </head>
 <body>
     <app>
-        @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
+        <component type="typeof(App)" render-mode="Server" />
     </app>
     <script src="_framework/blazor.server.js"></script>
     <script src="_content/SimplyWorks.SimplyRazor/simply.razor.js"></script>

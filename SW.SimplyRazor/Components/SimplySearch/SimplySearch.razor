@@ -1,78 +1,90 @@
-﻿@typeparam TModel
+﻿
 @namespace SW.SimplyRazor
-@inject MapiClient<TModel> mapiClient
+@inject ApiService apiClient
 @inject NotifyService notify
 @implements ISimplySearch
 @inject IJSRuntime JSRuntime
 
-@using SW.ModelApi
+
 
 <CascadingValue Value="this" Name="Search">
     @Filters
     @Columns
 </CascadingValue>
 
-<div class="form-group row">
-    <label for="filterSelect" class="col-sm-1 col-form-label">Search</label>
-    <div class="col-sm-5 input-group ">
-        <SimplySelect @bind-Value="filterValue"
-                      EmptyText="Select filter"
-                      Items="@(filterSetup.Select(e=>e.Text).ToList())" />
+<div class="container-fluid">
 
-        <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
+    <div class="form-group row">
+        <label for="filterSelect" class="col-sm-1 col-form-label">Search</label>
+        <div class="col-sm-5 input-group ">
+            <SimplySelect @bind-Value="filterValue"
+                          EmptyText="Select filter"
+                          Items="@(filterSetup.Select(e=>e.Text).ToList())" />
+
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
+            </div>
+        </div>
+        <div class="col-sm-6 text-right">
+            <SimplyButton OnClick="() => Search()" class="btn btn-secondary" style="width: 120px;">Search</SimplyButton>
         </div>
     </div>
-    <div class="col-sm-6 text-right">
-        <SimplyButton OnClick="() => Search()" class="btn btn-secondary" style="width: 120px;">Search</SimplyButton>
-    </div>
+
+
+
+    @for (int i = 0; i < filters.Count; i++)
+    {
+        int index = i;
+        <div class="form-group row" @key="filters[index]">
+            <div class=" input-group col">
+
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="">@filters[index].Text</span>
+                </div>
+
+                <SimplySelect @bind-value="filters[index].Rule"
+                              Items="filters[index].Rules"
+                              TKey="SearchyRule" />
+
+                @switch (filters[index].Type)
+                {
+                    case SearchyDataType.Text:
+
+                        <input @bind="filters[index].ValueString" type="text" class="form-control" />
+                        break;
+
+                    case SearchyDataType.Number:
+
+                        <input @bind="filters[index].ValueDecimal" type="number" class="form-control" />
+                        break;
+
+                    case SearchyDataType.Date:
+
+                        <input @bind="filters[index].ValueDateTime" type="date" class="form-control" />
+                        break;
+
+                }
+                <div class="input-group-append">
+                    <button @onclick="@(e => RemoveFilter(index))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
+                </div>
+            </div>
+        </div>
+    }
+
 </div>
 
-@for (int i = 0; i < filters.Count; i++)
-{
-    int index = i;
-    <div class="form-group row" @key="filters[index]">
-        <div class=" input-group col">
+<div class="container-fluid mt-5">
+    <div @ref="tableElementRef" />
+</div>
 
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="">@filters[index].Text</span>
-            </div>
-
-            <SimplySelect @bind-value="filters[index].Rule"
-                          Items="filters[index].Rules"
-                          TKey="SearchyRule" />
-
-            @switch (filters[index].Type)
-            {
-                case SearchyDataType.Text:
-
-                    <input @bind="filters[index].ValueString" type="text" class="form-control" />
-                    break;
-
-                case SearchyDataType.Number:
-
-                    <input @bind="filters[index].ValueDecimal" type="number" class="form-control" />
-                    break;
-
-                case SearchyDataType.Date:
-
-                    <input @bind="filters[index].ValueDateTime" type="date" class="form-control" />
-                    break;
-
-            }
-            <div class="input-group-append">
-                <button @onclick="@(e => RemoveFilter(index))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
-            </div>
-        </div>
-    </div>
-}
-
-<div @ref="tableElementRef" />
 
 @code{
 
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    [Parameter]
+    public string SearchUrl { get; set; }
 
     [Parameter]
     public RenderFragment Filters { get; set; }
@@ -117,14 +129,14 @@
     protected async override Task OnInitializedAsync()
     {
 
-
+        apiClient.HttpClient.BaseAddress = new Uri(SearchUrl);
 
         columns = new List<ISimplyColumn>();
 
         filters = new List<FilterModel>();
         filterSetup = new List<ISearchyFilterSetup>();
-        
-        filterSetup.AddRange(await mapiClient.GetFilterSetup());
+
+        filterSetup.AddRange(await apiClient.GetFilterSetup());
 
         foreach (var fc in filterSetup)
 
@@ -139,11 +151,11 @@
             var userIdentity = (await authenticationStateTask).User.Identity as ClaimsIdentity;
 
             string jwt = string.Empty;
-            
+
             if (userIdentity.IsAuthenticated)
                 jwt = userIdentity.GenerateJwt();
 
-            wrapper = new SimplySearchInterop(this, JSRuntime, notify, mapiClient.GetUri().ToString(), jwt);
+            wrapper = new SimplySearchInterop(this, JSRuntime, notify, apiClient.HttpClient.BaseAddress.ToString(), jwt);
             await wrapper.Initialize(tableElementRef, columns);
 
         }
@@ -161,14 +173,17 @@
     //    await StepperDeboucer.Debouce(() => { Console.WriteLine(args.Value); });
     //}
 
-    public void AddFilterSetup(ISearchyFilterSetup filter)
+    async public Task AddFilterSetup(ISearchyFilterSetup filter)
     {
         filterSetup.Add(filter);
+        await InvokeAsync(() => StateHasChanged());
     }
 
     public void RemoveFilterSetup(ISearchyFilterSetup filter)
     {
         filterSetup.Remove(filter);
+
+
     }
 
     public void AddColumn(ISimplyColumn column)
