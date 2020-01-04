@@ -1,0 +1,22 @@
+﻿@namespace SW.SimplyRazor
+@if (Ready)
+{
+    @ChildContent
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+
+    [Parameter]
+    public bool Ready { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> ReadyChanged { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+}

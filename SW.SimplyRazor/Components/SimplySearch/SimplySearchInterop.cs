@@ -16,17 +16,24 @@ namespace SW.SimplyRazor
         private readonly NotifyService notify;
         private readonly string url;
         private readonly string jwt;
+        private readonly string index;
         private readonly string id;
         private readonly string correlationId;
 
 
-        public SimplySearchInterop(ISimplySearch search, IJSRuntime runtime, NotifyService notify, string url, string jwt)
+        public SimplySearchInterop(ISimplySearch search, 
+            IJSRuntime runtime, 
+            NotifyService notify, 
+            string url, 
+            string jwt, 
+            string index)
         {
             this.search = search;
             this.runtime = runtime;
             this.notify = notify;
             this.url = url;
             this.jwt = jwt;
+            this.index = index;
             id = $"tabulator_{Guid.NewGuid().ToString("N")}";
             correlationId = Guid.NewGuid().ToString("N");   
         }
@@ -34,7 +41,7 @@ namespace SW.SimplyRazor
         async public Task Initialize(ElementReference element, IEnumerable<ISimplyColumn> columns)
         {
             var newCols = columns.Select(e => new { e.Field, Title = e.Field });
-            await runtime.InvokeVoidAsync("simplySearchInterop.init", element, id, DotNetObjectReference.Create(this), newCols, url);
+            await runtime.InvokeVoidAsync("simplySearchInterop.init", element, id, DotNetObjectReference.Create(this), newCols, index);
         }
 
         async public Task SetFilter(IEnumerable<ISearchyFilterTyped> filters)

@@ -38,18 +38,39 @@ namespace SW.SimplyRazor
             return await response.Content.ReadAsStringAsync();
         }
 
-        async public Task<HttpResponseMessage> PostCommand(object key = null, object request =null)
+        async public Task<HttpResponseMessage> Post(object key = null, object request =null)
         {
             if (key!=null && request != null)
             {
-                return  await HttpClient.PostAsAsync(request, key.ToString());
+                return  await HttpClient.PostAsync(key.ToString(), request);
             }
             if (request != null)
             {
-                return await HttpClient.PostAsAsync(request, string.Empty);
+                return await HttpClient.PostAsync(string.Empty, request);
             }
             //return await HttpClient.PostAsync(request, string.Empty);
             return null;
         }
+
+        async public Task<HttpResponseMessage> Get(object key = null, object request = null)
+        {
+            if (key != null && request != null)
+            {
+                return await HttpClient.GetAsync(key.ToString());
+            }
+            if (request == null)
+            {
+                return await HttpClient.GetAsync(key.ToString());
+            }
+            if (key == null)
+            {
+                return await HttpClient.GetAsync(string.Empty);
+            }
+
+
+            //return await HttpClient.PostAsync(request, string.Empty);
+            return null;
+        }
+
     }
 }

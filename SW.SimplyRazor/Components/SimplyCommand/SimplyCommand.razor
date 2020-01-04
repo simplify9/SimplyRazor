@@ -54,7 +54,7 @@
             working = true;
 
 
-            var result = await apiService.PostCommand(Key, Request);
+            var result = await apiService.Post(Key, Request);
 
             if ((int)result.StatusCode>=200 && (int)result.StatusCode < 300)
             {

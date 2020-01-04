@@ -10,7 +10,7 @@ namespace SW.SimplyRazor
 {
     internal static class HttpClientExtensions
     {
-        public static Task<HttpResponseMessage> PostAsAsync(this HttpClient client, object payload, string url)
+        public static Task<HttpResponseMessage> PostAsync(this HttpClient client, string url, object payload)
         {
             var payloadStr = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
             return client.PostAsync(url, payloadStr);

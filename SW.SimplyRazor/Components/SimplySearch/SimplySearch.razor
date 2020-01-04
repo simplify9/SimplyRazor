@@ -101,7 +101,11 @@
     [Parameter]
     public string Height { get; set; }
 
+    [Parameter]
+    public EventCallback<string> OnRowClick { get; set; }
+
     int filterValue;
+    bool tableInitialized;
     List<FilterModel> filters;
     ElementReference tableElementRef;
     SimplySearchInterop wrapper;
@@ -136,6 +140,8 @@
         filters = new List<FilterModel>();
         filterSetup = new List<ISearchyFilterSetup>();
 
+        Index = Index ?? "Id";
+
         filterSetup.AddRange(await apiClient.GetFilterSetup());
 
         foreach (var fc in filterSetup)
@@ -143,26 +149,23 @@
             if (fc.Default || fc.Required) filters.Add(new FilterModel(fc));
     }
 
-    async protected override Task OnAfterRenderAsync(bool firstRender)
+    async Task InitializeTable()
     {
-        if (firstRender && tableElementRef.Id != null)
-        {
+        tableInitialized = true;
+        var userIdentity = (await authenticationStateTask).User.Identity as ClaimsIdentity;
 
-            var userIdentity = (await authenticationStateTask).User.Identity as ClaimsIdentity;
+        string jwt = string.Empty;
 
-            string jwt = string.Empty;
+        if (userIdentity.IsAuthenticated)
+            jwt = userIdentity.GenerateJwt();
 
-            if (userIdentity.IsAuthenticated)
-                jwt = userIdentity.GenerateJwt();
-
-            wrapper = new SimplySearchInterop(this, JSRuntime, notify, apiClient.HttpClient.BaseAddress.ToString(), jwt);
-            await wrapper.Initialize(tableElementRef, columns);
-
-        }
+        wrapper = new SimplySearchInterop(this, JSRuntime, notify, apiClient.HttpClient.BaseAddress.ToString(), jwt, Index);
+        await wrapper.Initialize(tableElementRef, columns);
     }
 
     async Task Search()
     {
+        if (!tableInitialized) await InitializeTable();
         await wrapper.SetFilter(filters);
     }
 
@@ -195,11 +198,9 @@
         columns.Remove(column);
     }
 
-    public Task RowClick(object index)
+    async public Task RowClick(string index)
     {
-        //var item = JsonSerializer.Deserialize<TModel>(data.ToString(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-        return Task.CompletedTask;
+        await OnRowClick.InvokeAsync(index);
     }
 
 }

@@ -1,12 +1,12 @@
 ﻿(function () {
     window.simplySearchInterop = {
 
-        init: function (element, id, dotNetRef, columns, url) {
+        init: function (element, id, dotNetRef, columns, index) {
 
             window[id] = new Tabulator(element, {
 
-                index: "Id",
-                placeholder: "No Data Available", //display message to user on empty table
+                index: index,
+                placeholder: "No data...", //display message to user on empty table
                 //pagination: "remote", //enable remote pagination
                 ajaxProgressiveLoad: "scroll", //enable progressive loading
                 ajaxProgressiveLoadScrollMargin: 300, //triger next ajax load when scroll bar is 300px or less from the bottom of the table.
@@ -91,7 +91,7 @@
                 layout: "fitColumns", //fit columns to width of table (optional)
                 columns: columns,
                 rowClick: function (e, row) { //trigger an alert message when the row is clicked
-                    dotNetRef.invokeMethodAsync('RowClick', row._row.data['id']);
+                    dotNetRef.invokeMethodAsync('RowClick', row._row.data[index]);
                 },
             });
 
