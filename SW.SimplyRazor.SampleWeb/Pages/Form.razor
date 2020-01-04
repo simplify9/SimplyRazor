@@ -1,21 +1,13 @@
 ﻿@page "/form"
+@inject NavigationManager navigationManager
+
+<SimplyAlertHub></SimplyAlertHub>
 
 <SimplyForm @bind-Value="FakeEmployees.Data[0]">
 
     <FieldGroup>
         <SimplyField Name="FirstName" readonly></SimplyField>
         <SimplyField Name="LastName"></SimplyField>
-    </FieldGroup>
-
-    <SimplyField Name="Age" />
-    <SimplyField Name="Married" />
-    <SimplyField Name="EmploymentStatus" Lookup="https://localhost:5001/cqapi/mockmodels/" />
-    <SimplyField Name="Country" Lookup="https://localhost:5001/cqapi/countries/" />
-    <SimplyField Name="Photo"   />
-
-    <FieldGroup>
-        <SimplyField Name="Salary.Amount" />
-        <SimplyField Name="Salary.Currency" />
     </FieldGroup>
     <SimplyTable Name="Leaves" TModel="Leave">
         <Header>
@@ -26,8 +18,24 @@
             <SimplyField Name="Days" min="1" max="100" pattern="[0-9]{5}" />
         </Fields>
     </SimplyTable>
+    <SimplyField Name="Age" />
+    <SimplyField Name="Married" />
+    <SimplyField Name="EmploymentStatus" Lookup="https://localhost:5001/cqapi/mockmodels/" />
+    <SimplyField Name="Country" Lookup="https://localhost:5001/cqapi/countries/" />
+    <SimplyField Name="Photo" />
+
+    <FieldGroup>
+        <SimplyField Name="Salary.Amount" />
+        <SimplyField Name="Salary.Currency" />
+    </FieldGroup>
+
 
 </SimplyForm>
+
+<div class="container-fluid mt-5">
+    <SimplyCommand Text="Save" CommandUrl="https://localhost:5001/cqapi/employees/" Key="5" Request="FakeEmployees.Data[0]" OnSuccess="SaveOnSuccess" />
+</div>
+
 
 <p>Age: @FakeEmployees.Data[0].Age</p>
 <p>Emp Status: @FakeEmployees.Data[0].EmploymentStatus</p>
@@ -40,6 +48,11 @@
     {
         //Employee.Sample[0] = (Employee)formModel;
         return Task.CompletedTask;
+    }
+
+    async Task SaveOnSuccess(object obj)
+    {
+        navigationManager.NavigateTo("/");
     }
 
 

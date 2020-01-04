@@ -37,5 +37,19 @@ namespace SW.SimplyRazor
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
+
+        async public Task<HttpResponseMessage> PostCommand(object key = null, object request =null)
+        {
+            if (key!=null && request != null)
+            {
+                return  await HttpClient.PostAsAsync(request, key.ToString());
+            }
+            if (request != null)
+            {
+                return await HttpClient.PostAsAsync(request, string.Empty);
+            }
+            //return await HttpClient.PostAsync(request, string.Empty);
+            return null;
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿@typeparam TModel
 @implements ISimplyForm
 @namespace SW.SimplyRazor
-@using FluentValidation
+
 
 <form id="@Id" @onsubmit="(e) => OnSubmit.InvokeAsync(e)" @onreset="(e) => OnReset.InvokeAsync(e)"></form>
 <CascadingValue IsFixed="true" Value="this" Name="Form">
@@ -31,8 +31,6 @@
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
-    [Parameter]
-    public AbstractValidator<TModel> Validator { get; set; }
 
     string id;
     public string Id => id;
@@ -61,19 +59,7 @@
         if (name != null) Fields.Remove(name);
     }
 
-    async Task ValidateOnClick(EventArgs args)
-    {
-        //AbstractValidator<TModel> validator = new EmployeeValidator();
 
-        var result = await Validator.ValidateAsync(Value);
-
-        foreach (var err in result.Errors)
-        {
-            var fld = Fields[err.PropertyName];
-            fld.InvalidFeedback = err.ErrorMessage;
-
-        };
-    }
 
 
 
