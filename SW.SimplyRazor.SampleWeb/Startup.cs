@@ -69,7 +69,7 @@ namespace SW.SimplyRazor.SampleWeb
             //});
             
 
-            services.AddSimplyRazorServices();
+            services.AddSimplyRazor();
             services.AddAuthentication().AddJwtBearer();
 
         }
