@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SW.SimplyRazor
 {
-    public interface ISimplyColumn
+    public interface IColumn
     {
         string Title { get; set; }
         string Field { get; set; }

@@ -1,5 +1,5 @@
 ﻿@namespace SW.SimplyRazor
-@implements ISimplyField
+@implements IField
 @implements IDisposable
 @inject ApiService apiClient
 @using SW.PrimitiveTypes
@@ -13,33 +13,31 @@
         if (editorFragment != null)
         {
             <SimplyNotify Notification="InvalidFieldNotification" OnReceived="OnServerFeedback" Tag="@Name" />
-            <div class="form-group">
 
-                @editorFragment
+            @editorFragment
 
-                @if (InvalidFeedback != null)
-                {
-                    <div class="invalid-feedback">
-                        @InvalidFeedback
-                    </div>
-                }
-                @if (serverFeedback != null)
-                {
-                    <div class="invalid-feedback">
-                        @serverFeedback
-                    </div>
-                }
+            @if (InvalidFeedback != null)
+            {
+                <div class="invalid-feedback">
+                    @InvalidFeedback
+                </div>
+            }
+            @if (serverFeedback != null)
+            {
+                <div class="invalid-feedback">
+                    @serverFeedback
+                </div>
+            }
 
-                @if (Help != null)
-                {
-                    <small class="form-text text-muted">@Help</small>
-                }
-            </div>
+            @if (Help != null)
+            {
+                <small class="form-text text-muted">@Help</small>
+            }
+
         }
         break;
 
     case FieldRole.ColumnValue:
-
 
         <td>
             @if (ColumnValue == null)
@@ -54,9 +52,7 @@
 
         break;
 
-
     case FieldRole.ColumnName:
-
 
         <th scope="col">
             @if (ColumnHeader == null)
@@ -70,7 +66,6 @@
         </th>
 
         break;
-
 }
 
 
@@ -82,19 +77,8 @@
     [CascadingParameter(Name = "Model")]
     public object Model { get; set; }
 
-    //[CascadingParameter(Name = "ModelType")]
-    //public Type ModelType { get; set; }
-
     [CascadingParameter(Name = "RenderMode")]
     public FieldRole RenderMode { get; set; }
-
-
-
-    //[CascadingParameter(Name = "Table")]
-    //public ISimplyTable Table { get; set; }
-
-    //[CascadingParameter(Name = "ItemIndex")]
-    //public int ItemIndex { get; set; }
 
     [Parameter]
     public string Lookup { get; set; }
@@ -102,16 +86,11 @@
     [Parameter]
     public string Name { get; set; }
 
-
+    [Parameter]
+    public RenderFragment<IField> ColumnHeader { get; set; }
 
     [Parameter]
-    public RenderFragment<ISimplyField> ColumnHeader { get; set; }
-
-    [Parameter]
-    public RenderFragment<ISimplyField> ColumnValue { get; set; }
-
-    //[Parameter]
-    //public FieldShowsOn ShowsOn { get; set; }
+    public RenderFragment<IField> ColumnValue { get; set; }
 
     [Parameter]
     public string Help { get; set; }
@@ -119,13 +98,10 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
-    //public string FormId => Form.Id;
-
     public PropertyInfo PropertyInfo { get; private set; }
 
     string id;
     public string Id => id;
-
 
     Type editor;
     string text = null;

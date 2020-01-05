@@ -14,8 +14,8 @@ namespace SW.SimplyRazor
         string Height { get; set; }
 
 
-        void AddColumn(ISimplyColumn column);
-        void RemoveColumn(ISimplyColumn column);
+        void AddColumn(IColumn column);
+        void RemoveColumn(IColumn column);
         Task AddFilterSetup(ISearchyFilterSetup filter);
         void RemoveFilterSetup(ISearchyFilterSetup filter);
         Task RowClick(string index);

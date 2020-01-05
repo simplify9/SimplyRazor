@@ -38,7 +38,7 @@ namespace SW.SimplyRazor
             correlationId = Guid.NewGuid().ToString("N");   
         }
 
-        async public Task Initialize(ElementReference element, IEnumerable<ISimplyColumn> columns)
+        async public Task Initialize(ElementReference element, IEnumerable<IColumn> columns)
         {
             var newCols = columns.Select(e => new { e.Field, Title = e.Field });
             await runtime.InvokeVoidAsync("simplySearchInterop.init", element, id, DotNetObjectReference.Create(this), newCols, index);

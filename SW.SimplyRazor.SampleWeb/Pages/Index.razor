@@ -6,20 +6,20 @@
 
 <SimplySearch PageSize="10" SearchUrl="https://localhost:5001/cqapi/employees/" OnRowClick="RowClick" >
     <Filters>
-        <SimplyFilter Field="Id" Text="Id" Type="@SearchyDataType.Number"></SimplyFilter>
-        <SimplyFilter Field="HandlerName" Default="true" Text="Handler" Type="@SearchyDataType.Text"></SimplyFilter>
-        <SimplyFilter Field="Started" Text="Date" Type="@SearchyDataType.Date"></SimplyFilter>
+        <Filter Field="Id" Text="Id" Type="@SearchyDataType.Number"></Filter>
+        <Filter Field="HandlerName" Default="true" Text="Handler" Type="@SearchyDataType.Text"></Filter>
+        <Filter Field="Started" Text="Date" Type="@SearchyDataType.Date"></Filter>
     </Filters>
     <Columns>
-        <SimplyColumn Field="Id" Title="Id" />
-        <SimplyColumn Field="FirstName" Title="First Name" />
-        <SimplyColumn Field="LastName" Title="Last Name" />
-        <SimplyColumn Field="Age" />
-        <SimplyColumn Field="Married" />
-        <SimplyColumn Field="EmploymentStatus" />
-        <SimplyColumn Field="Country" />
-        <SimplyColumn Field="Salary.Amount" />
-        <SimplyColumn Field="Salary.Currency" />
+        <Column Field="Id" Title="Id" />
+        <Column Field="FirstName" Title="First Name" />
+        <Column Field="LastName" Title="Last Name" />
+        <Column Field="Age" />
+        <Column Field="Married" />
+        <Column Field="EmploymentStatus" />
+        <Column Field="Country" />
+        <Column Field="Salary.Amount" />
+        <Column Field="Salary.Currency" />
     </Columns>
 </SimplySearch>
 

@@ -9,18 +9,18 @@
 
     <SimplyForm @bind-Value="employee">
 
-        <SimplyField Name="FirstName"></SimplyField>
-        <SimplyField Name="LastName"></SimplyField>
+        <Field Name="FirstName"></Field>
+        <Field Name="LastName"></Field>
 
-        <SimplyField Name="@nameof(Employee.Age)" />
+        <Field Name="@nameof(Employee.Age)" />
         <div>test</div>
-        <SimplyField Name="Married" />
-        <SimplyField Name="EmploymentStatus" Lookup="https://localhost:5001/cqapi/mockmodels/" />
-        <SimplyField Name="Country" Lookup="https://localhost:5001/cqapi/countries/" />
-        <SimplyField Name="Photo" />
+        <Field Name="Married" />
+        <Field Name="EmploymentStatus" Lookup="https://localhost:5001/cqapi/mockmodels/" />
+        <Field Name="Country" Lookup="https://localhost:5001/cqapi/countries/" />
+        <Field Name="Photo" />
 
-        <SimplyField Name="Salary.Amount" />
-        <SimplyField Name="Salary.Currency" />
+        <Field Name="Salary.Amount" />
+        <Field Name="Salary.Currency" />
     </SimplyForm>
 
     <h1>Leaves</h1>
@@ -30,12 +30,12 @@
             <SimplyAction Type="ActionType.TableAdd" />
         </Header>
         <Columns>
-            <SimplyField Name="Reason" />
-            <SimplyField Name="Days"  />
+            <Field Name="Reason" />
+            <Field Name="Days"  />
         </Columns>
         <Form>
-            <SimplyField Name="Reason" />
-            <SimplyField Name="Days"  />
+            <Field Name="Reason" />
+            <Field Name="Days"  />
         </Form>
     </SimplyTable>
 

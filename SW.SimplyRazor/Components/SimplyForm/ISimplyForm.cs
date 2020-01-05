@@ -7,8 +7,8 @@ namespace SW.SimplyRazor
 {
     public interface ISimplyForm
     {
-        void AddField(ISimplyField formField);
-        void RemoveField(string name);
+        //void AddField(IField formField);
+        //void RemoveField(string name);
         Task FieldValueChanged(string name);
         //IDictionary<string, ISimplyField> Fields { get; set; }
         //string Id { get;  }

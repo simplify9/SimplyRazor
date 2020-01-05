@@ -110,7 +110,7 @@
     ElementReference tableElementRef;
     SimplySearchInterop wrapper;
     List<ISearchyFilterSetup> filterSetup;
-    List<ISimplyColumn> columns;
+    List<IColumn> columns;
 
     Task FilterAddOnClick(object e)
     {
@@ -135,7 +135,7 @@
 
         apiClient.HttpClient.BaseAddress = new Uri(SearchUrl);
 
-        columns = new List<ISimplyColumn>();
+        columns = new List<IColumn>();
 
         filters = new List<FilterModel>();
         filterSetup = new List<ISearchyFilterSetup>();
@@ -189,11 +189,11 @@
 
     }
 
-    public void AddColumn(ISimplyColumn column)
+    public void AddColumn(IColumn column)
     {
         columns.Add(column);
     }
-    public void RemoveColumn(ISimplyColumn column)
+    public void RemoveColumn(IColumn column)
     {
         columns.Remove(column);
     }
