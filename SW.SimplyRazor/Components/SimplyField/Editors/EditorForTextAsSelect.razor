@@ -2,14 +2,15 @@
 
 <label for="@State.Id">@State.Text</label>
 
-<SimplySelect id="@State.Id"
-                       form="@State.FormId"
-                       class="@cssClass"
-                       ValueChanged="(e)=> ValueChanged.InvokeAsync(e)"
-                       Value="@State.Value"
-                       EmptyText="Select"
-                       Lookup="@State.Lookup"
-                       @attributes="UnmatchedAttributes" TKey="object" />
+<SimplySelect id="@State.Id" 
+              form="@State.FormId"
+              class="@cssClass"
+              ValueChanged="(e)=> ValueChanged.InvokeAsync(e)"
+              Value="@State.Value"
+              EmptyText="Select"
+              Lookup="@State.Lookup"
+              @attributes="UnmatchedAttributes" 
+              TKey="object" />
 
 @code {
 

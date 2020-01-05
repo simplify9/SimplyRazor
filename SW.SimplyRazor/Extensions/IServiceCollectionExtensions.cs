@@ -8,6 +8,7 @@ namespace SW.SimplyRazor
         {
             serviceCollection.AddSingleton<Notifier<Ping>>();
             serviceCollection.AddSingleton<Notifier<UserMessage>>();
+            serviceCollection.AddSingleton<Notifier<InvalidFieldNotification>>();
 
             serviceCollection.AddHttpClient<ApiService>();
 

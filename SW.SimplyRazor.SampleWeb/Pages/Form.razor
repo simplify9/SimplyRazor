@@ -32,14 +32,11 @@
             <SimplyField Name="Salary.Amount" />
             <SimplyField Name="Salary.Currency" />
         </FieldGroup>
-
-
     </SimplyForm>
 
     <div class="container-fluid mt-5">
         <SimplyCommand Text="Save" CommandUrl="https://localhost:5001/cqapi/employees/" Key="5" Request="employee" OnSuccess="SaveOnSuccess" />
     </div>
-
 
     <p>Age: @employee?.Age</p>
     <p>Emp Status: @employee?.EmploymentStatus</p>
@@ -53,11 +50,9 @@
     Employee employee;
     bool ready;
 
-    async Task SaveOnSuccess(object obj)
+    void SaveOnSuccess(object obj)
     {
         navigationManager.NavigateTo("/");
     }
-
-
 
 }

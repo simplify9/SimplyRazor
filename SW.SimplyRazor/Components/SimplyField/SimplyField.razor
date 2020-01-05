@@ -6,23 +6,27 @@
 @using System.Reflection
 @using Humanizer
 
-
-
-
 @switch (RenderMode)
 {
     case FieldRole.Input:
 
         if (editorFragment != null && (ShowsOn == FieldShowsOn.Always || ShowsOn == FieldShowsOn.Edit))
         {
+            <SimplyNotify Notification="InvalidFieldNotification" OnReceived="OnServerFeedback" Tag="@Name" />
             <div class="@((Grouped) ? "col" : "form-group")">
 
                 @editorFragment
 
-                @if (IsInvalid)
+                @if (InvalidFeedback!=null)
                 {
                     <div class="invalid-feedback">
                         @InvalidFeedback
+                    </div>
+                }
+                @if (serverFeedback!=null)
+                {
+                    <div class="invalid-feedback">
+                        @serverFeedback
                     </div>
                 }
 
@@ -33,6 +37,7 @@
             </div>
         }
         break;
+
     case FieldRole.ColumnValue:
 
         if (ShowsOn == FieldShowsOn.Always || ShowsOn == FieldShowsOn.List)
@@ -136,7 +141,7 @@
 
     public string InvalidFeedback { get; set; }
 
-    public bool IsInvalid => InvalidFeedback != null;
+    public bool IsInvalid => serverFeedback != null || InvalidFeedback != null;
 
     public object DisplayValue
     {
@@ -235,7 +240,12 @@
 
     async Task OnChange(object value)
     {
-        if (await TrySetValue(value)) await Form.FieldValueChanged(Name);
+        if (await TrySetValue(value))
+        {
+            serverFeedback = null;
+            await Form.FieldValueChanged(Name);
+        }
+
     }
 
     async Task<bool> TrySetValue(object value)
@@ -282,8 +292,31 @@
         }
     }
 
+    System.Timers.Timer countdown;
+    string serverFeedback;
+
+    void OnServerFeedback(InvalidFieldNotification notification)
+    {
+
+        serverFeedback = notification.Message;
+        StateHasChanged();
+
+        countdown = new System.Timers.Timer(TimeSpan.FromSeconds(5).TotalMilliseconds);
+        countdown.Elapsed += async (s, e) => await OnDue();
+        countdown.AutoReset = false;
+        countdown.Start();
+    }
+
+    async Task OnDue()
+    {
+        serverFeedback = null;
+
+        await InvokeAsync(() => StateHasChanged());
+    }
+
     void IDisposable.Dispose()
     {
+        countdown?.Dispose();
         Form.RemoveField(Name);
     }
 }
