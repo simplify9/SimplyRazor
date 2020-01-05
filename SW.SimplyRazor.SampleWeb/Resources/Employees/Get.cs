@@ -10,7 +10,7 @@ namespace SW.SimplyRazor.SampleWeb.Resources.Employees
     {
         async public Task<object> Handle(int key, bool lookup = false)
         {
-            await Task.Delay(TimeSpan.FromSeconds(5));
+            await Task.Delay(TimeSpan.FromSeconds(1));
             return SW.BogusDataModels.FakeEmployees.Data[0];
         }
     }

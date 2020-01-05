@@ -1,7 +1,6 @@
 ﻿@typeparam TModel
 @implements ISimplyTable
 @namespace SW.SimplyRazor
-@using System.Reflection
 
 
 <div>
@@ -16,9 +15,9 @@
         <thead>
             <tr>
                 <CascadingValue IsFixed="true" Value="FieldRole.ColumnName" Name="RenderMode">
-                    <SimplyForm Value="Value.First()">
-                        @Fields
-                    </SimplyForm>
+                    <CascadingValue Value="Value.First()" Name="Model">
+                        @Columns
+                    </CascadingValue>
                 </CascadingValue>
             </tr>
         </thead>
@@ -27,15 +26,12 @@
             {
                 var itemIndex = i;
                 <tr @key="Value[itemIndex]">
-                    <CascadingValue  Value="this" Name="Table">
-                        <CascadingValue Value="itemIndex" Name="ItemIndex">
-                            <CascadingValue IsFixed="true" Value="FieldRole.ColumnValue" Name="RenderMode">
-                                <SimplyForm Value="Value[itemIndex]">
-                                    @Fields
-                                </SimplyForm>
-                            </CascadingValue>
+                    <CascadingValue IsFixed="true" Value="FieldRole.ColumnValue" Name="RenderMode">
+                        <CascadingValue Value="Value[itemIndex]" Name="Model">
+                            @Columns
                         </CascadingValue>
                     </CascadingValue>
+
                 </tr>
             }
         </tbody>
@@ -46,18 +42,12 @@
 {
     <SimplyModal OnVisibilityChanged="OnModalVisibilityChanged">
         <Content>
-            <CascadingValue  Value="this" Name="Table">
-                <CascadingValue Value="beingEditedModelIndex" Name="ItemIndex">
-                    <CascadingValue IsFixed="true" Value="FieldRole.Input" Name="RenderMode">
-                        <SimplyForm Name="@($"{Name}{beingEditedModelIndex}")" Value="beingEditedModel" OnSubmit="()=> OnFormSubmit(context)">
-                            @Fields
-                        </SimplyForm>
-                    </CascadingValue>
-                </CascadingValue>
-            </CascadingValue>
+            <SimplyForm Name="@($"Table_{beingEditedModelIndex}")" Value="beingEditedModel">
+                @Form
+            </SimplyForm>
         </Content>
         <Footer>
-            <button type="submit" class="btn btn-primary" form="@($"{Name}{beingEditedModelIndex}")">Ok</button>
+            <button type="button" class="btn btn-primary" @onclick="()=> OnFormSubmit(context)">Ok</button>
             @*<button type="reset" class="btn btn-secondary" form="@($"{Name}{beingEditedModelIndex}")">Close</button>*@
         </Footer>
     </SimplyModal>
@@ -65,14 +55,10 @@
 
 @code {
 
-    [CascadingParameter(Name = "Form")]
-    public ISimplyForm Form { get; set; }
 
-    [CascadingParameter(Name = "Model")]
-    public object Model { get; set; }
 
-    [CascadingParameter(Name = "RenderMode")]
-    public FieldRole RenderMode { get; set; }
+    //[CascadingParameter(Name = "RenderMode")]
+    //public FieldRole RenderMode { get; set; }
 
     [Parameter]
     public IList<TModel> Value { get; set; }
@@ -84,61 +70,48 @@
     public EventCallback<TableItem<TModel>> OnItem { get; set; }
 
     [Parameter]
-    public string Name { get; set; }
-
-    [Parameter]
-    public string For { get; set; }
-
-    [Parameter]
-    public RenderFragment Fields { get; set; }
+    public RenderFragment Columns { get; set; }
 
     [Parameter]
     public RenderFragment Header { get; set; }
 
+    [Parameter]
+    public RenderFragment Form { get; set; }
+
     TModel beingEditedModel;
     int beingEditedModelIndex;
-    PropertyInfo propertyInfo;
-    string[] nameArray;
+    //string name;
+    //PropertyInfo propertyInfo;
+    //string[] nameArray;
 
     protected override void OnInitialized()
     {
-        if (Name == null) Name = "MainTable";
-        if (Value != null)
-        {
-            ItemData = new TableItemData(Value.Count);
-            return;
-        }
+        //if (Name == null) Name = "MainTable";
+        //if (Value != null)
+        //{
+        //    ItemData = new TableItemData(Value.Count);
+        //    return;
+        //}
 
-        if (Model == null) return;
+        //if (Model == null) return;
 
-        Type modelType = Model.GetType();
-        var childModel = Model;
+        //Type modelType = Model.GetType();
+        //var childModel = Model;
 
-        nameArray = Name.Split('.');
+        //nameArray = Name.Split('.');
 
-        for (var i = 0; i < nameArray.Length; i++)
-        {
-            propertyInfo = modelType.GetProperty(nameArray[i]);
-            modelType = propertyInfo.PropertyType;
-            if (childModel != null) childModel = propertyInfo.GetValue(childModel);
-        };
+        //for (var i = 0; i < nameArray.Length; i++)
+        //{
+        //    propertyInfo = modelType.GetProperty(nameArray[i]);
+        //    modelType = propertyInfo.PropertyType;
+        //    if (childModel != null) childModel = propertyInfo.GetValue(childModel);
+        //};
 
-        Value = childModel == null ? null : (IList<TModel>)childModel;
-        if (Value!=null) ItemData = new TableItemData(Value.Count);
+        //Value = childModel == null ? null : (IList<TModel>)childModel;
+        //if (Value != null) ItemData = new TableItemData(Value.Count);
     }
 
-    //void OnReceived(DatalistReady datalist)
-    //{
-    //    Value = ((IEnumerable<TModel>)datalist.Datalist).ToList();
-    //    ItemData = new TableItemData(Value.Count);
-    //}
 
-    //Task OnModalKeyDown(KeyboardEventArgs args)
-    //{
-    //    if (args.Code == "Enter") return OnFormSubmit(args);
-    //    if (args.Code == "Escape") return OnFormReset(args);
-    //    return Task.CompletedTask;
-    //}
 
     public Task AddModel()
     {
@@ -151,7 +124,7 @@
     public Task ChangeModel(int index)
     {
         beingEditedModelIndex = index;
-        beingEditedModel = Object.DeepClone(Value[index]); 
+        beingEditedModel = Object.DeepClone(Value[index]);
         StateHasChanged();
         return Task.CompletedTask;
     }
@@ -171,26 +144,26 @@
             {
                 Value = new List<TModel>();
 
-                if (propertyInfo != null)
-                {
-                    object obj = Model;
+                //if (propertyInfo != null)
+                //{
+                //    object obj = Model;
 
-                    for (int i = 0; i < nameArray.Length - 1; i++)
-                    {
-                        var targetProp = obj.GetType().GetProperty(nameArray[i]);
-                        var nextType = targetProp.PropertyType;
-                        var nextObj = targetProp.GetValue(obj);
-                        if (nextObj == null)
-                        {
-                            nextObj = Activator.CreateInstance(nextType);
-                            targetProp.SetValue(obj, nextObj);
-                        }
+                //    for (int i = 0; i < nameArray.Length - 1; i++)
+                //    {
+                //        var targetProp = obj.GetType().GetProperty(nameArray[i]);
+                //        var nextType = targetProp.PropertyType;
+                //        var nextObj = targetProp.GetValue(obj);
+                //        if (nextObj == null)
+                //        {
+                //            nextObj = Activator.CreateInstance(nextType);
+                //            targetProp.SetValue(obj, nextObj);
+                //        }
 
-                        obj = nextObj;
-                    }
-                    propertyInfo.SetValue(obj, Value);
+                //        obj = nextObj;
+                //    }
+                //    propertyInfo.SetValue(obj, Value);
 
-                }
+                //}
             }
 
             await OnItem.InvokeAsync(new TableItem<TModel>
@@ -213,7 +186,7 @@
         }
 
         await ValueChanged.InvokeAsync(Value);
-        if (Form != null) await Form.FieldValueChanged(Name);
+        //if (Form != null) await Form.FieldValueChanged(Name);
 
         await modal.Hide();
     }
@@ -224,7 +197,7 @@
         return Task.CompletedTask;
     }
 
-    public TableItemData ItemData { get; set; }
+    //public TableItemData ItemData { get; set; }
 
 
 }

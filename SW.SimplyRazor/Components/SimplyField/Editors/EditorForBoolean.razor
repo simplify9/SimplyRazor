@@ -1,16 +1,16 @@
 ﻿@namespace SW.SimplyRazor
 
-    <div class="custom-control custom-checkbox">
+    <div class="form-check">
         <input id="@State.Id"
                checked="@State.Value"
                type="checkbox"
-               class="custom-control-input @((State.IsInvalid ? "is-invalid" : null))"
-               form="@State.FormId"
+               class="form-check-input @((State.IsInvalid ? "is-invalid" : null))"
                @onchange="e=> ValueChanged.InvokeAsync(e.Value)"
                @attributes="UnmatchedAttributes" />
 
-        <label class="custom-control-label" for="@State.Id">@State.Text</label>
+        <label class="form-check-label" for="@State.Id">@State.Text</label>
     </div>
+
 @code {
 
     [Parameter]

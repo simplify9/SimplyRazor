@@ -3,7 +3,6 @@
 <label for="@State.Id">@State.Text</label>
 
 <SimplyUpload id="@State.Id"
-              form="@State.FormId"
               ValueChanged="(e)=> ValueChanged.InvokeAsync(e)"
               @attributes="UnmatchedAttributes"  />
 

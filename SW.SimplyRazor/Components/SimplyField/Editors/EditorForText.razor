@@ -6,7 +6,6 @@
        value="@State.Value"
        type="@inputType"
        class="form-control @((State.IsInvalid ? "is-invalid" : null))"
-       form="@State.FormId"
        @onchange="(e)=> ValueChanged.InvokeAsync(e.Value)"
        @attributes="UnmatchedAttributes" />
 

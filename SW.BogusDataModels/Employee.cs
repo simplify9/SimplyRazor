@@ -32,7 +32,7 @@ namespace SW.BogusDataModels
         public int EmploymentStatus { get; set; }
         public string Country { get; set; }
         public RemoteBlob Photo { get; set; }
-        public ICollection<Leave> Leaves { get; set; }
+        public IList<Leave> Leaves { get; set; }
 
         //public static IList<Employee> Sample = new List<Employee>
         //{

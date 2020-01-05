@@ -3,7 +3,6 @@
 <label for="@State.Id">@State.Text</label>
 
 <SimplySelect id="@State.Id" 
-              form="@State.FormId"
               class="@cssClass"
               ValueChanged="(e)=> ValueChanged.InvokeAsync(e)"
               Value="@State.Value"

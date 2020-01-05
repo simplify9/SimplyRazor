@@ -10,7 +10,7 @@ namespace SW.SimplyRazor
         void AddField(ISimplyField formField);
         void RemoveField(string name);
         Task FieldValueChanged(string name);
-        IDictionary<string, ISimplyField> Fields { get; set; }
-        string Id { get;  }
+        //IDictionary<string, ISimplyField> Fields { get; set; }
+        //string Id { get;  }
     }
 }

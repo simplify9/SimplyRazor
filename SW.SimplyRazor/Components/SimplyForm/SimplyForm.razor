@@ -3,12 +3,11 @@
 @namespace SW.SimplyRazor
 
 
-<form id="@Id" @onsubmit="(e) => OnSubmit.InvokeAsync(e)" @onreset="(e) => OnReset.InvokeAsync(e)"></form>
 <CascadingValue IsFixed="true" Value="this" Name="Form">
-    <CascadingValue Value="(object)Value" Name="Model">
-        <CascadingValue IsFixed="true" Value="typeof(TModel)" Name="ModelType">
+    <CascadingValue Value="Value" Name="Model">
+
             @ChildContent
-        </CascadingValue>
+
     </CascadingValue>
 </CascadingValue>
 
@@ -23,26 +22,25 @@
     [Parameter]
     public EventCallback<TModel> ValueChanged { get; set; }
 
-    [Parameter]
-    public EventCallback OnSubmit { get; set; }
+    //[Parameter]
+    //public EventCallback OnSubmit { get; set; }
 
-    [Parameter]
-    public EventCallback OnReset { get; set; }
+    //[Parameter]
+    //public EventCallback OnReset { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
 
-    string id;
-    public string Id => id;
 
-    public IDictionary<string, ISimplyField> Fields { get; set; }
+
+    //public IDictionary<string, ISimplyField> Fields { get; set; }
 
 
     protected override void OnInitialized()
     {
-        id = Name == null ? $"Form{Guid.NewGuid().ToString("N")}" : Name;
-        Fields = new Dictionary<string, ISimplyField>();
+        //id = Name == null ? $"Form{Guid.NewGuid().ToString("N")}" : Name;
+        //Fields = new Dictionary<string, ISimplyField>();
     }
 
     public async Task FieldValueChanged(string name)
@@ -52,12 +50,12 @@
 
     public void AddField(ISimplyField formField)
     {
-        if (formField.Name != null) Fields.Add(formField.Name, formField);
+        //if (formField.Name != null) Fields.Add(formField.Name, formField);
     }
 
     public void RemoveField(string name)
     {
-        if (name != null) Fields.Remove(name);
+        //if (name != null) Fields.Remove(name);
     }
 
 

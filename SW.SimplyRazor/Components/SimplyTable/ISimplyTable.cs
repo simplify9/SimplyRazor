@@ -11,7 +11,7 @@ namespace SW.SimplyRazor
         Task ChangeModel(int index);
         Task RemoveModel(int index);
 
-        TableItemData ItemData { get; set; }
+        //TableItemData ItemData { get; set; }
             
     }
 }

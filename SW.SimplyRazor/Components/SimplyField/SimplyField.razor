@@ -10,20 +10,20 @@
 {
     case FieldRole.Input:
 
-        if (editorFragment != null && (ShowsOn == FieldShowsOn.Always || ShowsOn == FieldShowsOn.Edit))
+        if (editorFragment != null)
         {
             <SimplyNotify Notification="InvalidFieldNotification" OnReceived="OnServerFeedback" Tag="@Name" />
-            <div class="@((Grouped) ? "col" : "form-group")">
+            <div class="form-group">
 
                 @editorFragment
 
-                @if (InvalidFeedback!=null)
+                @if (InvalidFeedback != null)
                 {
                     <div class="invalid-feedback">
                         @InvalidFeedback
                     </div>
                 }
-                @if (serverFeedback!=null)
+                @if (serverFeedback != null)
                 {
                     <div class="invalid-feedback">
                         @serverFeedback
@@ -40,38 +40,35 @@
 
     case FieldRole.ColumnValue:
 
-        if (ShowsOn == FieldShowsOn.Always || ShowsOn == FieldShowsOn.List)
-        {
-            <td>
-                @if (ColumnValue == null)
-                {
-                    @DisplayValue
-                }
-                else
-                {
-                    @ColumnValue(this)
-                }
-            </td>
-        }
+
+        <td>
+            @if (ColumnValue == null)
+            {
+                @DisplayValue
+            }
+            else
+            {
+                @ColumnValue(this)
+            }
+        </td>
+
         break;
 
 
     case FieldRole.ColumnName:
 
-        if (ShowsOn == FieldShowsOn.Always || ShowsOn == FieldShowsOn.List)
-        {
-            <th scope="col">
-                @if (ColumnHeader == null)
-                {
-                    @Text
 
-                }
-                else
-                {
-                    @ColumnHeader(this)
-                }
-            </th>
-        }
+        <th scope="col">
+            @if (ColumnHeader == null)
+            {
+                @Text
+            }
+            else
+            {
+                @ColumnHeader(this)
+            }
+        </th>
+
         break;
 
 }
@@ -83,22 +80,21 @@
     public ISimplyForm Form { get; set; }
 
     [CascadingParameter(Name = "Model")]
-    public dynamic Model { get; set; }
+    public object Model { get; set; }
 
-    [CascadingParameter(Name = "ModelType")]
-    public Type ModelType { get; set; }
+    //[CascadingParameter(Name = "ModelType")]
+    //public Type ModelType { get; set; }
 
     [CascadingParameter(Name = "RenderMode")]
     public FieldRole RenderMode { get; set; }
 
-    [CascadingParameter(Name = "Grouped")]
-    public bool Grouped { get; set; }
 
-    [CascadingParameter(Name = "Table")]
-    public ISimplyTable Table { get; set; }
 
-    [CascadingParameter(Name = "ItemIndex")]
-    public int ItemIndex { get; set; }
+    //[CascadingParameter(Name = "Table")]
+    //public ISimplyTable Table { get; set; }
+
+    //[CascadingParameter(Name = "ItemIndex")]
+    //public int ItemIndex { get; set; }
 
     [Parameter]
     public string Lookup { get; set; }
@@ -106,7 +102,7 @@
     [Parameter]
     public string Name { get; set; }
 
-    public Type Editor { get; set; }
+
 
     [Parameter]
     public RenderFragment<ISimplyField> ColumnHeader { get; set; }
@@ -114,8 +110,8 @@
     [Parameter]
     public RenderFragment<ISimplyField> ColumnValue { get; set; }
 
-    [Parameter]
-    public FieldShowsOn ShowsOn { get; set; }
+    //[Parameter]
+    //public FieldShowsOn ShowsOn { get; set; }
 
     [Parameter]
     public string Help { get; set; }
@@ -123,13 +119,15 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
-    public string FormId => Form.Id;
+    //public string FormId => Form.Id;
 
     public PropertyInfo PropertyInfo { get; private set; }
 
     string id;
     public string Id => id;
 
+
+    Type editor;
     string text = null;
 
     [Parameter]
@@ -148,9 +146,9 @@
         get
         {
 
-            if (Lookup != null && Table != null)
+            if (Lookup != null)
 
-                return Table.ItemData?.GetLookupValue(ItemIndex, Name);
+                return "ll";//Table.ItemData?.GetLookupValue(ItemIndex, Name);
 
             return Value;
 
@@ -177,7 +175,7 @@
 
     RenderFragment CreateEditor() => builder =>
     {
-        builder.OpenComponent(0, Editor);
+        builder.OpenComponent(0, editor);
         builder.AddAttribute(1, "State", this);
         builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<object>(this, OnChange));
         builder.AddMultipleAttributes(3, UnmatchedAttributes);
@@ -190,18 +188,18 @@
     async protected override Task OnInitializedAsync()
     {
 
-        if (Model != null) ModelType = Model.GetType();
-        if (ModelType == null) throw new ArgumentNullException();
+        //var modelType = Model.GetType();
+        //if (ModelType == null) throw new ArgumentNullException();
 
         id = Name == null
             ? $"field{Guid.NewGuid().ToString("N")}"
-            : $"{FormId}_{Name}".Replace(".", "_").ToLower();
+            : $"{Name}".Replace(".", "_").ToLower();
 
         if (Name is null) return;
 
         nameArray = Name.Split('.');
 
-        PropertyInfo = ModelType.GetProperty(nameArray[0]);
+        PropertyInfo = Model.GetType().GetProperty(nameArray[0]);
 
         for (int i = 1; i < nameArray.Length; i++)
 
@@ -209,28 +207,28 @@
 
         if (PropertyInfo.PropertyType == typeof(bool))
         {
-            Editor = typeof(EditorForBoolean);
+            editor = typeof(EditorForBoolean);
         }
         else if (PropertyInfo.PropertyType == typeof(RemoteBlob))
         {
-            Editor = typeof(EditorForUpload);
+            editor = typeof(EditorForUpload);
         }
         else
         {
-            Editor = (Lookup == null) ? typeof(EditorForText) : typeof(EditorForTextAsSelect);
+            editor = (Lookup == null) ? typeof(EditorForText) : typeof(EditorForTextAsSelect);
         }
 
-        Form.AddField(this);
+        //Form.AddField(this);
 
-        if (RenderMode == FieldRole.Input && Editor != null) editorFragment = CreateEditor();
+        if (RenderMode == FieldRole.Input && editor != null) editorFragment = CreateEditor();
 
-        if (RenderMode == FieldRole.ColumnValue && Table != null)
+        if (RenderMode == FieldRole.ColumnValue)
         {
             if (Lookup != null)
             {
-                apiClient.HttpClient.BaseAddress = new Uri(Lookup);
+                //apiClient.HttpClient.BaseAddress = new Uri(Lookup);
 
-                Table.ItemData?.SetLookupValue(ItemIndex, Name, await apiClient.LookupValue(Value));
+                //Table.ItemData?.SetLookupValue(ItemIndex, Name, await apiClient.LookupValue(Value));
 
             }
 
@@ -240,18 +238,18 @@
 
     async Task OnChange(object value)
     {
-        if (await TrySetValue(value))
+        if (TrySetValue(value))
         {
             serverFeedback = null;
-            await Form.FieldValueChanged(Name);
+            await Form?.FieldValueChanged(Name);
         }
 
     }
 
-    async Task<bool> TrySetValue(object value)
+    bool TrySetValue(object value)
     {
 
-        if (Model == null) Model = Activator.CreateInstance(ModelType);
+        //if (Model == null) Model = Activator.CreateInstance(ModelType);
 
         object obj = Model;
 
@@ -275,12 +273,12 @@
             PropertyInfo.SetValue(obj, typedValue);
             InvalidFeedback = null;
 
-            if (Table != null && Lookup != null)
-            {
-                apiClient.HttpClient.BaseAddress = new Uri(Lookup);
-                Table.ItemData.SetLookupValue(ItemIndex, Name, await apiClient.LookupValue(Value));
+            //if (Table != null && Lookup != null)
+            //{
+            //    apiClient.HttpClient.BaseAddress = new Uri(Lookup);
+            //    Table.ItemData.SetLookupValue(ItemIndex, Name, await apiClient.LookupValue(Value));
 
-            }
+            //}
 
 
             return true;
@@ -317,6 +315,6 @@
     void IDisposable.Dispose()
     {
         countdown?.Dispose();
-        Form.RemoveField(Name);
+        //Form.RemoveField(Name);
     }
 }
