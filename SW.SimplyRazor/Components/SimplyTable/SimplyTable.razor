@@ -2,7 +2,6 @@
 @implements ISimplyTable
 @namespace SW.SimplyRazor
 
-
 <div>
     <CascadingValue Value="this" Name="Table">
         @Header
@@ -40,25 +39,27 @@
 
 @if (beingEditedModel != null)
 {
-    <SimplyModal OnVisibilityChanged="OnModalVisibilityChanged">
-        <Content>
-            <SimplyForm Name="@($"Table_{beingEditedModelIndex}")" Value="beingEditedModel">
-                @Form
-            </SimplyForm>
-        </Content>
-        <Footer>
-            <button type="button" class="btn btn-primary" @onclick="()=> OnFormSubmit(context)">Ok</button>
-            @*<button type="reset" class="btn btn-secondary" form="@($"{Name}{beingEditedModelIndex}")">Close</button>*@
-        </Footer>
-    </SimplyModal>
+    <div class="modal" tabindex="-1" role="dialog" style="display:block">
+        <div class="modal-dialog modal-dialog-scrollable" role="document" style="display:block">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                </div>
+                <div class="modal-body">
+                    <SimplyForm Value="beingEditedModel">
+                        @Form
+                    </SimplyForm>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="()=> OnFormSubmit()">Ok</button>
+                    <button type="button" class="btn btn-secondary" >Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 @code {
-
-
-
-    //[CascadingParameter(Name = "RenderMode")]
-    //public FieldRole RenderMode { get; set; }
 
     [Parameter]
     public IList<TModel> Value { get; set; }
@@ -136,7 +137,7 @@
         return Task.CompletedTask;
     }
 
-    async Task OnFormSubmit(ISimplyModal modal)
+    async Task OnFormSubmit()
     {
         if (beingEditedModelIndex == 0 && Value == null || beingEditedModelIndex == Value.Count)
         {
@@ -188,16 +189,11 @@
         await ValueChanged.InvokeAsync(Value);
         //if (Form != null) await Form.FieldValueChanged(Name);
 
-        await modal.Hide();
+        //await modal.Hide();
+        beingEditedModel = default(TModel);
     }
 
-    Task OnModalVisibilityChanged(bool visible)
-    {
-        if (!visible) beingEditedModel = default(TModel);
-        return Task.CompletedTask;
-    }
 
-    //public TableItemData ItemData { get; set; }
 
 
 }

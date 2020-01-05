@@ -2,19 +2,13 @@
 @implements ISimplyForm
 @namespace SW.SimplyRazor
 
-
 <CascadingValue IsFixed="true" Value="this" Name="Form">
     <CascadingValue Value="Value" Name="Model">
-
             @ChildContent
-
     </CascadingValue>
 </CascadingValue>
 
 @code {
-
-    [Parameter]
-    public string Name { get; set; }
 
     [Parameter]
     public TModel Value { get; set; }
@@ -22,41 +16,11 @@
     [Parameter]
     public EventCallback<TModel> ValueChanged { get; set; }
 
-    //[Parameter]
-    //public EventCallback OnSubmit { get; set; }
-
-    //[Parameter]
-    //public EventCallback OnReset { get; set; }
-
     [Parameter]
     public RenderFragment ChildContent { get; set; }
-
-
-
-
-    //public IDictionary<string, ISimplyField> Fields { get; set; }
-
-
-    protected override void OnInitialized()
-    {
-        //id = Name == null ? $"Form{Guid.NewGuid().ToString("N")}" : Name;
-        //Fields = new Dictionary<string, ISimplyField>();
-    }
 
     public async Task FieldValueChanged(string name)
     {
         await ValueChanged.InvokeAsync(Value);
     }
-
-    //public void AddField(ISimplyField formField)
-    //{
-    //    //if (formField.Name != null) Fields.Add(formField.Name, formField);
-    //}
-
-    //public void RemoveField(string name)
-    //{
-    //    //if (name != null) Fields.Remove(name);
-    //}
-
-
 }
