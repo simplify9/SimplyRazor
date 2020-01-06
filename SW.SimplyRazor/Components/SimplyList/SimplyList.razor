@@ -1,0 +1,59 @@
+﻿@typeparam TModel
+@namespace SW.SimplyRazor
+
+<SimplyTable @bind-Value="wrapper" OnItem="OnItem" TModel="PrimitiveTypeWrapper<TModel>">
+    <Columns>
+        <Field Name="Value" Lookup="@Lookup" />
+    </Columns>
+    <Form>
+        <Field Name="Value" Lookup="@Lookup" />
+    </Form>
+</SimplyTable>
+
+@code {
+
+
+    [Parameter]
+    public ICollection<TModel> Value { get; set; }
+
+    [Parameter]
+    public EventCallback<ICollection<TModel>> ValueChanged { get; set; }
+
+    [Parameter]
+    public string Lookup { get; set; }
+
+    ICollection<PrimitiveTypeWrapper<TModel>> wrapper;
+
+    protected override void OnInitialized()
+    {
+        if (Value != null)
+        {
+            var _wrapper = new List<PrimitiveTypeWrapper<TModel>>();
+
+            foreach (TModel item in Value)
+            {
+                _wrapper.Add(new PrimitiveTypeWrapper<TModel>
+                {
+                    Value = item
+                });
+            }
+
+            wrapper = _wrapper;
+        }
+    }
+
+    async Task OnItem(TableItem<PrimitiveTypeWrapper<TModel>> tableItem)
+    {
+        if (Value == null) Value = new List<TModel>();
+
+        if (tableItem.Flag == TableItemFlag.Added)
+            Value.Add(tableItem.Item.Value);
+
+        if (tableItem.Flag == TableItemFlag.Removed)
+            Value.Remove(tableItem.Item.Value);
+
+        await ValueChanged.InvokeAsync(Value);
+
+    }
+
+}

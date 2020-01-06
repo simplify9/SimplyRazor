@@ -1,13 +1,13 @@
 ﻿@typeparam TKey
+
 @namespace SW.SimplyRazor
+
 @using System.Collections
-@using System.Linq
 @using Humanizer
+
 @inject ApiService apiClient
 
-
-
-<select @onchange="SelectValueChanged" class="form-control" @attributes="UnmatchedAttributes">
+<select @onchange="SelectValueChanged" @attributes="UnmatchedAttributes">
 
     @if (EmptyText != null)
     {
@@ -21,10 +21,10 @@
     else
     {
         int index = 1;
-        foreach (dynamic itemUntyped in Items)
+        foreach (object itemUntyped in Items)
         {
-            dynamic key = null;
-            dynamic value = null;
+            object key = null;
+            object value = null;
 
             Type enumerableType = itemUntyped.GetType();
 
@@ -40,11 +40,11 @@
             }
             else
             {
-                key = itemUntyped.Key;
-                value = itemUntyped.Value;
+                key = ((KeyValuePair<string, string>)itemUntyped).Key;
+                value = ((KeyValuePair<string, string>)itemUntyped).Value;
             }
 
-            <option selected="@(Value != null && Value.ToString() == ((object)key).ToString() )" value="@key">@value</option>
+            <option selected="@(Value != null && Value.ToString() == key.ToString() )" value="@key">@value</option>
 
             index++;
         }
@@ -63,6 +63,9 @@
 
     [Parameter]
     public IEnumerable Items { get; set; }
+
+    [Parameter]
+    public EventCallback<IEnumerable> ItemsChanged { get; set; }
 
     [Parameter]
     public string Lookup { get; set; }

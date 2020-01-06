@@ -16,10 +16,10 @@
 
             @editorFragment
 
-            @if (InvalidFeedback != null)
+            @if (invalidFeedback != null)
             {
                 <div class="invalid-feedback">
-                    @InvalidFeedback
+                    @invalidFeedback
                 </div>
             }
             @if (serverFeedback != null)
@@ -42,7 +42,16 @@
         <td>
             @if (ColumnValue == null)
             {
-                @DisplayValue
+                @if (Lookup != null && !string.IsNullOrWhiteSpace(Value.ToString()))
+                {
+                    <SimplyQuery QueryUrl="@Lookup" Key="@($"{Value}?lookup=true")" @bind-Value="lookupValue" @bind-Ready="lookupReady" />
+                    <SimplyReady @bind-Ready="lookupReady">
+                        @lookupValue
+                    </SimplyReady>
+                }
+                else
+
+                    @Value 
             }
             else
             {
@@ -112,23 +121,10 @@
         set => text = value;
     }
 
-    public string InvalidFeedback { get; set; }
+    string invalidFeedback;
 
-    public bool IsInvalid => serverFeedback != null || InvalidFeedback != null;
+    public bool IsInvalid => serverFeedback != null || invalidFeedback != null;
 
-    public object DisplayValue
-    {
-        get
-        {
-
-            if (Lookup != null)
-
-                return "ll";//Table.ItemData?.GetLookupValue(ItemIndex, Name);
-
-            return Value;
-
-        }
-    }
 
     public object Value
     {
@@ -159,12 +155,11 @@
     };
 
     string[] nameArray;
+    bool lookupReady;
+    string lookupValue;
 
-    async protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-
-        //var modelType = Model.GetType();
-        //if (ModelType == null) throw new ArgumentNullException();
 
         id = Name == null
             ? $"field{Guid.NewGuid().ToString("N")}"
@@ -193,21 +188,7 @@
             editor = (Lookup == null) ? typeof(EditorForText) : typeof(EditorForTextAsSelect);
         }
 
-        //Form.AddField(this);
-
         if (RenderMode == FieldRole.Input && editor != null) editorFragment = CreateEditor();
-
-        if (RenderMode == FieldRole.ColumnValue)
-        {
-            if (Lookup != null)
-            {
-                //apiClient.HttpClient.BaseAddress = new Uri(Lookup);
-
-                //Table.ItemData?.SetLookupValue(ItemIndex, Name, await apiClient.LookupValue(Value));
-
-            }
-
-        }
 
     }
 
@@ -223,9 +204,6 @@
 
     bool TrySetValue(object value)
     {
-
-        //if (Model == null) Model = Activator.CreateInstance(ModelType);
-
         object obj = Model;
 
         for (int i = 0; i < nameArray.Length - 1; i++)
@@ -246,21 +224,13 @@
         {
             var typedValue = Object.ConvertValueToType(value, PropertyInfo.PropertyType);
             PropertyInfo.SetValue(obj, typedValue);
-            InvalidFeedback = null;
-
-            //if (Table != null && Lookup != null)
-            //{
-            //    apiClient.HttpClient.BaseAddress = new Uri(Lookup);
-            //    Table.ItemData.SetLookupValue(ItemIndex, Name, await apiClient.LookupValue(Value));
-
-            //}
-
+            invalidFeedback = null;
 
             return true;
         }
         catch (Exception ex)
         {
-            InvalidFeedback = $"{value} is not {PropertyInfo.PropertyType.Name}";
+            invalidFeedback = $"{value} is not {PropertyInfo.PropertyType.Name}";
             return false;
         }
     }
@@ -290,6 +260,5 @@
     void IDisposable.Dispose()
     {
         countdown?.Dispose();
-        //Form.RemoveField(Name);
     }
 }

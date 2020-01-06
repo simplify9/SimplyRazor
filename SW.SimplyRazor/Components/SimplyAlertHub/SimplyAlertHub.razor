@@ -8,14 +8,12 @@
     var index = i;
 
     <CascadingValue Value="this" Name="AlertHub">
-        <CascadingValue Value="index" Name="Index">
-            <SimplyAlert Body="@alerts[index].Body" Level="alerts[index].Level" ></SimplyAlert>
-        </CascadingValue>
+        <SimplyAlert @key="alerts[index]" Id="@alerts[index].Id" Body="@alerts[index].Body" Level="alerts[index].Level"></SimplyAlert>
     </CascadingValue>
 }
 
 @code {
-
+    
     List<Alert> alerts;
 
     protected override void OnInitialized()
@@ -25,19 +23,26 @@
 
     private class Alert
     {
+        public string Id { get; set; }
         public string Body { get; set; }
         public AttentionLevel Level { get; set; }
     }
 
-    public void RemoveAlert(int index)
+    public void RemoveAlert(string id)
     {
-        alerts.RemoveAt(index);
+
+        alerts.Remove(alerts.Where(a => a.Id == id).Single());
         StateHasChanged();
     }
 
     void OnUserMessageReceived(UserMessage message)
     {
-        alerts.Add(new Alert { Level = message.Level, Body = message.Body });
+        alerts.Add(new Alert
+        {
+            Id = Guid.NewGuid().ToString("N"),
+            Level = message.Level,
+            Body = message.Body
+        });
     }
 
 }

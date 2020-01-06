@@ -4,8 +4,8 @@ using System.Text;
 
 namespace SW.SimplyRazor
 {
-    public interface ISimplyAlertHub
+    class PrimitiveTypeWrapper<T>
     {
-        void RemoveAlert(string id);
+        public T Value { get; set; }
     }
 }

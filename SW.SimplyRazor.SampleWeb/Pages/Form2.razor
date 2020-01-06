@@ -23,19 +23,27 @@
         <Field Name="Salary.Currency" />
     </SimplyForm>
 
-    <h1>Leaves</h1>
+    <h5>Addtional Values</h5>
+
+    <SimplyDictionary  @bind-Value="employee.AdditionalValues" ></SimplyDictionary>
+
+    <h5>Roles</h5>
+
+    <SimplyList @bind-Value="employee.Roles" Lookup="https://localhost:5001/cqapi/countries/"></SimplyList>
+
+    <h5>Leaves</h5>
 
     <SimplyTable @bind-Value="employee.Leaves">
         <Header>
-            <SimplyAction Type="ActionType.TableAdd" />
+            
         </Header>
         <Columns>
             <Field Name="Reason" />
-            <Field Name="Days"  />
+            <Field Name="Days" />
         </Columns>
         <Form>
             <Field Name="Reason" />
-            <Field Name="Days"  />
+            <Field Name="Days" />
         </Form>
     </SimplyTable>
 

@@ -2,8 +2,12 @@
 @implements ISimplyTable
 @namespace SW.SimplyRazor
 
+@using System.Linq
+
 <div>
     <CascadingValue Value="this" Name="Table">
+        <button type="button" class="btn btn-outline-secondary btn-sm" @onclick="() => AddModel()"><span class="oi oi-plus" /></button>
+
         @Header
     </CascadingValue>
 </div>
@@ -18,21 +22,28 @@
                         @Columns
                     </CascadingValue>
                 </CascadingValue>
+                <th>
+
+                </th>
             </tr>
+
         </thead>
         <tbody>
             @for (var i = 0; i < Value.Count; i++)
             {
                 var itemIndex = i;
-                <tr @key="Value[itemIndex]">
+                <tr @key="Value.GetAt(itemIndex)">
                     <CascadingValue IsFixed="true" Value="FieldRole.ColumnValue" Name="RenderMode">
-                        <CascadingValue Value="Value[itemIndex]" Name="Model">
+                        <CascadingValue Value="Value.GetAt( itemIndex)" Name="Model">
                             @Columns
                         </CascadingValue>
                     </CascadingValue>
-
+                    <td>
+                        <button @onclick="(()=> RemoveModel(itemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-x" /></button>
+                    </td>
                 </tr>
             }
+
         </tbody>
     </table>
 }
@@ -52,7 +63,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" @onclick="()=> OnFormSubmit()">Ok</button>
-                    <button type="button" class="btn btn-secondary" >Cancel</button>
+                    <button type="button" class="btn btn-secondary">Cancel</button>
                 </div>
             </div>
         </div>
@@ -62,10 +73,10 @@
 @code {
 
     [Parameter]
-    public IList<TModel> Value { get; set; }
+    public ICollection<TModel> Value { get; set; }
 
     [Parameter]
-    public EventCallback<IList<TModel>> ValueChanged { get; set; }
+    public EventCallback<ICollection<TModel>> ValueChanged { get; set; }
 
     [Parameter]
     public EventCallback<TableItem<TModel>> OnItem { get; set; }
@@ -81,91 +92,44 @@
 
     TModel beingEditedModel;
     int beingEditedModelIndex;
-    //string name;
-    //PropertyInfo propertyInfo;
-    //string[] nameArray;
-
-    protected override void OnInitialized()
-    {
-        //if (Name == null) Name = "MainTable";
-        //if (Value != null)
-        //{
-        //    ItemData = new TableItemData(Value.Count);
-        //    return;
-        //}
-
-        //if (Model == null) return;
-
-        //Type modelType = Model.GetType();
-        //var childModel = Model;
-
-        //nameArray = Name.Split('.');
-
-        //for (var i = 0; i < nameArray.Length; i++)
-        //{
-        //    propertyInfo = modelType.GetProperty(nameArray[i]);
-        //    modelType = propertyInfo.PropertyType;
-        //    if (childModel != null) childModel = propertyInfo.GetValue(childModel);
-        //};
-
-        //Value = childModel == null ? null : (IList<TModel>)childModel;
-        //if (Value != null) ItemData = new TableItemData(Value.Count);
-    }
-
 
 
     public Task AddModel()
     {
         beingEditedModelIndex = (Value == null) ? 0 : Value.Count;
         beingEditedModel = Activator.CreateInstance<TModel>();
-        StateHasChanged();
+        //StateHasChanged();
         return Task.CompletedTask;
     }
 
     public Task ChangeModel(int index)
     {
         beingEditedModelIndex = index;
-        beingEditedModel = Object.DeepClone(Value[index]);
-        StateHasChanged();
+        beingEditedModel = Object.DeepClone(Value.GetAt(index));
+        //StateHasChanged();
         return Task.CompletedTask;
     }
 
-    public Task RemoveModel(int index)
+    async public Task RemoveModel(int index)
     {
+
+        await OnItem.InvokeAsync(new TableItem<TModel>
+        {
+            Item = Value.GetAt(index),
+            Flag = TableItemFlag.Removed
+        });
+
         Value.RemoveAt(index);
-        StateHasChanged();
-        return Task.CompletedTask;
+
+        //StateHasChanged();
+
     }
 
     async Task OnFormSubmit()
     {
         if (beingEditedModelIndex == 0 && Value == null || beingEditedModelIndex == Value.Count)
         {
-            if (Value == null)
-            {
-                Value = new List<TModel>();
-
-                //if (propertyInfo != null)
-                //{
-                //    object obj = Model;
-
-                //    for (int i = 0; i < nameArray.Length - 1; i++)
-                //    {
-                //        var targetProp = obj.GetType().GetProperty(nameArray[i]);
-                //        var nextType = targetProp.PropertyType;
-                //        var nextObj = targetProp.GetValue(obj);
-                //        if (nextObj == null)
-                //        {
-                //            nextObj = Activator.CreateInstance(nextType);
-                //            targetProp.SetValue(obj, nextObj);
-                //        }
-
-                //        obj = nextObj;
-                //    }
-                //    propertyInfo.SetValue(obj, Value);
-
-                //}
-            }
+            if (Value == null) Value = new List<TModel>();
 
             await OnItem.InvokeAsync(new TableItem<TModel>
             {
@@ -183,17 +147,11 @@
                 Flag = TableItemFlag.Changed
             });
 
-            Object.DeepClone(beingEditedModel, Value[beingEditedModelIndex]);
+            Object.DeepClone(beingEditedModel, Value.GetAt(beingEditedModelIndex));
         }
 
         await ValueChanged.InvokeAsync(Value);
-        //if (Form != null) await Form.FieldValueChanged(Name);
-
-        //await modal.Hide();
         beingEditedModel = default(TModel);
     }
-
-
-
 
 }

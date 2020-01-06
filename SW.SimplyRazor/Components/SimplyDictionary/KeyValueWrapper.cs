@@ -4,8 +4,9 @@ using System.Text;
 
 namespace SW.SimplyRazor
 {
-    public interface ISimplyAlertHub
+    class KeyValueWrapper
     {
-        void RemoveAlert(string id);
+        public string Key { get; set; }
+        public string Value { get; set; }
     }
 }

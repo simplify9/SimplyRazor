@@ -7,9 +7,9 @@ namespace SW.SimplyRazor
 {
     public interface ISimplyTable
     {
-        Task AddModel();
-        Task ChangeModel(int index);
-        Task RemoveModel(int index);
+        //Task AddModel();
+        //Task ChangeModel(int index);
+        //Task RemoveModel(int index);
 
         //TableItemData ItemData { get; set; }
             

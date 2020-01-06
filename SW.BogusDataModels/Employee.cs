@@ -12,7 +12,7 @@ namespace SW.BogusDataModels
     {
         public Employee()
         {
-            //Salary = new Money();
+
         }
 
         public int Id { get; set; }
@@ -32,7 +32,11 @@ namespace SW.BogusDataModels
         public int EmploymentStatus { get; set; }
         public string Country { get; set; }
         public RemoteBlob Photo { get; set; }
-        public IList<Leave> Leaves { get; set; }
+        public ICollection<Leave> Leaves { get; set; }
+
+        public ICollection<string> Roles { get; set; }
+
+        public IDictionary<string, string> AdditionalValues { get; set; }
 
         //public static IList<Employee> Sample = new List<Employee>
         //{
@@ -78,6 +82,7 @@ namespace SW.BogusDataModels
             .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
             .RuleFor(u => u.Id, f => f.UniqueIndex)
             .RuleFor(u=> u.Country, f=> f.Address.CountryCode()) 
+            
             //Use a method outside scope.
             //.RuleFor(u => u.CartId, f => Guid.NewGuid())
             //Compound property with context, use the first/last name properties
@@ -89,6 +94,7 @@ namespace SW.BogusDataModels
             //{
             //    Console.WriteLine("User Created! Id={0}", u.Id);
             //});
+            
 
         public static readonly List<Employee> Data = testUsers.Generate(5000); 
 

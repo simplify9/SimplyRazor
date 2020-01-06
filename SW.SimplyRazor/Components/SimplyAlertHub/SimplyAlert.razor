@@ -17,8 +17,8 @@
     [CascadingParameter(Name = "AlertHub")]
     public ISimplyAlertHub AlertHub { get; set; }
 
-    [CascadingParameter]
-    public int Index { get; set; }
+    [Parameter]
+    public string Id { get; set; }
 
     [Parameter]
     public string Body { get; set; }
@@ -56,14 +56,13 @@
 
     async Task OnDue()
     {
-        await InvokeAsync(() => AlertHub.RemoveAlert(Index));
+        await InvokeAsync(() => AlertHub.RemoveAlert(Id));
     }
 
-    public Task CloseAlert(EventArgs args)
+    void CloseAlert(EventArgs args)
     {
         countdown.Stop();
-        AlertHub.RemoveAlert(Index);
-        return Task.CompletedTask;
+        AlertHub.RemoveAlert(Id);
     }
 
     void IDisposable.Dispose()
