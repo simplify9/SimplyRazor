@@ -21,14 +21,21 @@
     else
     {
         int index = 1;
+
+
         foreach (object itemUntyped in Items)
         {
             object key = null;
             object value = null;
+            var enumerableType = itemUntyped.GetType();
 
-            Type enumerableType = itemUntyped.GetType();
 
-            if (enumerableType == typeof(string))
+            if (enumerableType == typeof(string) && typeof(TKey)== typeof(string))
+            {
+                key = itemUntyped;
+                value = itemUntyped;
+            }
+            else if (enumerableType == typeof(string))
             {
                 key = index;
                 value = itemUntyped;

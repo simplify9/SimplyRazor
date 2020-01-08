@@ -1,6 +1,7 @@
 ﻿@typeparam TModel
 @implements ISimplyTable
 @namespace SW.SimplyRazor
+@inject NotifyService  notify
 
 @using System.Linq
 
@@ -127,31 +128,41 @@
 
     async Task OnFormSubmit()
     {
-        if (beingEditedModelIndex == 0 && Value == null || beingEditedModelIndex == Value.Count)
+        try
         {
-            if (Value == null) Value = new List<TModel>();
 
-            await OnItem.InvokeAsync(new TableItem<TModel>
+
+            if (beingEditedModelIndex == 0 && Value == null || beingEditedModelIndex == Value.Count)
             {
-                Item = beingEditedModel,
-                Flag = TableItemFlag.Added
-            });
+                if (Value == null) Value = new List<TModel>();
 
-            Value.Add((TModel)beingEditedModel);
+                await OnItem.InvokeAsync(new TableItem<TModel>
+                {
+                    Item = beingEditedModel,
+                    Flag = TableItemFlag.Added
+                });
+
+                Value.Add((TModel)beingEditedModel);
+            }
+            else
+            {
+                await OnItem.InvokeAsync(new TableItem<TModel>
+                {
+                    Item = beingEditedModel,
+                    Flag = TableItemFlag.Changed
+                });
+
+                Object.DeepClone(beingEditedModel, Value.GetAt(beingEditedModelIndex));
+            }
+
+            await ValueChanged.InvokeAsync(Value);
+            beingEditedModel = default(TModel);
+
         }
-        else
+        catch (Exception ex)
         {
-            await OnItem.InvokeAsync(new TableItem<TModel>
-            {
-                Item = beingEditedModel,
-                Flag = TableItemFlag.Changed
-            });
-
-            Object.DeepClone(beingEditedModel, Value.GetAt(beingEditedModelIndex));
+            await notify.Publish(new UserMessage { Body = ex.Message, Level = AttentionLevel.Warning });
         }
-
-        await ValueChanged.InvokeAsync(Value);
-        beingEditedModel = default(TModel);
     }
 
 }

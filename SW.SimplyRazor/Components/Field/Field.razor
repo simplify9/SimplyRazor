@@ -103,6 +103,9 @@
     [Parameter]
     public string Help { get; set; }
 
+    [Parameter]
+    public InputType InputType { get; set; }
+
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 

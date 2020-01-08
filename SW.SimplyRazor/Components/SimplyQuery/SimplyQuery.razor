@@ -36,8 +36,8 @@
     async protected override Task OnInitializedAsync()
     {
 
-        await notify.Publish(new UserMessage { Body = "Loading data, please wait..", Level = AttentionLevel.Info });
-
+        //await notify.Publish(new UserMessage { Body = "Loading data, please wait..", Level = AttentionLevel.Info });
+        await Task.Delay(TimeSpan.FromSeconds(3));
 
         apiService.HttpClient.BaseAddress = new Uri(QueryUrl);
 

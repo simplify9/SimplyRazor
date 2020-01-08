@@ -2,12 +2,28 @@
 
 <label for="@State.Id">@State.Text</label>
 
-<input id="@State.Id"
-       value="@State.Value"
-       type="@inputType"
-       class="form-control @((State.IsInvalid ? "is-invalid" : null))"
-       @onchange="(e)=> ValueChanged.InvokeAsync(e.Value)"
-       @attributes="UnmatchedAttributes" />
+@if (inputType == "textarea")
+{
+    <textarea id="@State.Id"
+              rows="3"
+              value="@State.Value"
+              class="form-control @((State.IsInvalid ? "is-invalid" : null))"
+              @onchange="(e)=> ValueChanged.InvokeAsync(e.Value)"
+              @attributes="UnmatchedAttributes">@State.Value</textarea>
+
+}
+else
+{
+    <input id="@State.Id"
+           value="@State.Value"
+           type="@inputType"
+           class="form-control @((State.IsInvalid ? "is-invalid" : null))"
+           @onchange="(e)=> ValueChanged.InvokeAsync(e.Value)"
+           @attributes="UnmatchedAttributes" />
+}
+
+
+
 
 @code {
 
@@ -22,13 +38,37 @@
 
     string inputType;
 
-    protected override void  OnInitialized()
+    protected override void OnInitialized()
     {
         if (State.PropertyInfo.PropertyType == typeof(int))
         {
             inputType = "number";
         }
-        else inputType = "text";
+        else if (State.PropertyInfo.PropertyType == typeof(DateTime) || State.PropertyInfo.PropertyType == typeof(DateTime?))
+        {
+            inputType = "date";
+        }
+        else if (State.PropertyInfo.PropertyType == typeof(string))
+        {
+            switch (State.InputType)
+            {
+
+                case InputType.Multiline:
+
+                    inputType = "textarea";
+                    break;
+
+                case 0:
+                    inputType = "text";
+                    break;
+
+            }
+
+        }
+        else
+        {
+            inputType = "text";
+        }
     }
 
 }

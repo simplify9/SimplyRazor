@@ -68,13 +68,43 @@
             else if ((int)result.StatusCode >= 400 && (int)result.StatusCode < 500)
             {
 
-                var messages = await result.Content.ReadAsAsync<Dictionary<string, IEnumerable<string>>>();
-
-                await notify.Publish(new UserMessage
+                try
                 {
-                    Body = "error",
-                    Level = AttentionLevel.Warning
-                });
+                    var messages = await result.Content.ReadAsAsync<Dictionary<string, IEnumerable<string>>>();
+
+                    foreach (var kvp in messages)
+                    {
+                        if (kvp.Key.StartsWith("Field."))
+                        {
+                            await notify.Publish(new InvalidFieldNotification
+                            {
+                                Message = string.Join(", ", kvp.Value),
+                            }, kvp.Key.Split('.')[1]);
+                        }
+                        else
+                        {
+                            await notify.Publish(new UserMessage
+                            {
+                                Body = string.Join(", ", kvp.Value),
+                                Level = AttentionLevel.Warning,
+
+                            });
+                        }
+
+                    }
+
+                }
+
+                catch (Exception)
+                {
+
+                    await notify.Publish(new UserMessage
+                    {
+                        Body = "Errors occured.",
+                        Level = AttentionLevel.Warning,
+
+                    });
+                }
 
                 await OnFailure.InvokeAsync(null);
             }

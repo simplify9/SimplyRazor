@@ -17,5 +17,7 @@ namespace SW.SimplyRazor
         bool IsInvalid { get; }
         //string InvalidFeedback { get; set; }
         PropertyInfo PropertyInfo { get; }
+
+        InputType InputType { get; set; } 
     }
 }

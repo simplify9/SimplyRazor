@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace SW.SimplyRazor
-{ 
-    public enum FieldShowsOn
+{
+    public enum InputType
     {
-        Always,
-        Edit,
-        List,
+        Text,
+        Multiline
     }
 }

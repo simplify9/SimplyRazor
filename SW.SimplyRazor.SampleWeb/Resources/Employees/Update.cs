@@ -1,4 +1,5 @@
-﻿using SW.BogusDataModels;
+﻿using FluentValidation;
+using SW.BogusDataModels;
 using SW.PrimitiveTypes;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,14 @@ namespace SW.SimplyRazor.SampleWeb.Resources.Employees
 
             //throw new SWException("Invalid employee nunmber"); 
             return null;
+        }
+
+        private class Validator : AbstractValidator<Employee>
+        {
+            public Validator()
+            {
+                RuleFor(p => p.Age).ExclusiveBetween(18, 130);  
+            }
         }
     }
 }

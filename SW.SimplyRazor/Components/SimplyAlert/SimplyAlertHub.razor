@@ -30,7 +30,6 @@
 
     public void RemoveAlert(string id)
     {
-
         alerts.Remove(alerts.Where(a => a.Id == id).Single());
         StateHasChanged();
     }
