@@ -1,16 +1,20 @@
 ﻿
 @namespace SW.SimplyRazor
-@inject ApiService apiClient
-@inject NotifyService notify
 @implements ISimplySearch
+
+@inject NotifyService notify
+@inject ComponentOptions componentOptions
 @inject IJSRuntime JSRuntime
-
-
 
 <CascadingValue Value="this" Name="Search">
     @Filters
     @Columns
 </CascadingValue>
+
+@if (FilterUrl != null)
+{
+    <SimplyQuery QueryUrl="@FilterUrl" ValueChanged="FilterQueryValueChanged" TResponse="IEnumerable<SearchyFilterSetup>"></SimplyQuery>
+}
 
 <div class="container-fluid">
 
@@ -26,7 +30,7 @@
             </div>
         </div>
         <div class="col-sm-6 text-right">
-            <button type="button" @onclick="() => Search()" class="btn btn-secondary" style="width: 120px;">Search</button> 
+            <button type="button" @onclick="() => Search()" class="btn btn-secondary" style="width: 120px;">Search</button>
         </div>
     </div>
 
@@ -87,6 +91,9 @@
     public string SearchUrl { get; set; }
 
     [Parameter]
+    public string FilterUrl { get; set; }
+
+    [Parameter]
     public RenderFragment Filters { get; set; }
 
     [Parameter]
@@ -106,11 +113,11 @@
 
     int filterValue;
     bool tableInitialized;
-    List<FilterModel> filters;
+    List<FilterModel> filters = new List<FilterModel>();
     ElementReference tableElementRef;
     SimplySearchInterop wrapper;
-    List<ISearchyFilterSetup> filterSetup;
-    List<IColumn> columns;
+    List<ISearchyFilterSetup> filterSetup = new List<ISearchyFilterSetup>();
+    List<IColumn> columns = new List<IColumn>();
 
     Task FilterAddOnClick(object e)
     {
@@ -133,20 +140,20 @@
     protected async override Task OnInitializedAsync()
     {
 
-        apiClient.HttpClient.BaseAddress = new Uri(SearchUrl);
+        //apiClient.HttpClient.BaseAddress = new Uri(SearchUrl);
 
-        columns = new List<IColumn>();
+        //columns = new List<IColumn>();
 
-        filters = new List<FilterModel>();
-        filterSetup = new List<ISearchyFilterSetup>();
+        //filters = new List<FilterModel>();
+        //filterSetup = new List<ISearchyFilterSetup>();
 
         Index = Index ?? "Id";
 
-        filterSetup.AddRange(await apiClient.GetFilterSetup());
+        //filterSetup.AddRange(await apiClient.GetFilterSetup());
 
-        foreach (var fc in filterSetup)
+        //foreach (var fc in filterSetup)
 
-            if (fc.Default || fc.Required) filters.Add(new FilterModel(fc));
+        //    if (fc.Default || fc.Required) filters.Add(new FilterModel(fc));
     }
 
     async Task InitializeTable()
@@ -159,7 +166,7 @@
         if (userIdentity.IsAuthenticated)
             jwt = userIdentity.GenerateJwt();
 
-        wrapper = new SimplySearchInterop(this, JSRuntime, notify, apiClient.HttpClient.BaseAddress.ToString(), jwt, Index);
+        wrapper = new SimplySearchInterop(this, JSRuntime, notify, $"{componentOptions.ApiBaseUri}{SearchUrl}", jwt, Index);
         await wrapper.Initialize(tableElementRef, columns);
     }
 
@@ -179,14 +186,20 @@
     async public Task AddFilterSetup(ISearchyFilterSetup filter)
     {
         filterSetup.Add(filter);
+        if (filter.Default || filter.Required) filters.Add(new FilterModel(filter));
         await InvokeAsync(() => StateHasChanged());
+    }
+
+    async Task FilterQueryValueChanged(IEnumerable<SearchyFilterSetup> remoteFilterSetup)
+    {
+        foreach (var fc in remoteFilterSetup)
+
+            await AddFilterSetup(fc);
     }
 
     public void RemoveFilterSetup(ISearchyFilterSetup filter)
     {
         filterSetup.Remove(filter);
-
-
     }
 
     public void AddColumn(IColumn column)

@@ -5,7 +5,11 @@
 @using System.Collections
 @using Humanizer
 
-@inject ApiService apiClient
+
+@if (Lookup != null)
+{
+    <SimplyQuery QueryUrl="@($"{Lookup}?lookup=true")" ValueChanged="QueryValueChanged" TResponse="Dictionary<string, string>" ></SimplyQuery>
+}
 
 <select @onchange="SelectValueChanged" @attributes="UnmatchedAttributes">
 
@@ -22,13 +26,11 @@
     {
         int index = 1;
 
-
         foreach (object itemUntyped in Items)
         {
             object key = null;
             object value = null;
             var enumerableType = itemUntyped.GetType();
-
 
             if (enumerableType == typeof(string) && typeof(TKey)== typeof(string))
             {
@@ -59,7 +61,6 @@
 
 </select>
 
-
 @code {
 
     [Parameter]
@@ -83,15 +84,9 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
-    async protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        if (Items == null && Lookup != null)
-        {
-            apiClient.HttpClient.BaseAddress = new Uri(Lookup);
-
-            Items = await apiClient.LookupList();
-        }
-        else if (Items == null && typeof(TKey).BaseType == typeof(Enum))
+        if (Items == null && typeof(TKey).BaseType == typeof(Enum))
         {
             var lst = new List<KeyValuePair<TKey, string>>();
             foreach (var item in Items)
@@ -100,7 +95,6 @@
             }
             Items = lst;
         }
-
     }
 
     async Task SelectValueChanged(ChangeEventArgs args)
@@ -130,8 +124,12 @@
             Value = (TKey)args.Value;
             await ValueChanged.InvokeAsync(Value);
         }
-
     }
 
+    void QueryValueChanged(Dictionary<string, string> items)
+    {
+        Items = items;
+        StateHasChanged();
+    }
 
 }

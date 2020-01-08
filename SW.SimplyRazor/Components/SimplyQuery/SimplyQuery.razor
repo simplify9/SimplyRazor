@@ -9,15 +9,6 @@
     public string QueryUrl { get; set; }
 
     [Parameter]
-    public object Key { get; set; }
-
-    [Parameter]
-    public object Request { get; set; }
-
-    [Parameter]
-    public string Parameters { get; set; }
-
-    [Parameter]
     public TResponse Value { get; set; }
 
     [Parameter]
@@ -32,19 +23,15 @@
     [Parameter]
     public EventCallback<object> OnFailure { get; set; }
 
-
     async protected override Task OnInitializedAsync()
     {
 
-        //await notify.Publish(new UserMessage { Body = "Loading data, please wait..", Level = AttentionLevel.Info });
-        await Task.Delay(TimeSpan.FromSeconds(3));
-
-        apiService.HttpClient.BaseAddress = new Uri(QueryUrl);
+        await Task.Delay(TimeSpan.FromSeconds(1));
 
         try
         {
 
-            var result = await apiService.Get(Key, Request);
+            var result = await apiService.HttpClient.GetAsync(QueryUrl);
 
             if ((int)result.StatusCode >= 200 && (int)result.StatusCode < 300)
             {
@@ -82,6 +69,7 @@
         }
         catch (Exception ex)
         {
+            await OnFailure.InvokeAsync(null);
             await notify.Publish(new UserMessage { Body = ex.Message, Level = AttentionLevel.Error });
         }
         finally

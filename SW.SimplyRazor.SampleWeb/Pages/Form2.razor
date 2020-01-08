@@ -3,7 +3,7 @@
 
 <SimplyAlertHub></SimplyAlertHub>
 
-<SimplyQuery QueryUrl="https://localhost:5001/cqapi/employees/" Key="5" @bind-Value="employee" @bind-Ready="ready" />
+<SimplyQuery QueryUrl="@($"employees/5")" @bind-Value="employee" @bind-Ready="ready" />
 
 <SimplyReady @bind-Ready="ready">
 
@@ -15,8 +15,8 @@
         <Field Name="@nameof(Employee.Age)" />
         <div>test</div>
         <Field Name="Married" />
-        <Field Name="EmploymentStatus" Lookup="https://localhost:5001/cqapi/mockmodels/" />
-        <Field Name="Country" Lookup="https://localhost:5001/cqapi/countries/" />
+        <Field Name="EmploymentStatus" Lookup="mockmodels" />
+        <Field Name="Country" Lookup="countries" />
         <Field Name="Photo" />
 
         <Field Name="Salary.Amount" />
@@ -29,7 +29,7 @@
 
     <h5>Roles</h5>
 
-    <SimplyList @bind-Value="employee.Roles" Lookup="https://localhost:5001/cqapi/countries/"></SimplyList>
+    <SimplyList @bind-Value="employee.Roles" Lookup="countries"></SimplyList>
 
     <h5>Leaves</h5>
 
@@ -48,7 +48,7 @@
     </SimplyTable>
 
     <div class="container-fluid mt-5">
-        <SimplyCommand Text="Save" CommandUrl="https://localhost:5001/cqapi/employees/" Key="5" Request="employee" OnSuccess="SaveOnSuccess" />
+        <SimplyCommand Text="Save" CommandUrl="employees/5" Request="employee" OnSuccess="SaveOnSuccess" class="btn btn-secondary" />
     </div>
 
     <p>Age: @employee?.Age</p>

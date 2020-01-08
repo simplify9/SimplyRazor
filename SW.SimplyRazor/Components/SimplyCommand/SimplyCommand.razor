@@ -3,7 +3,7 @@
 @inject ApiService apiService
 
 
-<button disabled="@working" type="button" @onclick="ButtonOnClick" class="btn btn-secondary" @attributes="UnmatchedAttributes">
+<button disabled="@working" type="button" @onclick="ButtonOnClick" @attributes="UnmatchedAttributes">
     @if (working)
     {
         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -22,14 +22,10 @@
     public string CommandUrl { get; set; }
 
     [Parameter]
-    public object Key { get; set; }
-
-    [Parameter]
     public object Request { get; set; }
 
     [Parameter]
     public EventCallback<object> OnSuccess { get; set; }
-
 
     [Parameter]
     public EventCallback<object> OnFailure { get; set; }
@@ -40,70 +36,41 @@
     [Parameter]
     public string Text { get; set; }
 
-
-
-    protected override void OnInitialized()
-    {
-        apiService.HttpClient.BaseAddress = new Uri(CommandUrl);
-    }
-
     async Task ButtonOnClick(EventArgs args)
     {
         try
         {
             working = true;
 
+            var result = await apiService.HttpClient.PostAsync(CommandUrl, Request);
 
-            var result = await apiService.Post(Key, Request);
-
-            if ((int)result.StatusCode>=200 && (int)result.StatusCode < 300)
+            if ((int)result.StatusCode >= 200 && (int)result.StatusCode < 300)
             {
                 await OnSuccess.InvokeAsync(null);
-                //await notify.Publish(new InvalidFieldNotification
-                //{
-                //    Message = "this is test error",
-                //}, 
-                //"Age");
             }
             else if ((int)result.StatusCode >= 400 && (int)result.StatusCode < 500)
             {
+                var messages = await result.Content.ReadAsAsync<Dictionary<string, IEnumerable<string>>>();
 
-                try
+                foreach (var kvp in messages)
                 {
-                    var messages = await result.Content.ReadAsAsync<Dictionary<string, IEnumerable<string>>>();
-
-                    foreach (var kvp in messages)
+                    if (kvp.Key.StartsWith("Field."))
                     {
-                        if (kvp.Key.StartsWith("Field."))
+                        await notify.Publish(new InvalidFieldNotification
                         {
-                            await notify.Publish(new InvalidFieldNotification
-                            {
-                                Message = string.Join(", ", kvp.Value),
-                            }, kvp.Key.Split('.')[1]);
-                        }
-                        else
+                            Message = string.Join(", ", kvp.Value),
+                        }, kvp.Key.Split('.')[1]);
+                    }
+                    else
+                    {
+                        await notify.Publish(new UserMessage
                         {
-                            await notify.Publish(new UserMessage
-                            {
-                                Body = string.Join(", ", kvp.Value),
-                                Level = AttentionLevel.Warning,
+                            Body = string.Join(", ", kvp.Value),
+                            Level = AttentionLevel.Warning,
 
-                            });
-                        }
-
+                        });
                     }
 
-                }
-
-                catch (Exception)
-                {
-
-                    await notify.Publish(new UserMessage
-                    {
-                        Body = "Errors occured.",
-                        Level = AttentionLevel.Warning,
-
-                    });
                 }
 
                 await OnFailure.InvokeAsync(null);
@@ -123,7 +90,12 @@
         }
         catch (Exception ex)
         {
-            await notify.Publish(new UserMessage { Body = ex.Message, Level = AttentionLevel.Error });
+            await OnFailure.InvokeAsync(null);
+            await notify.Publish(new UserMessage
+            {
+                Body = ex.Message,
+                Level = AttentionLevel.Error
+            });
         }
     }
 }

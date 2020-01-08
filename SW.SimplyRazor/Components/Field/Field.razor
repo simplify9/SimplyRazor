@@ -44,7 +44,7 @@
             {
                 @if (Lookup != null && !string.IsNullOrWhiteSpace(Value.ToString()))
                 {
-                    <SimplyQuery QueryUrl="@Lookup" Key="@($"{Value}?lookup=true")" @bind-Value="lookupValue" @bind-Ready="lookupReady" />
+                    <SimplyQuery QueryUrl="@($"{Lookup}/{Value}?lookup=true")" @bind-Value="lookupValue" @bind-Ready="lookupReady" />
                     <SimplyReady @bind-Ready="lookupReady">
                         @lookupValue
                     </SimplyReady>

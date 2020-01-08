@@ -34,22 +34,15 @@ namespace SW.SimplyRazor.SampleWeb
             {
                 config.JsonSerializerOptions.PropertyNamingPolicy = null;
             });
-            
-            
+
             services.AddRazorPages();
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; }); ;
             services.AddSingleton<WeatherForecastService>();
 
             services.AddI18n();
             services.AddCqApi(typeof(I18nService).Assembly, typeof(Startup).Assembly);
-            
-            //services.AddMapiClientFactory();
-            //services.AddMapiModelMap<Employee>("employee");
-            //services.AddMapiModelMap<MockModel>("mockmodel");
-            //services.AddMapiModelMap<Country>("country");
 
-            services.AddHttpContextAccessor(); 
-            //services.AddSingleton(sp => new MapiClient<Employee>(sp.GetService<HttpClient>()));
+            services.AddHttpContextAccessor();
 
             //services.AddHttpClient<MapiClient<Employee>>((sp, httpClient) =>
             //{
@@ -57,27 +50,19 @@ namespace SW.SimplyRazor.SampleWeb
             //    var httpRequest = httpContext.Request;
             //    httpClient.BaseAddress = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}");
             //});
-            //services.AddHttpClient<MapiClient<MockModel>>((sp, httpClient) =>
-            //{
-            //    var httpRequest = sp.GetService<IHttpContextAccessor>().HttpContext.Request;
-            //    httpClient.BaseAddress = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}");
-            //});
-            //services.AddHttpClient<MapiClient<Country>>((sp, httpClient) =>
-            //{
-            //    var httpRequest = sp.GetService<IHttpContextAccessor>().HttpContext.Request;
-            //    httpClient.BaseAddress = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}");
-            //});
-            
 
-            services.AddSimplyRazor();
+            //services.AddSimplyRazor();
+            services.AddSimplyRazor(config =>
+            {
+                config.ApiBaseUri = new Uri("https://localhost:5001/cqapi/");
+            });
+
             services.AddAuthentication().AddJwtBearer();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
 
             if (env.IsDevelopment())
             {
