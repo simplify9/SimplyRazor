@@ -1,6 +1,7 @@
 ﻿
+using Newtonsoft.Json;
 using System;
-using Force.DeepCloner;
+
 
 namespace SW.SimplyRazor 
 {
@@ -37,12 +38,12 @@ namespace SW.SimplyRazor
 
         public static T DeepClone<T>(T obj)
         {
-            return obj.DeepClone();
+            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(obj));
         }
 
         public static void DeepClone(object obj, object target)
         {
-            obj.DeepCloneTo(target);
+            JsonConvert.PopulateObject(JsonConvert.SerializeObject(obj), target);
         }
     }
 }
