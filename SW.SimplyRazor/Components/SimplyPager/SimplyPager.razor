@@ -4,16 +4,16 @@
 @if (Count > 0)
 {
     <ul class="pagination">
-        <li class="page-item @(CurrentPage <= 0 ? "disabled" : null)" @onclick="e=> ChangePage(0)">
+        <li class="page-item @(Page <= 0 ? "disabled" : null)" @onclick="e=> ChangePage(0)">
             <span class="page-link">First</span>
         </li>
-        <li class="page-item @(CurrentPage <= 0 ? "disabled" : null)" @onclick="e=> ChangePage(CurrentPage - 1)">
+        <li class="page-item @(Page <= 0 ? "disabled" : null)" @onclick="e=> ChangePage(Page - 1)">
             <span class="page-link">Previous</span>
         </li>
-        <li class="page-item @(Count < PageSize || totalPages == CurrentPage + 1 ? "disabled" : null)" @onclick="e=> ChangePage(CurrentPage + 1)">
+        <li class="page-item @(Count < PageSize || totalPages == Page + 1 ? "disabled" : null)" @onclick="e=> ChangePage(Page + 1)">
             <span class="page-link">Next</span>
         </li>
-        <li class="page-item @(totalPages == 0 || totalPages == CurrentPage + 1  ? "disabled" : null)" @onclick="e=> ChangePage(totalPages-1)">
+        <li class="page-item @(totalPages == 0 || totalPages == Page + 1  ? "disabled" : null)" @onclick="e=> ChangePage(totalPages-1)">
             <span class="page-link">Last</span>
         </li>
     </ul>
@@ -22,10 +22,10 @@
 @code {
 
     [Parameter]
-    public int CurrentPage { get; set; }
+    public int Page { get; set; }
 
     [Parameter]
-    public EventCallback<int> CurrentPageChanged { get; set; }
+    public EventCallback<int> PageChanged { get; set; }
 
     [Parameter]
     public int PageSize { get; set; }
@@ -40,7 +40,7 @@
 
     async Task ChangePage(int page)
     {
-        await CurrentPageChanged.InvokeAsync(page);
+        await PageChanged.InvokeAsync(page);
     }
 
 

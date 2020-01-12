@@ -8,9 +8,9 @@
     @Filters
 </CascadingValue>
 
-<SimplyQuery QueryUrl="@FilterUrl" ValueChanged="FilterQueryValueChanged" TResponse="IEnumerable<SearchyFilterSetup>" @bind-Working="busy"></SimplyQuery>
+<SimplyQuery QueryUrl="@FilterUrl" ValueChanged="FilterQueryValueChanged" TResponse="IEnumerable<SearchyFilterSetup>" @bind-Working="filterQueryBusy"></SimplyQuery>
 
-<SimplyQuery QueryUrl="@query" @bind-Value="result" @bind-Working="busy"></SimplyQuery>
+<SimplyQuery QueryUrl="@query" @bind-Value="result" @bind-Working="searchQueryBusy"></SimplyQuery>
 
 <div class="container-fluid">
 
@@ -27,7 +27,7 @@
         </div>
         <div class="col-sm-6 text-right">
             <button type="button" @onclick="() => Search(0)" class="btn btn-secondary" style="width: 100px;">
-                @if (busy)
+                @if (filterQueryBusy || searchQueryBusy)
                 {
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                 }
@@ -39,40 +39,40 @@
         </div>
     </div>
 
-    @for (int i = 0; i < filters.Count; i++)
+    @foreach (var filter in filters)
     {
-        int index = i;
-        <div class="form-group row" @key="filters[index]">
+
+        <div class="form-group row" @key="filter">
             <div class=" input-group col">
 
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="">@filters[index].Text</span>
+                    <span class="input-group-text" id="">@filter.Text</span>
                 </div>
 
-                <SimplySelect @bind-value="filters[index].Rule"
-                              Items="filters[index].Rules"
+                <SimplySelect @bind-value="filter.Rule"
+                              Items="filter.Rules"
                               TKey="SearchyRule" />
 
-                @switch (filters[index].Type)
+                @switch (filter.Type)
                 {
                     case SearchyDataType.Text:
 
-                        <input @bind="filters[index].ValueString" type="text" class="form-control" />
+                        <input @bind="filter.ValueString" type="text" class="form-control" />
                         break;
 
                     case SearchyDataType.Number:
 
-                        <input @bind="filters[index].ValueDecimal" type="number" class="form-control" />
+                        <input @bind="filter.ValueDecimal" type="number" class="form-control" />
                         break;
 
                     case SearchyDataType.Date:
 
-                        <input @bind="filters[index].ValueDateTime" type="date" class="form-control" />
+                        <input @bind="filter.ValueDateTime" type="date" class="form-control" />
                         break;
 
                 }
                 <div class="input-group-append">
-                    <button @onclick="@(e => RemoveFilter(index))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
+                    <button @onclick="@(e => RemoveFilter(filter))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
                 </div>
             </div>
         </div>
@@ -83,34 +83,11 @@
 <div class="container-fluid mt-5">
     @if (result?.TotalCount > 0)
     {
-        <table class="table table-sm table-hover">
-            <thead>
-                <tr>
-                    <CascadingValue IsFixed="true" Value="FieldRole.ColumnName" Name="RenderMode">
-                        <CascadingValue Value="result.Result.First()" Name="Model">
-                            @Columns
-                        </CascadingValue>
-                    </CascadingValue>
+        <SimplyGrid Data="result.Result" RowClicked="GridRowClicked" TModel="TModel" >
+            @Columns
+        </SimplyGrid>
 
-                </tr>
-
-            </thead>
-            <tbody>
-                @foreach (var item in result.Result)
-                {
-                    <tr @key="item" @onclick="() => RowClick(item)">
-                        <CascadingValue IsFixed="true" Value="FieldRole.ColumnValue" Name="RenderMode">
-                            <CascadingValue Value="item" Name="Model">
-                                @Columns
-                            </CascadingValue>
-                        </CascadingValue>
-                    </tr>
-                }
-
-            </tbody>
-        </table>
-
-        <SimplyPager Count="result.TotalCount" CurrentPage="page" PageSize="PageSize" CurrentPageChanged="page => Search(page)" ></SimplyPager>
+        <SimplyPager Count="result.TotalCount" Page="page" PageSize="PageSize" PageChanged="page => Search(page)" ></SimplyPager>
     }
 </div>
 
@@ -132,18 +109,16 @@
     public int PageSize { get; set; }
 
     [Parameter]
-    public string Index { get; set; }
-
-    [Parameter]
     public string Height { get; set; }
 
     [Parameter]
-    public EventCallback<TModel> OnRowClick { get; set; }
+    public EventCallback<TModel> RowClicked { get; set; }
 
     int filterValue;
     List<FilterModel> filters = new List<FilterModel>();
     List<ISearchyFilterSetup> filterSetup = new List<ISearchyFilterSetup>();
-    bool busy;
+    bool searchQueryBusy;
+    bool filterQueryBusy;
     int page;
     SearchyResponse<TModel> result;
     string query;
@@ -159,12 +134,12 @@
         return Task.CompletedTask;
     }
 
-    async Task RemoveFilter(int index)
+    async Task RemoveFilter(FilterModel filter)
     {
-        if (filters[index].Required)
+        if (filter.Required)
             await notify.Publish(new UserMessage { Body = "This filter is required for search.", Level = AttentionLevel.Warning });
         else
-            filters.RemoveAt(index);
+            filters.Remove(filter);
     }
 
     void Search(int page)
@@ -210,9 +185,9 @@
         filterSetup.Remove(filter);
     }
 
-    async Task RowClick(TModel model)
+    Task GridRowClicked(TModel model)
     {
-        await OnRowClick.InvokeAsync(model); 
+        return RowClicked.InvokeAsync(model);
     }
 
 }

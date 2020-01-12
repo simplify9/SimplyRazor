@@ -34,10 +34,15 @@
     <h5>Leaves</h5>
 
     <SimplyTable @bind-Value="employee.Leaves">
-        <Header>
-            
-        </Header>
+
         <Columns>
+            <Field Text="Action">
+                <ColumnValue>
+                    <button type="button" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</button>
+                    <button type="button" @onclick="@(() => context.Action.Invoke("edit", context.Model))">Edit</button>
+
+                </ColumnValue>
+            </Field>
             <Field Name="Reason" />
             <Field Name="Days" />
         </Columns>

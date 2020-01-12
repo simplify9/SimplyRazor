@@ -31,7 +31,7 @@ gulp.task('js', function () {
         //'components/simplytags/simplytagsinterop.js',
         'components/simplychoices/simplychoicesinterop.js',
         'components/simplyupload/simplyuploadinterop.js',
-        'components/simplymodal/SimplyModalInterop.js',
+        //'components/simplymodal/SimplyModalInterop.js',
         'components/simplyalert/simplyalertinterop.js',
         //'components/simplysearch/simplysearchinterop.js',
 

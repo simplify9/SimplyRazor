@@ -1,9 +1,8 @@
 ﻿@typeparam TModel
 @implements ISimplyTable
+@implements IFieldAction
 @namespace SW.SimplyRazor
 @inject NotifyService  notify
-
-@using System.Linq
 
 <div>
     <CascadingValue Value="this" Name="Table">
@@ -15,41 +14,14 @@
 
 @if (Value?.Count > 0)
 {
-    <table class="table table-bordered table-sm">
-        <thead>
-            <tr>
-                <CascadingValue IsFixed="true" Value="FieldRole.ColumnName" Name="RenderMode">
-                    <CascadingValue Value="Value.First()" Name="Model">
-                        @Columns
-                    </CascadingValue>
-                </CascadingValue>
-                <th>
-
-                </th>
-            </tr>
-
-        </thead>
-        <tbody>
-            @for (var i = 0; i < Value.Count; i++)
-            {
-                var itemIndex = i;
-                <tr @key="Value.GetAt(itemIndex)">
-                    <CascadingValue IsFixed="true" Value="FieldRole.ColumnValue" Name="RenderMode">
-                        <CascadingValue Value="Value.GetAt( itemIndex)" Name="Model">
-                            @Columns
-                        </CascadingValue>
-                    </CascadingValue>
-                    <td>
-                        <button @onclick="(()=> RemoveModel(itemIndex))" class="btn btn-outline-secondary btn-sm"><span class="oi oi-x" /></button>
-                    </td>
-                </tr>
-            }
-
-        </tbody>
-    </table>
+    <CascadingValue IsFixed="true" Value="this" Name="FieldAction">
+        <SimplyGrid Data="Value" >
+            @Columns
+        </SimplyGrid>
+    </CascadingValue>
 }
 
-@if (beingEditedModel != null)
+@if (newModel != null)
 {
     <div class="modal" tabindex="-1" role="dialog" style="display:block">
         <div class="modal-dialog modal-dialog-scrollable" role="document" style="display:block">
@@ -58,7 +30,7 @@
                     <h5 class="modal-title"></h5>
                 </div>
                 <div class="modal-body">
-                    <SimplyForm Value="beingEditedModel">
+                    <SimplyForm Value="newModel">
                         @Form
                     </SimplyForm>
                 </div>
@@ -91,72 +63,93 @@
     [Parameter]
     public RenderFragment Form { get; set; }
 
-    TModel beingEditedModel;
-    int beingEditedModelIndex;
+    TModel newModel;
+    TModel originalModel;
+    //int beingEditedModelIndex;
 
 
-    public Task AddModel()
+    void AddModel()
     {
-        beingEditedModelIndex = (Value == null) ? 0 : Value.Count;
-        beingEditedModel = Activator.CreateInstance<TModel>();
-        //StateHasChanged();
-        return Task.CompletedTask;
+        newModel = Activator.CreateInstance<TModel>();
     }
 
-    public Task ChangeModel(int index)
-    {
-        beingEditedModelIndex = index;
-        beingEditedModel = Object.DeepClone(Value.GetAt(index));
-        //StateHasChanged();
-        return Task.CompletedTask;
-    }
-
-    async public Task RemoveModel(int index)
+    async public Task Invoke(string actionName, object actionValue)
     {
 
-        await OnItem.InvokeAsync(new TableItem<TModel>
+        switch (actionName.ToLower())
         {
-            Item = Value.GetAt(index),
-            Flag = TableItemFlag.Removed
-        });
+            case "remove":
 
-        Value.RemoveAt(index);
+                await OnItem.InvokeAsync(new TableItem<TModel>
+                {
+                    Item = (TModel)actionValue,
+                    Flag = TableItemFlag.Removed
+                });
 
-        //StateHasChanged();
+                Value.Remove((TModel)actionValue);
+                break;
 
+            case "edit":
+
+                originalModel = (TModel)actionValue;
+                newModel = Object.DeepClone(originalModel);
+                break;
+        }
     }
+
+    //public Task ChangeModel(int index)
+    //{
+    //    beingEditedModelIndex = index;
+    //    beingEditedModel = Object.DeepClone(Value.GetAt(index));
+    //    //StateHasChanged();
+    //    return Task.CompletedTask;
+    //}
+
+    //async public Task RemoveModel(int index)
+    //{
+
+    //    await OnItem.InvokeAsync(new TableItem<TModel>
+    //    {
+    //        Item = Value.GetAt(index),
+    //        Flag = TableItemFlag.Removed
+    //    });
+
+    //    Value.RemoveAt(index);
+
+    //    //StateHasChanged();
+
+    //}
 
     async Task OnFormSubmit()
     {
         try
         {
-
-
-            if (beingEditedModelIndex == 0 && Value == null || beingEditedModelIndex == Value.Count)
+            if (originalModel == null)
             {
                 if (Value == null) Value = new List<TModel>();
 
                 await OnItem.InvokeAsync(new TableItem<TModel>
                 {
-                    Item = beingEditedModel,
+                    Item = newModel,
                     Flag = TableItemFlag.Added
                 });
 
-                Value.Add((TModel)beingEditedModel);
+                Value.Add(newModel);
             }
             else
             {
                 await OnItem.InvokeAsync(new TableItem<TModel>
                 {
-                    Item = beingEditedModel,
+                    Item = newModel,
                     Flag = TableItemFlag.Changed
                 });
 
-                Object.DeepClone(beingEditedModel, Value.GetAt(beingEditedModelIndex));
+                Object.DeepClone(newModel, originalModel);
             }
 
             await ValueChanged.InvokeAsync(Value);
-            beingEditedModel = default(TModel);
+            newModel = default(TModel);
+            originalModel = default(TModel);
 
         }
         catch (Exception ex)

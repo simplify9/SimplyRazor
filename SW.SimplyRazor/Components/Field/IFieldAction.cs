@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor
 {
-    public interface ISimplyModal
+    public interface IFieldAction
     {
-        Task Hide();
+        Task Invoke(string actionName, object actionValue);
     }
 }

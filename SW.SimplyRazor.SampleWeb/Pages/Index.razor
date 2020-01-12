@@ -4,14 +4,18 @@
 
 <SimplyAlertHub></SimplyAlertHub>
 
-<SimplySearch PageSize="10" SearchUrl="employees" FilterUrl="employees/filters" OnRowClick="RowClick" TModel="Employee" >
+<SimplySearch PageSize="10" SearchUrl="employees" FilterUrl="employees/filters" RowClicked="RowClicked" TModel="Employee" >
     <Filters>
         <Filter Field="Id" Text="Id" Type="@SearchyDataType.Number"></Filter>
         <Filter Field="HandlerName" Default="true" Text="Handler" Type="@SearchyDataType.Text"></Filter>
         <Filter Field="Started" Text="Date" Type="@SearchyDataType.Date"></Filter>
     </Filters>
     <Columns>
-        <Field Name="Id" Text="Id" />
+        <Field Name="Id" Text="Id" >
+            <ColumnValue>
+                <a @onclick="@(() => context.Action.Invoke("s", "s"))">Edit</a>
+            </ColumnValue> 
+        </Field>
         <Field Name="FirstName"  />
         <Field Name="LastName"  />
         <Field Name="Age" />
@@ -25,7 +29,7 @@
 
 @code{
 
-    void RowClick(Employee employee)
+    void RowClicked(Employee employee)
     {
         navigationManager.NavigateTo($"/form2?id={employee.Id}");
     }

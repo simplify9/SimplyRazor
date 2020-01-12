@@ -1,7 +1,6 @@
 ﻿@namespace SW.SimplyRazor
 @implements IField
 @implements IDisposable
-@inject ApiService apiClient
 @using SW.PrimitiveTypes
 @using System.Reflection
 @using Humanizer
@@ -88,6 +87,9 @@
     [CascadingParameter(Name = "RenderMode")]
     public FieldRole RenderMode { get; set; }
 
+    [CascadingParameter(Name = "FieldAction")]
+    public IFieldAction Action { get; set; }
+
     [Parameter]
     public string Lookup { get; set; }
 
@@ -108,6 +110,8 @@
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+
 
     public PropertyInfo PropertyInfo { get; private set; }
 
@@ -174,11 +178,14 @@
 
         PropertyInfo = Model.GetType().GetProperty(nameArray[0]);
 
-        if (RenderMode != FieldRole.Input) return;
-
         for (int i = 1; i < nameArray.Length; i++)
 
             PropertyInfo = PropertyInfo.PropertyType.GetProperty(nameArray[i]);
+
+        if (PropertyInfo == null) throw new ArgumentException("Field not found.", Name);
+
+        if (RenderMode != FieldRole.Input) return;
+
 
         if (PropertyInfo.PropertyType == typeof(bool))
         {
@@ -203,7 +210,6 @@
             serverFeedback = null;
             await Form?.FieldValueChanged(Name);
         }
-
     }
 
     bool TrySetValue(object value)
@@ -244,7 +250,6 @@
 
     void OnServerFeedback(InvalidFieldNotification notification)
     {
-
         serverFeedback = notification.Message;
         StateHasChanged();
 
