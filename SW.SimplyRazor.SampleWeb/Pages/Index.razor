@@ -4,29 +4,29 @@
 
 <SimplyAlertHub></SimplyAlertHub>
 
-<SimplySearch PageSize="10" SearchUrl="employees" FilterUrl="employees/filters" OnRowClick="RowClick" >
+<SimplySearch PageSize="10" SearchUrl="employees" FilterUrl="employees/filters" OnRowClick="RowClick" TModel="Employee" >
     <Filters>
         <Filter Field="Id" Text="Id" Type="@SearchyDataType.Number"></Filter>
         <Filter Field="HandlerName" Default="true" Text="Handler" Type="@SearchyDataType.Text"></Filter>
         <Filter Field="Started" Text="Date" Type="@SearchyDataType.Date"></Filter>
     </Filters>
     <Columns>
-        <Column Field="Id" Title="Id" />
-        <Column Field="FirstName" Title="First Name" />
-        <Column Field="LastName" Title="Last Name" />
-        <Column Field="Age" />
-        <Column Field="Married" />
-        <Column Field="EmploymentStatus" />
-        <Column Field="Country" />
-        <Column Field="Salary.Amount" />
-        <Column Field="Salary.Currency" />
+        <Field Name="Id" Text="Id" />
+        <Field Name="FirstName"  />
+        <Field Name="LastName"  />
+        <Field Name="Age" />
+        <Field Name="Married" />
+        <Field Name="EmploymentStatus" />
+        <Field Name="Country" />
+        <Field Name="Salary.Amount" />
+        <Field Name="Salary.Currency" />
     </Columns>
 </SimplySearch>
 
 @code{
 
-    void RowClick(string index)
+    void RowClick(Employee employee)
     {
-        navigationManager.NavigateTo($"/form?id={index}");
+        navigationManager.NavigateTo($"/form2?id={employee.Id}");
     }
 }

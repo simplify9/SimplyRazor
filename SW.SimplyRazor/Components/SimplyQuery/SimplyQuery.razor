@@ -8,6 +8,9 @@
     [Parameter]
     public string QueryUrl { get; set; }
 
+    //[Parameter]
+    //public EventCallback<string> QueryUrlChanged { get; set; }
+
     [Parameter]
     public TResponse Value { get; set; }
 
@@ -21,17 +24,36 @@
     public EventCallback<bool> ReadyChanged { get; set; }
 
     [Parameter]
+    public bool Working { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> WorkingChanged { get; set; }
+
+    [Parameter]
     public EventCallback<object> OnFailure { get; set; }
 
-    async protected override Task OnInitializedAsync()
+
+    async public override Task SetParametersAsync(ParameterView parameters)
     {
+
+        var queryUrl = parameters.GetValueOrDefault<string>("QueryUrl");
+
+        if (string.IsNullOrEmpty(queryUrl) || queryUrl == QueryUrl)
+        {
+            await base.SetParametersAsync(parameters);
+            return;
+        }
+
+        await WorkingChanged.InvokeAsync(true);
+
+        await base.SetParametersAsync(parameters);
 
         await Task.Delay(TimeSpan.FromSeconds(1));
 
         try
         {
 
-            var result = await apiService.HttpClient.GetAsync(QueryUrl);
+            var result = await apiService.HttpClient.GetAsync(queryUrl);
 
             if ((int)result.StatusCode >= 200 && (int)result.StatusCode < 300)
             {
@@ -75,6 +97,13 @@
         finally
         {
             await ReadyChanged.InvokeAsync(true);
+            await WorkingChanged.InvokeAsync(false);
         }
     }
+
+    //async protected override Task OnInitializedAsync()
+    //{
+
+
+    //}
 }

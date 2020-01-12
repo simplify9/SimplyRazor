@@ -23,21 +23,11 @@
 
   <ItemGroup>
     <None Remove="Components\SimplyEditor\SimplyEditorInterop.js" />
-    <None Remove="Components\SimplyTags\SimplyTagsInterop.js" />
-    <None Remove="Components\SimplyTypeahead\SimplyTypeaheadInterop.js" />
     <None Remove="Components\SimplyUpload\SimplyUploadInterop.js" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Components\SimplyEditor\SimplyEditorInterop.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="Components\SimplyTags\SimplyTagsInterop.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="Components\SimplyTypeahead\SimplyTypeaheadInterop.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

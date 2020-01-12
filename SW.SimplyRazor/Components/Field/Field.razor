@@ -51,7 +51,7 @@
                 }
                 else
 
-                    @Value 
+                    @Value
             }
             else
             {
@@ -120,7 +120,7 @@
     [Parameter]
     public string Text
     {
-        get => (text == null) ? Name?.Humanize() : Text;
+        get => text == null ? Name?.Humanize() : text;
         set => text = value;
     }
 
@@ -174,6 +174,8 @@
 
         PropertyInfo = Model.GetType().GetProperty(nameArray[0]);
 
+        if (RenderMode != FieldRole.Input) return;
+
         for (int i = 1; i < nameArray.Length; i++)
 
             PropertyInfo = PropertyInfo.PropertyType.GetProperty(nameArray[i]);
@@ -191,8 +193,7 @@
             editor = (Lookup == null) ? typeof(EditorForText) : typeof(EditorForTextAsSelect);
         }
 
-        if (RenderMode == FieldRole.Input && editor != null) editorFragment = CreateEditor();
-
+        if (editor != null) editorFragment = CreateEditor();
     }
 
     async Task OnChange(object value)

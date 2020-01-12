@@ -9,15 +9,14 @@ namespace SW.SimplyRazor
     public interface ISimplySearch
     {
 
-        int PageSize { get; set; }
-        string Index { get; set; }
-        string Height { get; set; }
+        //int PageSize { get; set; }
+        //string Index { get; set; }
+        //string Height { get; set; }
 
 
-        void AddColumn(IColumn column);
-        void RemoveColumn(IColumn column);
+
         Task AddFilterSetup(ISearchyFilterSetup filter);
         void RemoveFilterSetup(ISearchyFilterSetup filter);
-        Task RowClick(string index);
+        //Task RowClick(string index);
     }
 }

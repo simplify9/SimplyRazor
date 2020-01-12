@@ -23,12 +23,12 @@ namespace SW.SimplyRazor
         //    return await response.Content.ReadAsAsync<Dictionary<string, string>>();
         //}
 
-        async public Task<string> LookupValue(object key)
-        {
-            var response = await HttpClient.GetAsync(key.ToString());
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
-        }
+        //async public Task<string> LookupValue(object key)
+        //{
+        //    var response = await HttpClient.GetAsync(key.ToString());
+        //    response.EnsureSuccessStatusCode();
+        //    return await response.Content.ReadAsStringAsync();
+        //}
 
         //async public Task<HttpResponseMessage> Post(object key = null, object request = null)
         //{

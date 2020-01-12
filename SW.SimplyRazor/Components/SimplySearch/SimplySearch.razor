@@ -1,20 +1,16 @@
-﻿
+﻿@typeparam TModel
 @namespace SW.SimplyRazor
 @implements ISimplySearch
-
 @inject NotifyService notify
-@inject ComponentOptions componentOptions
-@inject IJSRuntime JSRuntime
+
 
 <CascadingValue Value="this" Name="Search">
     @Filters
-    @Columns
 </CascadingValue>
 
-@if (FilterUrl != null)
-{
-    <SimplyQuery QueryUrl="@FilterUrl" ValueChanged="FilterQueryValueChanged" TResponse="IEnumerable<SearchyFilterSetup>"></SimplyQuery>
-}
+<SimplyQuery QueryUrl="@FilterUrl" ValueChanged="FilterQueryValueChanged" TResponse="IEnumerable<SearchyFilterSetup>" @bind-Working="busy"></SimplyQuery>
+
+<SimplyQuery QueryUrl="@query" @bind-Value="result" @bind-Working="busy"></SimplyQuery>
 
 <div class="container-fluid">
 
@@ -30,11 +26,18 @@
             </div>
         </div>
         <div class="col-sm-6 text-right">
-            <button type="button" @onclick="() => Search()" class="btn btn-secondary" style="width: 120px;">Search</button>
+            <button type="button" @onclick="() => Search(0)" class="btn btn-secondary" style="width: 100px;">
+                @if (busy)
+                {
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                }
+                else
+                {
+                    @:Search
+                }
+            </button>
         </div>
     </div>
-
-
 
     @for (int i = 0; i < filters.Count; i++)
     {
@@ -78,14 +81,40 @@
 </div>
 
 <div class="container-fluid mt-5">
-    <div @ref="tableElementRef" />
+    @if (result?.TotalCount > 0)
+    {
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <CascadingValue IsFixed="true" Value="FieldRole.ColumnName" Name="RenderMode">
+                        <CascadingValue Value="result.Result.First()" Name="Model">
+                            @Columns
+                        </CascadingValue>
+                    </CascadingValue>
+
+                </tr>
+
+            </thead>
+            <tbody>
+                @foreach (var item in result.Result)
+                {
+                    <tr @key="item" @onclick="() => RowClick(item)">
+                        <CascadingValue IsFixed="true" Value="FieldRole.ColumnValue" Name="RenderMode">
+                            <CascadingValue Value="item" Name="Model">
+                                @Columns
+                            </CascadingValue>
+                        </CascadingValue>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+        <SimplyPager Count="result.TotalCount" CurrentPage="page" PageSize="PageSize" CurrentPageChanged="page => Search(page)" ></SimplyPager>
+    }
 </div>
 
-
 @code{
-
-    [CascadingParameter]
-    private Task<AuthenticationState> authenticationStateTask { get; set; }
 
     [Parameter]
     public string SearchUrl { get; set; }
@@ -109,15 +138,16 @@
     public string Height { get; set; }
 
     [Parameter]
-    public EventCallback<string> OnRowClick { get; set; }
+    public EventCallback<TModel> OnRowClick { get; set; }
 
     int filterValue;
-    bool tableInitialized;
     List<FilterModel> filters = new List<FilterModel>();
-    ElementReference tableElementRef;
-    SimplySearchInterop wrapper;
     List<ISearchyFilterSetup> filterSetup = new List<ISearchyFilterSetup>();
-    List<IColumn> columns = new List<IColumn>();
+    bool busy;
+    int page;
+    SearchyResponse<TModel> result;
+    string query;
+
 
     Task FilterAddOnClick(object e)
     {
@@ -137,43 +167,21 @@
             filters.RemoveAt(index);
     }
 
-    protected async override Task OnInitializedAsync()
+    void Search(int page)
     {
 
-        //apiClient.HttpClient.BaseAddress = new Uri(SearchUrl);
+        var searchRequest = new SearchyRequest(new SearchyCondition(filters))
+        {
+            PageSize = PageSize,
+            PageIndex = page
+        };
 
-        //columns = new List<IColumn>();
+        query = $"{SearchUrl}?{searchRequest.ToString()}";
 
-        //filters = new List<FilterModel>();
-        //filterSetup = new List<ISearchyFilterSetup>();
 
-        Index = Index ?? "Id";
+        this.page = page;
+        //StateHasChanged();
 
-        //filterSetup.AddRange(await apiClient.GetFilterSetup());
-
-        //foreach (var fc in filterSetup)
-
-        //    if (fc.Default || fc.Required) filters.Add(new FilterModel(fc));
-    }
-
-    async Task InitializeTable()
-    {
-        tableInitialized = true;
-        var userIdentity = (await authenticationStateTask).User.Identity as ClaimsIdentity;
-
-        string jwt = string.Empty;
-
-        if (userIdentity.IsAuthenticated)
-            jwt = userIdentity.GenerateJwt();
-
-        wrapper = new SimplySearchInterop(this, JSRuntime, notify, $"{componentOptions.ApiBaseUri}{SearchUrl}", jwt, Index);
-        await wrapper.Initialize(tableElementRef, columns);
-    }
-
-    async Task Search()
-    {
-        if (!tableInitialized) await InitializeTable();
-        await wrapper.SetFilter(filters);
     }
 
     //Debouncer StepperDeboucer = new Debouncer(1000); // one second
@@ -202,18 +210,9 @@
         filterSetup.Remove(filter);
     }
 
-    public void AddColumn(IColumn column)
+    async Task RowClick(TModel model)
     {
-        columns.Add(column);
-    }
-    public void RemoveColumn(IColumn column)
-    {
-        columns.Remove(column);
-    }
-
-    async public Task RowClick(string index)
-    {
-        await OnRowClick.InvokeAsync(index);
+        await OnRowClick.InvokeAsync(model); 
     }
 
 }

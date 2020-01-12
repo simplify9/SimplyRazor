@@ -1,0 +1,111 @@
+﻿@namespace SW.SimplyRazor
+@using System.Text.Json
+
+@inject IJSRuntime JSRuntime
+@inject ApiService apiClient
+
+<select @ref="inputRef" multiple >
+    <option value="0" selected disabled>Please enter your address.</option>
+</select>
+
+<SimplyQuery QueryUrl="@queryUrl" ValueChanged="QueryValueChanged"  TResponse="Dictionary<string,string>" ></SimplyQuery>
+
+
+@code {
+
+    ElementReference inputRef;
+    object inputValue;
+    string queryUrl;
+
+
+    [Parameter]
+    public string Lookup { get; set; }
+
+    [Parameter]
+    public object Value { get; set; }
+
+    [Parameter]
+    public bool Static { get; set; }
+
+    [Parameter]
+    public EventCallback<object> ValueChanged { get; set; }
+
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.init", inputRef, DotNetObjectReference.Create(this));
+
+            if (Static)
+            {
+                queryUrl = $"{Lookup}?lookup=true";
+                StateHasChanged();
+            }
+
+        }
+    }
+
+    [JSInvokable]
+    async public Task OnSearch(string value, int resultCount)
+    {
+        if (Static) return;
+
+        queryUrl = $"{Lookup}?lookup=true&search={value}";
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    async public Task OnChange(string value)
+    {
+
+    }
+
+    [JSInvokable]
+    async public Task OnAddItem(string value)
+    {
+
+    }
+
+    [JSInvokable]
+    async public Task OnRemoveItem(string value)
+    {
+
+    }
+
+
+    async Task QueryValueChanged(Dictionary<string, string> result)
+    {
+        await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", result.ToArray(), "Key", "Value");
+    }
+
+    //public async Task SetSelectedItem(KeyValuePair<JsonElement, string> keyValue)
+    //{
+
+
+    //    if (keyValue.Key.ValueKind == JsonValueKind.String)
+    //    {
+    //        string keyStr = null;
+    //        keyStr = keyValue.Key.ToString();
+    //        await ValueChanged.InvokeAsync((TKey)(object)keyStr);
+
+    //    }
+    //    else if (keyValue.Key.ValueKind == JsonValueKind.Number)
+    //    {
+    //        if (keyValue.Key.TryGetInt32(out var keyInt))
+    //        {
+    //            await ValueChanged.InvokeAsync((TKey)(object)keyInt);
+    //        }
+    //        throw new NotImplementedException();
+    //    }
+    //    else
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+
+
+    //}
+
+
+}
