@@ -14,18 +14,21 @@
 
 <div class="container-fluid">
 
-    <div class="form-group row">
+    <div class="form-row align-items-center mb-3">
         <label for="filterSelect" class="col-sm-1 col-form-label">Search</label>
-        <div class="col-sm-5 input-group ">
-            <SimplySelect @bind-Value="filterValue"
-                          EmptyText="Select filter"
-                          Items="@(filterSetup.Select(e=>e.Text).ToList())" />
+        <div class="col-auto">
+            <div class="input-group">
+                <SimplySelect @bind-Value="filterValue"
+                              EmptyText="Select filter"
+                              Items="@(filterSetup.Select(e=>e.Text).ToList())"
+                              class="form-control" />
 
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
+                </div>
             </div>
         </div>
-        <div class="col-sm-6 text-right">
+        <div class="col-auto ">
             <button type="button" @onclick="() => Search(0)" class="btn btn-secondary" style="width: 100px;">
                 @if (filterQueryBusy || searchQueryBusy)
                 {
@@ -37,6 +40,14 @@
                 }
             </button>
         </div>
+        @if (NewText != null)
+        {
+            <div class="col-auto ">
+                <a   href="@NewHref" >
+                    @NewText  
+                </a>
+            </div>
+        }
     </div>
 
     @foreach (var filter in filters)
@@ -51,7 +62,8 @@
 
                 <SimplySelect @bind-value="filter.Rule"
                               Items="filter.Rules"
-                              TKey="SearchyRule" />
+                              TKey="SearchyRule"
+                              class="form-control" />
 
                 @switch (filter.Type)
                 {
@@ -83,11 +95,11 @@
 <div class="container-fluid mt-5">
     @if (result?.TotalCount > 0)
     {
-        <SimplyGrid Data="result.Result" RowClicked="GridRowClicked" TModel="TModel" >
+        <SimplyGrid Data="result.Result" RowClicked="GridRowClicked" TModel="TModel">
             @Columns
         </SimplyGrid>
 
-        <SimplyPager Count="result.TotalCount" Page="page" PageSize="PageSize" PageChanged="page => Search(page)" ></SimplyPager>
+        <SimplyPager Count="result.TotalCount" Page="page" PageSize="PageSize" PageChanged="page => Search(page)"></SimplyPager>
     }
 </div>
 
@@ -109,7 +121,13 @@
     public int PageSize { get; set; }
 
     [Parameter]
-    public string Height { get; set; }
+    public string NewText { get; set; }
+
+    [Parameter]
+    public string NewHref { get; set; }
+
+    //[Parameter]
+    //public string Height { get; set; }
 
     [Parameter]
     public EventCallback<TModel> RowClicked { get; set; }
