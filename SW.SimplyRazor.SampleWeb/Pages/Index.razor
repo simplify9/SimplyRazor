@@ -6,9 +6,9 @@
 
 <SimplySearch PageSize="10" SearchUrl="employees" FilterUrl="employees/filters" RowClicked="RowClicked" TModel="Employee" NewText="New Employee" NewHref="form2" >
     <Filters>
-        <Filter Field="Id" Text="Id" Type="@SearchyDataType.Number"></Filter>
-        <Filter Field="HandlerName" Default="true" Text="Handler" Type="@SearchyDataType.Text"></Filter>
-        <Filter Field="Started" Text="Date" Type="@SearchyDataType.Date"></Filter>
+        <Field Name="Id" Text="Id" ></Field>
+        @*<Field Name="HandlerName"  Text="Handler" ></Field>
+        <Field Name="Started" Text="Date" ></Field>*@
     </Filters>
     <Columns>
         <Field Name="Id" Text="Id" >

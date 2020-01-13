@@ -7,6 +7,7 @@ namespace SW.SimplyRazor
     public enum InputType
     {
         Text,
-        Multiline
+        Multiline,
+        Password
     }
 }

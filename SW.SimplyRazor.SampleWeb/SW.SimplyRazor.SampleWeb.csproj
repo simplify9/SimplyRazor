@@ -32,7 +32,7 @@
     <PackageReference Include="SimplyWorks.CqApi" Version="2020.1.7.1" />
     <PackageReference Include="SimplyWorks.I18n" Version="2020.1.7.2" />
     <PackageReference Include="SimplyWorks.Searchy" Version="2019.11.23.2" />
-    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2019.12.29.4" />
+    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2020.1.14.2" />
 
 
   </ItemGroup>

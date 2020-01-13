@@ -4,13 +4,17 @@
 @inject NotifyService notify
 
 
-<CascadingValue Value="this" Name="Search">
-    @Filters
+<CascadingValue IsFixed="true" Value="this" Name="Search">
+    <CascadingValue IsFixed="true" Value="typeof(TModel)" Name="ModelType">
+        <CascadingValue IsFixed="true" Value="FieldRole.Filter" Name="RenderMode">
+            @Filters
+        </CascadingValue>
+    </CascadingValue>
 </CascadingValue>
 
 <SimplyQuery QueryUrl="@FilterUrl" ValueChanged="FilterQueryValueChanged" TResponse="IEnumerable<SearchyFilterSetup>" @bind-Working="filterQueryBusy"></SimplyQuery>
 
-<SimplyQuery QueryUrl="@query" @bind-Value="result" @bind-Working="searchQueryBusy" OnSuccess="OnSearchQuerySuccess" ></SimplyQuery>
+<SimplyQuery QueryUrl="@query" @bind-Value="result" @bind-Working="searchQueryBusy" OnSuccess="OnSearchQuerySuccess"></SimplyQuery>
 
 <div class="container-fluid">
 
@@ -43,8 +47,8 @@
         @if (NewText != null)
         {
             <div class="col-auto ">
-                <a   href="@NewHref" >
-                    @NewText  
+                <a href="@NewHref">
+                    @NewText
                 </a>
             </div>
         }
@@ -67,10 +71,6 @@
 
                 @switch (filter.Type)
                 {
-                    case SearchyDataType.Text:
-
-                        <input @bind="filter.ValueString" type="text" class="form-control" />
-                        break;
 
                     case SearchyDataType.Number:
 
@@ -80,6 +80,11 @@
                     case SearchyDataType.Date:
 
                         <input @bind="filter.ValueDateTime" type="date" class="form-control" />
+                        break;
+
+                    default:
+
+                        <input @bind="filter.ValueString" type="text" class="form-control" />
                         break;
 
                 }
@@ -93,7 +98,7 @@
 </div>
 
 <div class="container-fluid mt-5">
-    @if (result !=null && result.Result.Count() > 0)
+    @if (result != null && result.Result.Count() > 0)
     {
         <SimplyGrid Data="result.Result" RowClicked="GridRowClicked" TModel="TModel">
             @Columns

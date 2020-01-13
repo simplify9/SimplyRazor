@@ -14,13 +14,13 @@ namespace SW.SimplyRazor.SampleWeb.Resources.Employees
         {
             IEnumerable<ISearchyFilterSetup> result = new List<ISearchyFilterSetup>
             {
-                new SearchyFilterSetup
-                {
-                    Field = "Id",
-                    Text = "Id",
-                    Type = SearchyDataType.Number,
-                    Rules=SearchyDataType.RulesFor(SearchyDataType.Number)
-                },
+                //new SearchyFilterSetup
+                //{
+                //    Field = "Id",
+                //    Text = "Id",
+                //    Type = SearchyDataType.Number,
+                //    Rules=SearchyDataType.RulesFor(SearchyDataType.Number)
+                //},
                 new SearchyFilterSetup
                 {
                     Field = "FirstName",

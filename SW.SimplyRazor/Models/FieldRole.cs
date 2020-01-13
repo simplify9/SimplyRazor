@@ -9,6 +9,7 @@ namespace SW.SimplyRazor
     {
         Input,
         ColumnValue,
-        ColumnName
+        ColumnName,
+        Filter
     }
 }

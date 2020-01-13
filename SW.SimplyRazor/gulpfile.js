@@ -24,7 +24,7 @@ gulp.task('js', function () {
         //'node_modules/@yaireo/tagify/dist/tagify.js',
         'node_modules/bs-custom-file-input/dist/bs-custom-file-input.js',
         'node_modules/choices.js/public/assets/scripts/choices.js',
-        'node_modules/bootstrap.native/dist/bootstrap-native-v4.js',
+        //'node_modules/bootstrap.native/dist/bootstrap-native-v4.js',
         //'node_modules/tabulator-tables/dist/js/tabulator.min.js',
 
         'components/simplyeditor/simplyeditorinterop.js',
@@ -32,7 +32,7 @@ gulp.task('js', function () {
         'components/simplychoices/simplychoicesinterop.js',
         'components/simplyupload/simplyuploadinterop.js',
         //'components/simplymodal/SimplyModalInterop.js',
-        'components/simplyalert/simplyalertinterop.js',
+        //'components/simplyalert/simplyalertinterop.js',
         //'components/simplysearch/simplysearchinterop.js',
 
     ])

@@ -78,11 +78,17 @@
 
 @code {
 
+    [CascadingParameter(Name = "Search")]
+    public ISimplySearch Search { get; set; }
+
     [CascadingParameter(Name = "Form")]
     public ISimplyForm Form { get; set; }
 
     [CascadingParameter(Name = "Model")]
     public object Model { get; set; }
+
+    [CascadingParameter(Name = "ModelType")]
+    public Type ModelType { get; set; }
 
     [CascadingParameter(Name = "RenderMode")]
     public FieldRole RenderMode { get; set; }
@@ -95,6 +101,9 @@
 
     [Parameter]
     public string Name { get; set; }
+
+    [Parameter]
+    public bool Required { get; set; }
 
     [Parameter]
     public RenderFragment<IField> ColumnHeader { get; set; }
@@ -111,8 +120,6 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
-
-
     public PropertyInfo PropertyInfo { get; private set; }
 
     string id;
@@ -120,18 +127,18 @@
 
     Type editor;
     string text = null;
+    ISearchyFilterSetup filterSetup;
 
     [Parameter]
     public string Text
     {
-        get => text == null ? Name?.Humanize() : text;
+        get => text ?? Name?.Humanize();
         set => text = value;
     }
 
     string invalidFeedback;
 
     public bool IsInvalid => serverFeedback != null || invalidFeedback != null;
-
 
     public object Value
     {
@@ -176,7 +183,8 @@
 
         nameArray = Name.Split('.');
 
-        PropertyInfo = Model.GetType().GetProperty(nameArray[0]);
+
+        PropertyInfo = (ModelType ?? Model.GetType()).GetProperty(nameArray[0]);
 
         for (int i = 1; i < nameArray.Length; i++)
 
@@ -184,23 +192,44 @@
 
         if (PropertyInfo == null) throw new ArgumentException("Field not found.", Name);
 
-        if (RenderMode != FieldRole.Input) return;
+        switch (RenderMode)
+        {
+            case FieldRole.Filter:
+
+                string filterTypeString = SearchyDataType.TypeStringFor(PropertyInfo.PropertyType);
+
+                filterSetup = new SearchyFilterSetup
+                {
+                    Field = Name,
+                    Text = Text,
+                    Type = filterTypeString,
+                    Rules = SearchyDataType.RulesFor(filterTypeString)
+                };
+
+                Search.AddFilterSetup(filterSetup);
+
+                break;
+
+            case FieldRole.Input:
+
+                if (PropertyInfo.PropertyType == typeof(bool))
+                {
+                    editor = typeof(EditorForBoolean);
+                }
+                else if (PropertyInfo.PropertyType == typeof(RemoteBlob))
+                {
+                    editor = typeof(EditorForUpload);
+                }
+                else
+                {
+                    editor = (Lookup == null) ? typeof(EditorForText) : typeof(EditorForTextAsSelect);
+                }
+
+                if (editor != null) editorFragment = CreateEditor();
+                break;
+        }
 
 
-        if (PropertyInfo.PropertyType == typeof(bool))
-        {
-            editor = typeof(EditorForBoolean);
-        }
-        else if (PropertyInfo.PropertyType == typeof(RemoteBlob))
-        {
-            editor = typeof(EditorForUpload);
-        }
-        else
-        {
-            editor = (Lookup == null) ? typeof(EditorForText) : typeof(EditorForTextAsSelect);
-        }
-
-        if (editor != null) editorFragment = CreateEditor();
     }
 
     async Task OnChange(object value)
@@ -269,5 +298,6 @@
     void IDisposable.Dispose()
     {
         countdown?.Dispose();
+        Search?.RemoveFilterSetup(filterSetup);
     }
 }
