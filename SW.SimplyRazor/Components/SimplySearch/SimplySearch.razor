@@ -93,7 +93,7 @@
 </div>
 
 <div class="container-fluid mt-5">
-    @if (result?.TotalCount > 0)
+    @if (result !=null && result.Result.Count() > 0)
     {
         <SimplyGrid Data="result.Result" RowClicked="GridRowClicked" TModel="TModel">
             @Columns
