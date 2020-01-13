@@ -30,6 +30,9 @@
     public EventCallback<bool> WorkingChanged { get; set; }
 
     [Parameter]
+    public EventCallback<object> OnSuccess { get; set; }
+
+    [Parameter]
     public EventCallback<object> OnFailure { get; set; }
 
 
@@ -48,7 +51,7 @@
 
         await base.SetParametersAsync(parameters);
 
-        await Task.Delay(TimeSpan.FromSeconds(1));
+        await Task.Delay(TimeSpan.FromMilliseconds(500));
 
         try
         {
@@ -63,6 +66,8 @@
 
                 else
                     await ValueChanged.InvokeAsync(await result.Content.ReadAsAsync<TResponse>());
+
+                await OnSuccess.InvokeAsync(null);
             }
             else if ((int)result.StatusCode >= 400 && (int)result.StatusCode < 500)
             {

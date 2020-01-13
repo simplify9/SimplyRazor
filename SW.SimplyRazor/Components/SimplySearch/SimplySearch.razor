@@ -10,7 +10,7 @@
 
 <SimplyQuery QueryUrl="@FilterUrl" ValueChanged="FilterQueryValueChanged" TResponse="IEnumerable<SearchyFilterSetup>" @bind-Working="filterQueryBusy"></SimplyQuery>
 
-<SimplyQuery QueryUrl="@query" @bind-Value="result" @bind-Working="searchQueryBusy"></SimplyQuery>
+<SimplyQuery QueryUrl="@query" @bind-Value="result" @bind-Working="searchQueryBusy" OnSuccess="OnSearchQuerySuccess" ></SimplyQuery>
 
 <div class="container-fluid">
 
@@ -206,6 +206,16 @@
     Task GridRowClicked(TModel model)
     {
         return RowClicked.InvokeAsync(model);
+    }
+
+    async Task OnSearchQuerySuccess(object args)
+    {
+        if (result.Result.Count() == 0)
+        {
+            await notify.Publish(new UserMessage { Body = "Search returned no results.", Level = AttentionLevel.Info });
+        }
+
+        query = null;
     }
 
 }
