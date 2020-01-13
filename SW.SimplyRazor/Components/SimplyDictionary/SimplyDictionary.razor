@@ -1,11 +1,14 @@
 ﻿
 @namespace SW.SimplyRazor
 
-<SimplyTable @bind-Value="wrapper" OnItem="OnItem" TModel="KeyValueWrapper">
-    <Header>
-        
-    </Header>
+<SimplyTable @bind-Value="wrapper" OnItem="OnItem" TModel="KeyValueWrapper" NewText="Add new..">
+
     <Columns>
+        <Field Text="Action">
+            <ColumnValue>
+                <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</button>
+            </ColumnValue>
+        </Field>
         <Field Name="Key" />
         <Field Name="Value" />
     </Columns>

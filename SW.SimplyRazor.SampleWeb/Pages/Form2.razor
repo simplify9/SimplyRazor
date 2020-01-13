@@ -33,14 +33,18 @@
 
     <h5>Leaves</h5>
 
-    <SimplyTable @bind-Value="employee.Leaves">
+    <SimplyTable @bind-Value="employee.Leaves" NewText="Add new leave..">
 
+
+        @*<TableHeader>
+            <button type="button" class="btn btn-outline-secondary btn-sm" ><span class="oi oi-plus" /></button>
+        </TableHeader>*@
         <Columns>
+           
             <Field Text="Action">
                 <ColumnValue>
-                    <button type="button" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</button>
-                    <button type="button" @onclick="@(() => context.Action.Invoke("edit", context.Model))">Edit</button>
-
+                    <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</button>
+                    <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("edit", context.Model))">Edit</button>
                 </ColumnValue>
             </Field>
             <Field Name="Reason" />

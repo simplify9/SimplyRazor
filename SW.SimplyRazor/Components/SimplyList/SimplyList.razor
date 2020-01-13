@@ -1,8 +1,13 @@
 ﻿@typeparam TModel
 @namespace SW.SimplyRazor
 
-<SimplyTable @bind-Value="wrapper" OnItem="OnItem" TModel="PrimitiveTypeWrapper<TModel>">
+<SimplyTable @bind-Value="wrapper" OnItem="OnItem" TModel="PrimitiveTypeWrapper<TModel>" NewText="Add new..">
     <Columns>
+        <Field Text="Action">
+            <ColumnValue>
+                <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</button>
+            </ColumnValue>
+        </Field>
         <Field Name="Value" Lookup="@Lookup" />
     </Columns>
     <Form>
