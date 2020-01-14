@@ -42,19 +42,12 @@ namespace SW.SimplyRazor.SampleWeb
             services.AddI18n();
             services.AddCqApi(typeof(I18nService).Assembly, typeof(Startup).Assembly);
 
-            services.AddHttpContextAccessor();
-
-            //services.AddHttpClient<MapiClient<Employee>>((sp, httpClient) =>
-            //{
-            //    var httpContext = sp.GetService<IHttpContextAccessor>().HttpContext;
-            //    var httpRequest = httpContext.Request;
-            //    httpClient.BaseAddress = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}");
-            //});
-
-            //services.AddSimplyRazor();
             services.AddSimplyRazor(config =>
             {
                 config.ApiBaseUri = new Uri("https://localhost:5001/cqapi/");
+                config.ApiTokenAudience = "local";
+                config.ApiTokenIssuer = "local";
+                config.ApiTokenKey = "jhgfjhgfjhgfjhgfjhfjfj";
             });
 
             services.AddAuthentication().AddJwtBearer();

@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 using System;
+
 
 namespace SW.SimplyRazor
 {
@@ -24,10 +26,9 @@ namespace SW.SimplyRazor
             configure.Invoke(componentOptions);
             serviceCollection.AddSingleton(componentOptions);
 
-            serviceCollection.AddHttpClient<ApiService>(configureHttp => 
+            serviceCollection.AddHttpClient<ApiService>((serviceProvider, httpClient) => 
             {
-                configureHttp.BaseAddress = componentOptions.ApiBaseUri;
-            
+                httpClient.BaseAddress = componentOptions.ApiBaseUri;
             });
 
             return serviceCollection.addSimplyRazor();
@@ -35,6 +36,8 @@ namespace SW.SimplyRazor
 
         static IServiceCollection addSimplyRazor(this IServiceCollection serviceCollection)
         {
+            
+
             serviceCollection.AddSingleton<Notifier<Ping>>();
             serviceCollection.AddSingleton<Notifier<UserMessage>>();
             serviceCollection.AddSingleton<Notifier<InvalidFieldNotification>>();

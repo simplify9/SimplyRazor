@@ -2,6 +2,8 @@
 @namespace SW.SimplyRazor
 @inject NotifyService notify
 @inject ApiService apiService
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject ComponentOptions componentOptions
 
 @code {
 
@@ -55,6 +57,11 @@
 
         try
         {
+            var jwt = await authenticationStateProvider.GenerateJwt(componentOptions.ApiTokenKey, componentOptions.ApiTokenIssuer, componentOptions.ApiTokenAudience);
+
+            if (jwt != null)
+
+                apiService.HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
 
             var result = await apiService.HttpClient.GetAsync(queryUrl);
 
