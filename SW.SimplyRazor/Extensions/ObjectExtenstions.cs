@@ -15,7 +15,7 @@ namespace SW.SimplyRazor
             return Nullable.GetUnderlyingType(type);
         }
 
-        public static dynamic ConvertValueToType(object value, Type type)
+        public static object ConvertValueToType(object value, Type type)
         {
              
             bool typeNullable = (GetNullableType(type) == null) ? false : true;
@@ -26,13 +26,16 @@ namespace SW.SimplyRazor
 
             if (value.GetType() == type) return value;
 
-            var t = GetNullableType(type);
-            if (t != null) 
+            var nakedType = GetNullableType(type);
+            if (nakedType != null) 
             {
-                type = t;
-                if (string.IsNullOrEmpty(value.ToString())) return null;  
-            } 
+                if (string.IsNullOrWhiteSpace(value.ToString())) return null;
 
+                if (nakedType.IsEnum) return Enum.Parse(nakedType, value.ToString());
+                return Convert.ChangeType(value, nakedType);
+            }
+
+            if (type.IsEnum) return Enum.Parse(type, value.ToString());
             return Convert.ChangeType(value, type);
         }
 

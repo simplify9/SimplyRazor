@@ -1,0 +1,40 @@
+﻿@namespace SW.SimplyRazor
+@using Humanizer
+
+<label for="@State.Id">@State.Text</label>
+<select id="@State.Id"
+        @onchange="(e)=> ValueChanged.InvokeAsync(e.Value)"
+        class="form-control @((State.IsInvalid ? "is-invalid" : null))"
+        @attributes="UnmatchedAttributes">
+
+    @if (Nullable.GetUnderlyingType(State.PropertyInfo.PropertyType) != null)
+    {
+        <option selected="@(State.Value == null)" value=" ">Select</option>
+    }
+
+    @{
+        var nakedType = Nullable.GetUnderlyingType(State.PropertyInfo.PropertyType) ?? State.PropertyInfo.PropertyType;
+
+        foreach (var enumValue in Enum.GetValues(nakedType))
+        {
+            <option selected="@(State.Value != null &&  (int)State.Value == (int)enumValue )" value="@((int)enumValue)">@Enum.GetName(nakedType, enumValue).Humanize()</option>
+        }
+
+    }
+
+</select>
+
+
+@code {
+
+    [Parameter]
+    public EventCallback<object> ValueChanged { get; set; }
+
+    [Parameter]
+    public IField State { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+
+}

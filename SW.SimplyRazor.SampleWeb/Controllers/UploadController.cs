@@ -36,7 +36,7 @@ namespace SW.SimplyRazor.SampleWeb.Controllers
                 MimeType = ur.File.ContentType,
                 Name = ur.File.FileName,
                 Size = Convert.ToInt32(ur.File.Length),
-                Uri = new Uri("http://cnn.com")
+                Location = "http://cnn.com"
             };
 
             using (var fs = System.IO.File.Create(filePath))

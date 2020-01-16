@@ -212,6 +212,8 @@
 
             case FieldRole.Input:
 
+                var nakedType = Nullable.GetUnderlyingType(PropertyInfo.PropertyType) ?? PropertyInfo.PropertyType;
+
                 if (PropertyInfo.PropertyType == typeof(bool))
                 {
                     editor = typeof(EditorForBoolean);
@@ -219,6 +221,10 @@
                 else if (PropertyInfo.PropertyType == typeof(RemoteBlob))
                 {
                     editor = typeof(EditorForUpload);
+                }
+                else if (nakedType.IsEnum)
+                {
+                    editor = typeof(EditorForEnum);
                 }
                 else
                 {

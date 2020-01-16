@@ -86,12 +86,14 @@
 
     protected override void OnInitialized()
     {
-        if (Items == null && typeof(TKey).BaseType == typeof(Enum))
+        var nakedType = Nullable.GetUnderlyingType(typeof(TKey)) ?? typeof(TKey);
+
+        if (Items == null && nakedType == typeof(Enum))
         {
             var lst = new List<KeyValuePair<TKey, string>>();
-            foreach (var item in Items)
+            foreach (var item in Enum.GetValues(nakedType))
             {
-                lst.Add(new KeyValuePair<TKey, string>((TKey)item, Enum.GetName(typeof(TKey), item).Humanize()));
+                lst.Add(new KeyValuePair<TKey, string>((TKey)item, Enum.GetName(nakedType, item).Humanize()));
             }
             Items = lst;
         }
