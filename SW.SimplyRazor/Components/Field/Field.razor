@@ -117,6 +117,15 @@
     [Parameter]
     public InputType InputType { get; set; }
 
+    [Parameter]
+    public int TypeAhead { get; set; }
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    [Parameter]
+    public EventCallback<object> ValueChanged { get; set; }
+
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
@@ -243,6 +252,7 @@
         if (TrySetValue(value))
         {
             serverFeedback = null;
+            await ValueChanged.InvokeAsync(value);
             await Form?.FieldValueChanged(Name);
         }
     }

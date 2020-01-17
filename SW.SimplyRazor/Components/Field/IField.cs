@@ -20,6 +20,9 @@ namespace SW.SimplyRazor
         InputType InputType { get; set; }
         IFieldAction Action { get; }
         object Model { get;  }
+        int TypeAhead { get; }
+
+        bool ReadOnly { get; }
 
     }
 }
