@@ -1,4 +1,4 @@
-﻿/// <reference path="node_modules/bootstrap.native/dist/bootstrap-native-v4.js" />
+﻿
 /// <reference path="components/simplyeditor/simplyeditorinterop.js" />
 /// <reference path="components/simplychoices/simplychoicesinterop.js" />
 /// <reference path="components/simplyupload/simplyuploadinterop.js" />

@@ -6,26 +6,27 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor
 {
-    public class Debouncer
+    internal class Debouncer
     {
         private List<CancellationTokenSource> StepperCancelTokens = new List<CancellationTokenSource>();
-        private int MillisecondsToWait;
+        private readonly int millisecondsToWait;
         private readonly object _lockThis = new object(); // Use a locking object to prevent the debouncer to trigger again while the func is still running
 
         public Debouncer(int millisecondsToWait = 300)
         {
-            this.MillisecondsToWait = millisecondsToWait;
+            this.millisecondsToWait = millisecondsToWait;
         }
 
         public async Task Debouce(Action func)
         {
             CancelAllStepperTokens(); // Cancel all api requests;
             var newTokenSrc = new CancellationTokenSource();
+
             lock (_lockThis)
             {
                 StepperCancelTokens.Add(newTokenSrc);
             }
-            await Task.Delay(MillisecondsToWait, newTokenSrc.Token).ContinueWith(task => // Create new request
+            await Task.Delay(millisecondsToWait, newTokenSrc.Token).ContinueWith(task => // Create new request
             {
                 if (!newTokenSrc.IsCancellationRequested) // if it hasn't been cancelled
                 {
@@ -42,12 +43,10 @@ namespace SW.SimplyRazor
         private void CancelAllStepperTokens()
         {
             foreach (var token in StepperCancelTokens)
-            {
+
                 if (!token.IsCancellationRequested)
-                {
+
                     token.Cancel();
-                }
-            }
         }
     }
 

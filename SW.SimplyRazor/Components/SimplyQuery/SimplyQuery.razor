@@ -78,9 +78,9 @@
             else if ((int)result.StatusCode >= 400 && (int)result.StatusCode < 500)
             {
 
-                var messages = await result.Content.ReadAsAsync<Dictionary<string, IEnumerable<string>>>();
+                //var messages = await result.Content.ReadAsAsync<Dictionary<string, IEnumerable<string>>>();
 
-                await notify.Publish(new UserMessage { Body = "error", Level = AttentionLevel.Warning });
+                //await notify.Publish(new UserMessage { Body = "error", Level = AttentionLevel.Warning });
                 await OnResult.InvokeAsync(new ApiResult<TResponse>
                 {
                     Success = false,
@@ -90,7 +90,7 @@
             }
             else if ((int)result.StatusCode >= 500)
             {
-                await notify.Publish(new UserMessage { Body = "server error", Level = AttentionLevel.Error });
+                await notify.Publish(new UserMessage { Body = "Server error.", Level = AttentionLevel.Error });
                 await OnResult.InvokeAsync(new ApiResult<TResponse>
                 {
                     Success = false,

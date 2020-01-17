@@ -1,9 +1,14 @@
 ﻿(function () {
     window.simplyChoicesInterop = {
 
-        init: function (element, dotNetObjRef) {
+        init: function (element, dotNetObjRef, id, searchFloor) {
 
-            window['choices'] = new Choices(element);
+            window[id] = new Choices(element, {
+                searchFloor: searchFloor,
+
+
+
+            });
 
             element.addEventListener(
                 'search',
@@ -24,10 +29,11 @@
             );
         },
 
-        setChoices: function (data, value, label) {
+        setChoices: function (id, data, value, label) {
 
-            window['choices'].setChoices(data, value, label, true);
-        }
+            window[id].setChoices(data, value, label, true);
+        },
+
     };
 
 })();

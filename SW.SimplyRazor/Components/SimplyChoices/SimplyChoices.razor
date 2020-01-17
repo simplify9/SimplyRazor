@@ -1,21 +1,18 @@
 ﻿@namespace SW.SimplyRazor
-@using System.Text.Json
-
 @inject IJSRuntime JSRuntime
 @inject ApiService apiClient
 
-<select @ref="inputRef" multiple>
+<select @ref="inputRef" @attributes="UnmatchedAttributes">
     @*<option value="0" selected disabled>Please enter your address.</option>*@
 </select>
 
 <SimplyQuery QueryUrl="@queryUrl" OnResult="OnQueryResult" TResponse="Dictionary<string,string>"></SimplyQuery>
+<SimplyQuery QueryUrl="@queryValueUrl" OnResult="OnQueryValueResult" TResponse="string"></SimplyQuery>
 
 @code {
 
-    ElementReference inputRef;
-    object inputValue;
-    string queryUrl;
-
+    [Parameter]
+    public string Id { get; set; }
 
     [Parameter]
     public string Lookup { get; set; }
@@ -24,87 +21,67 @@
     public object Value { get; set; }
 
     [Parameter]
-    public bool Static { get; set; }
-
-    [Parameter]
     public EventCallback<object> ValueChanged { get; set; }
 
+    [Parameter]
+    public int TypeAhead { get; set; }
 
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+    ElementReference inputRef;
+    object inputValue;
+    string queryUrl;
+    string queryValueUrl;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.init", inputRef, DotNetObjectReference.Create(this));
+            await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.init",
+                inputRef,
+                DotNetObjectReference.Create(this),
+                Id,
+                TypeAhead == 0 ? 1 : TypeAhead);
 
-            if (Static)
+            if (Value != null)
             {
-                queryUrl = $"{Lookup}?lookup=true";
+                queryValueUrl = $"{Lookup}/{Value}?lookup=true";
                 StateHasChanged();
             }
 
         }
     }
 
+    Debouncer StepperDeboucer = new Debouncer(); // one second
+
     [JSInvokable]
     async public Task OnSearch(string value, int resultCount)
     {
-        if (Static) return;
-
-        queryUrl = $"{Lookup}?lookup=true&search={value}";
-        StateHasChanged();
+        await StepperDeboucer.Debouce(async () =>
+        {
+            queryUrl = $"{Lookup}?lookup=true&search={value}";
+            await InvokeAsync(() => StateHasChanged());
+        });
     }
 
     [JSInvokable]
     async public Task OnChange(string value)
     {
-
-    }
-
-    [JSInvokable]
-    async public Task OnAddItem(string value)
-    {
-
-    }
-
-    [JSInvokable]
-    async public Task OnRemoveItem(string value)
-    {
-
+        await ValueChanged.InvokeAsync(value);
     }
 
     async Task OnQueryResult(ApiResult<Dictionary<string, string>> apiResult)
     {
         if (apiResult.Success)
-            await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", apiResult.Response.ToArray(), "Key", "Value");
+            await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, apiResult.Response.ToArray(), "Key", "Value");
     }
 
-    //public async Task SetSelectedItem(KeyValuePair<JsonElement, string> keyValue)
-    //{
-
-
-    //    if (keyValue.Key.ValueKind == JsonValueKind.String)
-    //    {
-    //        string keyStr = null;
-    //        keyStr = keyValue.Key.ToString();
-    //        await ValueChanged.InvokeAsync((TKey)(object)keyStr);
-
-    //    }
-    //    else if (keyValue.Key.ValueKind == JsonValueKind.Number)
-    //    {
-    //        if (keyValue.Key.TryGetInt32(out var keyInt))
-    //        {
-    //            await ValueChanged.InvokeAsync((TKey)(object)keyInt);
-    //        }
-    //        throw new NotImplementedException();
-    //    }
-    //    else
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-
-    //}
+    async Task OnQueryValueResult(ApiResult<string> apiResult)
+    {
+        if (apiResult.Success)
+            await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, new[] { new { Key = Value, Value = apiResult.Response, selected = true } }, "key", "value");
+    }
 
 
 }
