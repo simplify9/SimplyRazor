@@ -11,19 +11,16 @@
     public string QueryUrl { get; set; }
 
     //[Parameter]
-    //public EventCallback<string> QueryUrlChanged { get; set; }
+    //public TResponse Value { get; set; }
+
+    //[Parameter]
+    //public EventCallback<TResponse> ValueChanged { get; set; }
+
+    //[Parameter]
+    //public bool Ready { get; set; }
 
     [Parameter]
-    public TResponse Value { get; set; }
-
-    [Parameter]
-    public EventCallback<TResponse> ValueChanged { get; set; }
-
-    [Parameter]
-    public bool Ready { get; set; }
-
-    [Parameter]
-    public EventCallback<bool> ReadyChanged { get; set; }
+    public EventCallback<ApiResult<TResponse>> OnResult { get; set; }
 
     [Parameter]
     public bool Working { get; set; }
@@ -31,29 +28,24 @@
     [Parameter]
     public EventCallback<bool> WorkingChanged { get; set; }
 
-    [Parameter]
-    public EventCallback<object> OnSuccess { get; set; }
+    //[Parameter]
+    //public EventCallback<object> OnSuccess { get; set; }
 
-    [Parameter]
-    public EventCallback<object> OnFailure { get; set; }
+    //[Parameter]
+    //public EventCallback<object> OnFailure { get; set; }
 
 
     async public override Task SetParametersAsync(ParameterView parameters)
     {
 
         var queryUrl = parameters.GetValueOrDefault<string>("QueryUrl");
-
-        if (string.IsNullOrEmpty(queryUrl) || queryUrl == QueryUrl)
-        {
-            await base.SetParametersAsync(parameters);
-            return;
-        }
-
-        await WorkingChanged.InvokeAsync(true);
-
+        var oldQueryUrl = QueryUrl;
         await base.SetParametersAsync(parameters);
 
-        await Task.Delay(TimeSpan.FromMilliseconds(500));
+        if (string.IsNullOrEmpty(queryUrl) || queryUrl == oldQueryUrl) return;
+
+        await WorkingChanged.InvokeAsync(true);
+        await Task.Delay(TimeSpan.FromMilliseconds(100));
 
         try
         {
@@ -67,55 +59,61 @@
 
             if ((int)result.StatusCode >= 200 && (int)result.StatusCode < 300)
             {
+                TResponse response;
                 if (typeof(TResponse) == typeof(string))
 
-                    await ValueChanged.InvokeAsync((TResponse)(object)(await result.Content.ReadAsStringAsync()));
+                    response = (TResponse)(object)(await result.Content.ReadAsStringAsync());
 
                 else
-                    await ValueChanged.InvokeAsync(await result.Content.ReadAsAsync<TResponse>());
+                    response = await result.Content.ReadAsAsync<TResponse>();
 
-                await OnSuccess.InvokeAsync(null);
+                await OnResult.InvokeAsync(new ApiResult<TResponse>
+                {
+                    Response = response,
+                    Success = true,
+                    StatusCode = (int)result.StatusCode
+
+                });
             }
             else if ((int)result.StatusCode >= 400 && (int)result.StatusCode < 500)
             {
 
                 var messages = await result.Content.ReadAsAsync<Dictionary<string, IEnumerable<string>>>();
 
-                await notify.Publish(new UserMessage
+                await notify.Publish(new UserMessage { Body = "error", Level = AttentionLevel.Warning });
+                await OnResult.InvokeAsync(new ApiResult<TResponse>
                 {
-                    Body = "error",
-                    Level = AttentionLevel.Warning
-                });
+                    Success = false,
+                    StatusCode = (int)result.StatusCode
 
-                await OnFailure.InvokeAsync(null);
+                });
             }
             else if ((int)result.StatusCode >= 500)
             {
-                await notify.Publish(new UserMessage
+                await notify.Publish(new UserMessage { Body = "server error", Level = AttentionLevel.Error });
+                await OnResult.InvokeAsync(new ApiResult<TResponse>
                 {
-                    Body = "server error",
-                    Level = AttentionLevel.Error
-                });
+                    Success = false,
+                    StatusCode = (int)result.StatusCode
 
-                await OnFailure.InvokeAsync(null);
+                });
             }
 
         }
         catch (Exception ex)
         {
-            await OnFailure.InvokeAsync(null);
             await notify.Publish(new UserMessage { Body = ex.Message, Level = AttentionLevel.Error });
+            await OnResult.InvokeAsync(new ApiResult<TResponse>
+            {
+                Success = false,
+                StatusCode = 0
+
+            });
         }
         finally
         {
-            await ReadyChanged.InvokeAsync(true);
             await WorkingChanged.InvokeAsync(false);
         }
     }
 
-    //async protected override Task OnInitializedAsync()
-    //{
-
-
-    //}
 }

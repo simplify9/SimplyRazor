@@ -3,7 +3,7 @@
 
 <SimplyAlertHub></SimplyAlertHub>
 
-<SimplyQuery QueryUrl="@($"employees/5")" @bind-Value="employee" @bind-Ready="ready" />
+<SimplyQuery QueryUrl="@($"employees/5")" OnResult="OnQueryResult" TResponse="Employee" />
 
 <SimplyReady @bind-Ready="ready">
 
@@ -25,7 +25,7 @@
 
     <h5>Addtional Values</h5>
 
-    <SimplyDictionary  @bind-Value="employee.AdditionalValues" ></SimplyDictionary>
+    <SimplyDictionary @bind-Value="employee.AdditionalValues"></SimplyDictionary>
 
     <h5>Roles</h5>
 
@@ -37,10 +37,10 @@
 
 
         @*<TableHeader>
-            <button type="button" class="btn btn-outline-secondary btn-sm" ><span class="oi oi-plus" /></button>
-        </TableHeader>*@
+                <button type="button" class="btn btn-outline-secondary btn-sm" ><span class="oi oi-plus" /></button>
+            </TableHeader>*@
         <Columns>
-           
+
             <Field Text="Action">
                 <ColumnValue>
                     <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</button>
@@ -57,7 +57,7 @@
     </SimplyTable>
 
     <div class="container-fluid mt-5">
-        <SimplyCommand Text="Save" CommandUrl="employees/5" Request="employee" OnSuccess="SaveOnSuccess" class="btn btn-secondary" />
+        <SimplyCommand Text="Save" CommandUrl="employees/5" Request="employee" OnResult="OnSaveResult" class="btn btn-secondary" />
     </div>
 
     <p>Age: @employee?.Age</p>
@@ -72,9 +72,19 @@
     Employee employee;
     bool ready;
 
-    void SaveOnSuccess(object obj)
+    void OnSaveResult(ApiResult apiResult)
     {
-        navigationManager.NavigateTo("/");
+        if (apiResult.Success)
+            navigationManager.NavigateTo("/");
+    }
+
+    void OnQueryResult(ApiResult<Employee> apiResult)
+    {
+        if (apiResult.Success)
+        {
+            employee = apiResult.Response;
+            ready = true;
+        }
     }
 
 }

@@ -8,7 +8,7 @@
 
 @if (Lookup != null)
 {
-    <SimplyQuery QueryUrl="@($"{Lookup}?lookup=true")" ValueChanged="QueryValueChanged" TResponse="Dictionary<string, string>" ></SimplyQuery>
+    <SimplyQuery QueryUrl="@($"{Lookup}?lookup=true")" OnResult="OnQueryResult" TResponse="Dictionary<string, string>" ></SimplyQuery>
 }
 
 <select @onchange="SelectValueChanged" @attributes="UnmatchedAttributes">
@@ -128,10 +128,14 @@
         }
     }
 
-    void QueryValueChanged(Dictionary<string, string> items)
+    void OnQueryResult(ApiResult< Dictionary<string, string>> apiResult)
     {
-        Items = items;
-        StateHasChanged();
+        if (apiResult.Success)
+        {
+            Items = apiResult.Response;
+            //StateHasChanged();
+
+        }
     }
 
 }

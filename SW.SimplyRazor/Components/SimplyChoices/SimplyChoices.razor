@@ -4,12 +4,11 @@
 @inject IJSRuntime JSRuntime
 @inject ApiService apiClient
 
-<select @ref="inputRef" multiple >
-    <option value="0" selected disabled>Please enter your address.</option>
+<select @ref="inputRef" multiple>
+    @*<option value="0" selected disabled>Please enter your address.</option>*@
 </select>
 
-<SimplyQuery QueryUrl="@queryUrl" ValueChanged="QueryValueChanged"  TResponse="Dictionary<string,string>" ></SimplyQuery>
-
+<SimplyQuery QueryUrl="@queryUrl" OnResult="OnQueryResult" TResponse="Dictionary<string,string>"></SimplyQuery>
 
 @code {
 
@@ -74,10 +73,10 @@
 
     }
 
-
-    async Task QueryValueChanged(Dictionary<string, string> result)
+    async Task OnQueryResult(ApiResult<Dictionary<string, string>> apiResult)
     {
-        await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", result.ToArray(), "Key", "Value");
+        if (apiResult.Success)
+            await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", apiResult.Response.ToArray(), "Key", "Value");
     }
 
     //public async Task SetSelectedItem(KeyValuePair<JsonElement, string> keyValue)

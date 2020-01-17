@@ -4,20 +4,27 @@
 
 <SimplyAlertHub></SimplyAlertHub>
 
-<SimplySearch PageSize="10" SearchUrl="employees" FilterUrl="employees/filters" RowClicked="RowClicked" TModel="Employee" NewText="New Employee" NewHref="form2" >
+<SimplySearch PageSize="10" SearchUrl="employees" FilterUrl="employees/filters" RowClicked="RowClicked" TModel="Employee">
+    <Commands>
+        <div class="col-auto ">
+            <a href="form2">
+                New Employee
+            </a>
+        </div>
+    </Commands>
     <Filters>
-        <Field Name="Id" Text="Id" ></Field>
+        <Field Name="Id" Text="Id"></Field>
         @*<Field Name="HandlerName"  Text="Handler" ></Field>
-        <Field Name="Started" Text="Date" ></Field>*@
+            <Field Name="Started" Text="Date" ></Field>*@
     </Filters>
     <Columns>
-        <Field Name="Id" Text="Id" >
+        <Field Name="Id" Text="Id">
             <ColumnValue>
                 <a @onclick="@(() => context.Action.Invoke("s", "s"))">Edit</a>
-            </ColumnValue> 
+            </ColumnValue>
         </Field>
-        <Field Name="FirstName"  />
-        <Field Name="LastName"  />
+        <Field Name="FirstName" />
+        <Field Name="LastName" />
         <Field Name="Age" />
         <Field Name="Married" />
         <Field Name="EmploymentStatus" />

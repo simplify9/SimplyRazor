@@ -12,9 +12,8 @@
     </CascadingValue>
 </CascadingValue>
 
-<SimplyQuery QueryUrl="@FilterUrl" ValueChanged="FilterQueryValueChanged" TResponse="IEnumerable<SearchyFilterSetup>" @bind-Working="filterQueryBusy"></SimplyQuery>
-
-<SimplyQuery QueryUrl="@query" @bind-Value="result" @bind-Working="searchQueryBusy" OnSuccess="OnSearchQuerySuccess"></SimplyQuery>
+<SimplyQuery QueryUrl="@FilterUrl" @bind-Working="filterQueryBusy" OnResult="OnFilterQueryResult" TResponse="IEnumerable<SearchyFilterSetup>" ></SimplyQuery>
+<SimplyQuery QueryUrl="@query" @bind-Working="searchQueryBusy" OnResult="OnSearchQueryResult" TResponse="SearchyResponse<TModel>"></SimplyQuery>
 
 <div class="container-fluid">
 
@@ -44,13 +43,9 @@
                 }
             </button>
         </div>
-        @if (NewText != null)
+        @if (Commands != null)
         {
-            <div class="col-auto ">
-                <a href="@NewHref">
-                    @NewText
-                </a>
-            </div>
+            @Commands
         }
     </div>
 
@@ -126,10 +121,10 @@
     public int PageSize { get; set; }
 
     [Parameter]
-    public string NewText { get; set; }
+    public RenderFragment Commands { get; set; }
 
-    [Parameter]
-    public string NewHref { get; set; }
+    //[Parameter]
+    //public string NewHref { get; set; }
 
     //[Parameter]
     //public string Height { get; set; }
@@ -167,7 +162,6 @@
 
     void Search(int page)
     {
-
         var searchRequest = new SearchyRequest(new SearchyCondition(filters))
         {
             PageSize = PageSize,
@@ -175,11 +169,7 @@
         };
 
         query = $"{SearchUrl}?{searchRequest.ToString()}";
-
-
         this.page = page;
-        //StateHasChanged();
-
     }
 
     //Debouncer StepperDeboucer = new Debouncer(1000); // one second
@@ -196,11 +186,14 @@
         await InvokeAsync(() => StateHasChanged());
     }
 
-    async Task FilterQueryValueChanged(IEnumerable<SearchyFilterSetup> remoteFilterSetup)
+    async Task OnFilterQueryResult(ApiResult<IEnumerable<SearchyFilterSetup>> apiResult)
     {
-        foreach (var fc in remoteFilterSetup)
+        if (apiResult.Success)
+        {
+            foreach (var fc in apiResult.Response)
 
-            await AddFilterSetup(fc);
+                await AddFilterSetup(fc);
+        }
     }
 
     public void RemoveFilterSetup(ISearchyFilterSetup filter)
@@ -213,13 +206,16 @@
         return RowClicked.InvokeAsync(model);
     }
 
-    async Task OnSearchQuerySuccess(object args)
+    async Task OnSearchQueryResult(ApiResult<SearchyResponse<TModel>> apiResult)
     {
-        if (result.Result.Count() == 0)
+        if (apiResult.Success)
         {
-            await notify.Publish(new UserMessage { Body = "Search returned no results.", Level = AttentionLevel.Info });
+            if (apiResult.Response.Result.Count() == 0)
+            {
+                await notify.Publish(new UserMessage { Body = "Search returned no results.", Level = AttentionLevel.Info });
+            }
+            result = apiResult.Response;
         }
-
         query = null;
     }
 

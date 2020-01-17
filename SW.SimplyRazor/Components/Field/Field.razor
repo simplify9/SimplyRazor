@@ -43,7 +43,7 @@
             {
                 @if (Lookup != null && !string.IsNullOrWhiteSpace(Value.ToString()))
                 {
-                    <SimplyQuery QueryUrl="@($"{Lookup}/{Value}?lookup=true")" @bind-Value="lookupValue" @bind-Ready="lookupReady" />
+                    <SimplyQuery QueryUrl="@($"{Lookup}/{Value}?lookup=true")" OnResult="OnQueryResult" TResponse="string" />
                     <SimplyReady @bind-Ready="lookupReady">
                         @lookupValue
                     </SimplyReady>
@@ -278,6 +278,13 @@
             invalidFeedback = $"{value} is not {PropertyInfo.PropertyType.Name}";
             return false;
         }
+    }
+
+    void OnQueryResult(ApiResult<string> apiResult)
+    {
+        lookupValue = string.Empty;
+        if (apiResult.Success) lookupValue = apiResult.Response;
+        lookupReady = true;
     }
 
     System.Timers.Timer countdown;
