@@ -235,9 +235,19 @@
                 {
                     editor = typeof(EditorForEnum);
                 }
+                else if (Lookup != null)
+                {
+                    if (TypeAhead > 0)
+
+                        editor = typeof(EditorForTypeAhead);
+
+                    else
+
+                        editor = typeof(EditorForTextAsSelect);
+                }
                 else
                 {
-                    editor = (Lookup == null) ? typeof(EditorForText) : typeof(EditorForTextAsSelect);
+                    editor = typeof(EditorForText);
                 }
 
                 if (editor != null) editorFragment = CreateEditor();

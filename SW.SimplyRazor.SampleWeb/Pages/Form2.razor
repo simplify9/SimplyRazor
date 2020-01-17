@@ -3,7 +3,7 @@
 
 <SimplyAlertHub></SimplyAlertHub>
 
-<Query QueryUrl="@($"employees/5")" OnResult="OnQueryResult" TResponse="Employee" />
+<SimplyQuery QueryUrl="@($"employees/5")" OnResult="OnQueryResult" TResponse="Employee" />
 
 <SimplyReady @bind-Ready="ready">
 
@@ -16,7 +16,7 @@
         <div>test</div>
         <Field Name="Married" />
         <Field Name="EmploymentStatus" Lookup="mockmodels" />
-        <Field Name="Country" Lookup="countries" />
+        <Field Name="Country" Lookup="countries" TypeAhead="3" />
         <Field Name="Photo" />
 
         <Field Name="Salary.Amount" />
@@ -57,7 +57,7 @@
     </SimplyTable>
 
     <div class="container-fluid mt-5">
-        <Command Text="Save" CommandUrl="employees/5" Request="employee" OnResult="OnSaveResult" class="btn btn-secondary" />
+        <SimplyCommand Text="Save" CommandUrl="employees/5" Request="employee" OnResult="OnSaveResult" class="btn btn-secondary" />
     </div>
 
     <p>Age: @employee?.Age</p>

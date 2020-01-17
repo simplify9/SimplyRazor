@@ -1,0 +1,18 @@
+﻿@namespace SW.SimplyRazor
+
+<label for="@State.Id">@State.Text</label>
+
+<SimplyChoices Id="@State.Id" Lookup="@State.Lookup" TypeAhead="@State.TypeAhead" Value="@State.Value" ValueChanged=" (value) =>  ValueChanged.InvokeAsync(value)"></SimplyChoices>
+
+@code {
+
+    [Parameter]
+    public EventCallback<object> ValueChanged { get; set; }
+
+    [Parameter]
+    public IField State { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+}
