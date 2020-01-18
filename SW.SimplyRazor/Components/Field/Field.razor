@@ -235,6 +235,10 @@
                 {
                     editor = typeof(EditorForEnum);
                 }
+                else if (typeof(IDictionary<string, string>).IsAssignableFrom(PropertyInfo.PropertyType))
+                {
+                    editor = typeof(EditorForDictionary);
+                }
                 else if (Lookup != null)
                 {
                     if (TypeAhead > 0)

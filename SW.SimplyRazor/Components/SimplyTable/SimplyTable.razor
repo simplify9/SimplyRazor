@@ -4,11 +4,20 @@
 @namespace SW.SimplyRazor
 @inject NotifyService  notify
 
-
-@if (NewText != null)
-{
-    <button type="button" class="btn btn-link" @onclick="() => Add()">@NewText</button>
-}
+<div class="row">
+    @if (Text != null)
+    {
+        <div class="col-auto">
+            <label>@Text</label>
+        </div>
+    }
+    @if (NewText != null)
+    {
+        @*<div class="col-auto">
+                <a href="javascript:void();"  @onclick="() => Add()">@NewText</a>
+            </div>*@
+    }
+</div>
 
 @if (Value?.Count > 0)
 {
@@ -17,6 +26,10 @@
             @Columns
         </SimplyGrid>
     </CascadingValue>
+}
+else
+{
+    <div class="mb-3"><em>None <a href="javascript:void();" @onclick="() => Add()">click</a> to add...</em></div>
 }
 
 @if (newModel != null)
@@ -34,7 +47,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" @onclick="()=> OnFormSubmit()"> Ok </button>
-                    <button type="button" class="btn btn-secondary" @onclick="()=> CancelEdit()" >Cancel</button>
+                    <button type="button" class="btn btn-secondary" @onclick="()=> CancelEdit()">Cancel</button>
                 </div>
             </div>
         </div>
@@ -54,6 +67,9 @@
 
     [Parameter]
     public RenderFragment Columns { get; set; }
+
+    [Parameter]
+    public string Text { get; set; }
 
     [Parameter]
     public string NewText { get; set; }
@@ -88,6 +104,11 @@
 
         switch (actionName.ToLower())
         {
+            case "add":
+
+                await Add();
+                break;
+
             case "remove":
 
                 await OnItem.InvokeAsync(new TableItem<TModel>

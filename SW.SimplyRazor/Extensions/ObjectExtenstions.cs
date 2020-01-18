@@ -1,7 +1,7 @@
 ﻿
 using Newtonsoft.Json;
 using System;
-
+using System.Collections.Generic;
 
 namespace SW.SimplyRazor 
 {
@@ -22,9 +22,10 @@ namespace SW.SimplyRazor
 
             if (value is null && typeNullable) return null;
 
-            else if (value is null) return Activator.CreateInstance(type);  
+            else if (value is null) return Activator.CreateInstance(type);
 
             if (value.GetType() == type) return value;
+            if (type.IsAssignableFrom(value.GetType())) return value;
 
             var nakedType = GetNullableType(type);
             if (nakedType != null) 

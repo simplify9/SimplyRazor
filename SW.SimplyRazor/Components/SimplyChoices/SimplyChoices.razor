@@ -49,7 +49,6 @@
                 queryValueUrl = $"{Lookup}/{Value}?lookup=true";
                 StateHasChanged();
             }
-
         }
     }
 
@@ -82,6 +81,4 @@
         if (apiResult.Success)
             await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, new[] { new { Key = Value, Value = apiResult.Response, selected = true } }, "key", "value");
     }
-
-
 }
