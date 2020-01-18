@@ -4,6 +4,7 @@
 @using SW.PrimitiveTypes
 @using System.Reflection
 @using Humanizer
+@using System.Collections
 
 @switch (RenderMode)
 {
@@ -239,6 +240,10 @@
                 {
                     editor = typeof(EditorForDictionary);
                 }
+                else if (typeof(IEnumerable).IsAssignableFrom(PropertyInfo.PropertyType) && PropertyInfo.PropertyType != typeof(string))
+                {
+                    editor = typeof(EditorForList);
+                }
                 else if (Lookup != null)
                 {
                     if (TypeAhead > 0)
@@ -254,7 +259,7 @@
                     editor = typeof(EditorForText);
                 }
 
-                if (editor != null) editorFragment = CreateEditor();
+                editorFragment = CreateEditor();
                 break;
         }
 

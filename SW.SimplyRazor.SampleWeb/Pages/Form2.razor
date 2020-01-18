@@ -17,6 +17,8 @@
         <Field Name="Married" />
         <Field Name="EmploymentStatus" Lookup="mockmodels" />
         <Field Name="Country" Lookup="countries" TypeAhead="3" />
+        <Field Name="Roles" Lookup="countries"></Field>
+
         <Field Name="Photo" />
         <Field Name="AdditionalValues"></Field>
         <Field Name="Salary.Amount" />
@@ -27,7 +29,6 @@
     </SimplyForm>
 
 
-    <SimplyList @bind-Value="employee.Roles" Lookup="countries"></SimplyList>
 
     <SimplyTable @bind-Value="employee.Leaves" NewText="Add new leave.."  >
 

@@ -1,0 +1,80 @@
+﻿@namespace SW.SimplyRazor
+@using System.Collections
+@using System.Reflection
+
+<SimplyTable @bind-Value="wrapper" OnItem="OnItem" Text="@State.Text" TModel="PrimitiveTypeWrapper" >
+    <Columns>
+        <Field Text="Action">
+            <ColumnHeader>
+                Action (<a href="javascript:void();" @onclick="@(() => context.Action.Invoke("add", null))">add</a>)
+            </ColumnHeader>
+            <ColumnValue>
+                <a href="javascript:void();" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</a>
+            </ColumnValue>
+        </Field>
+        <Field Name="Value" Lookup="@State.Lookup" />
+    </Columns>
+    <Form>
+        <Field Name="Value" Lookup="@State.Lookup" />
+    </Form>
+</SimplyTable>
+
+@code {
+
+    [Parameter]
+    public EventCallback<object> ValueChanged { get; set; }
+
+    [Parameter]
+    public IField State { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+    object value { get; set; }
+    ICollection<PrimitiveTypeWrapper> wrapper;
+    Type collectionType;
+    MethodInfo addMethod;
+    MethodInfo removeMethod;
+
+    protected override void OnInitialized()
+    {
+        collectionType = State.PropertyInfo.PropertyType.GetGenericArguments()[0];
+        addMethod = typeof(List<>).MakeGenericType(collectionType).GetMethod("Add");
+        removeMethod = typeof(List<>).MakeGenericType(collectionType).GetMethod("Remove");
+        if (State.Value != null)
+        {
+            value = State.Value;
+            var _wrapper = new List<PrimitiveTypeWrapper>();
+
+            foreach (var item in (IEnumerable)value)
+            {
+                _wrapper.Add(new PrimitiveTypeWrapper
+                {
+                    Value = item
+                });
+            }
+
+            wrapper = _wrapper;
+        }
+    }
+
+    async Task OnItem(TableItem<PrimitiveTypeWrapper> tableItem)
+    {
+
+        if (value == null) value = Activator.CreateInstance(typeof(List<>).MakeGenericType(collectionType));
+
+        var typedValue = Object.ConvertValueToType(tableItem.Item.Value, collectionType);
+
+        if (tableItem.Flag == TableItemFlag.Added)
+
+            addMethod.Invoke(value, new object[] { typedValue });
+
+        if (tableItem.Flag == TableItemFlag.Removed)
+
+            removeMethod.Invoke(value, new object[] { typedValue });
+
+        await ValueChanged.InvokeAsync(value);
+
+    }
+
+}
