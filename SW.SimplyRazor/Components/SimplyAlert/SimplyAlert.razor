@@ -24,22 +24,22 @@
     public string Body { get; set; }
 
     [Parameter]
-    public AttentionLevel Level { get; set; }
+    public AlertLevel Level { get; set; }
 
     protected override void OnInitialized()
     {
 
         switch (Level)
         {
-            case AttentionLevel.Error:
+            case AlertLevel.Error:
                 alertCss = "alert-danger";
                 break;
 
-            case AttentionLevel.Warning:
+            case AlertLevel.Warning:
                 alertCss = "alert-warning";
                 break;
 
-            case AttentionLevel.Success:
+            case AlertLevel.Success:
                 alertCss = "alert-success";
                 break;
 

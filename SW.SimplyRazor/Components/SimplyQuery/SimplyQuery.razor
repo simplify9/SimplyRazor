@@ -90,7 +90,7 @@
             }
             else if ((int)result.StatusCode >= 500)
             {
-                await notify.Publish(new UserMessage { Body = "Server error.", Level = AttentionLevel.Error });
+                await notify.Publish(new UserMessage { Body = "Server error.", Level = AlertLevel.Error });
                 await OnResult.InvokeAsync(new ApiResult<TResponse>
                 {
                     Success = false,
@@ -102,7 +102,7 @@
         }
         catch (Exception ex)
         {
-            await notify.Publish(new UserMessage { Body = ex.Message, Level = AttentionLevel.Error });
+            await notify.Publish(new UserMessage { Body = ex.Message, Level = AlertLevel.Error });
             await OnResult.InvokeAsync(new ApiResult<TResponse>
             {
                 Success = false,

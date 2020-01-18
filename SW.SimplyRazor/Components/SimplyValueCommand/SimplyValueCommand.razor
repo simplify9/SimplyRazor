@@ -85,7 +85,7 @@
                         await notify.Publish(new UserMessage
                         {
                             Body = string.Join(",", kvp.Value),
-                            Level = AttentionLevel.Warning,
+                            Level = AlertLevel.Warning,
 
                         });
                     }
@@ -102,7 +102,7 @@
                 await notify.Publish(new UserMessage
                 {
                     Body = "server error",
-                    Level = AttentionLevel.Error
+                    Level = AlertLevel.Error
                 });
 
                 await OnResult.InvokeAsync(new ApiResult<TResponse>
@@ -118,7 +118,7 @@
             await notify.Publish(new UserMessage
             {
                 Body = ex.Message,
-                Level = AttentionLevel.Error
+                Level = AlertLevel.Error
             });
 
             await OnResult.InvokeAsync(new ApiResult<TResponse>

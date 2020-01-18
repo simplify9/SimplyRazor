@@ -185,7 +185,7 @@ else
         }
         catch (Exception ex)
         {
-            await notify.Publish(new UserMessage { Body = ex.Message, Level = AttentionLevel.Warning });
+            await notify.Publish(new UserMessage { Body = ex.Message, Level = AlertLevel.Warning });
         }
     }
 

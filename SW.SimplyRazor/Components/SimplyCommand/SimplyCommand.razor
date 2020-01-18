@@ -4,8 +4,6 @@
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject ComponentOptions componentOptions
 
-
-
 <button disabled="@working" type="button" @onclick="ButtonOnClick" @attributes="UnmatchedAttributes">
     @if (working)
     {
@@ -36,6 +34,9 @@
     [Parameter]
     public string Text { get; set; }
 
+    [Parameter]
+    public ApiMethod Method { get; set; }
+
     async Task ButtonOnClick(EventArgs args)
     {
         try
@@ -48,7 +49,23 @@
 
                 apiService.HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
 
-            var result = await apiService.HttpClient.PostAsync(CommandUrl, Request);
+            HttpResponseMessage result;
+
+            switch (Method)
+            {
+                case ApiMethod.Post:
+                case ApiMethod.Default:
+                    result = await apiService.HttpClient.PostAsync(CommandUrl, Request);
+                    break;
+
+                case ApiMethod.Delete:
+                    result = await apiService.HttpClient.DeleteAsync(CommandUrl);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+
 
             if ((int)result.StatusCode >= 200 && (int)result.StatusCode < 300)
             {
@@ -76,7 +93,7 @@
                         await notify.Publish(new UserMessage
                         {
                             Body = string.Join(",", kvp.Value),
-                            Level = AttentionLevel.Warning,
+                            Level = AlertLevel.Warning,
 
                         });
                     }
@@ -93,7 +110,7 @@
                 await notify.Publish(new UserMessage
                 {
                     Body = "server error",
-                    Level = AttentionLevel.Error
+                    Level = AlertLevel.Error
                 });
 
                 await OnResult.InvokeAsync(new ApiResult
@@ -109,7 +126,7 @@
             await notify.Publish(new UserMessage
             {
                 Body = ex.Message,
-                Level = AttentionLevel.Error
+                Level = AlertLevel.Error
             });
 
             await OnResult.InvokeAsync(new ApiResult

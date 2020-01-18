@@ -155,7 +155,7 @@
     async Task RemoveFilter(FilterModel filter)
     {
         if (filter.Required)
-            await notify.Publish(new UserMessage { Body = "This filter is required for search.", Level = AttentionLevel.Warning });
+            await notify.Publish(new UserMessage { Body = "This filter is required for search.", Level = AlertLevel.Warning });
         else
             filters.Remove(filter);
     }
@@ -205,7 +205,7 @@
         {
             if (apiResult.Response.Result.Count() == 0)
             {
-                await notify.Publish(new UserMessage { Body = "Search returned no results.", Level = AttentionLevel.Info });
+                await notify.Publish(new UserMessage { Body = "Search returned no results.", Level = AlertLevel.Info });
             }
             result = apiResult.Response;
         }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SW.SimplyRazor
 {
-    public enum AttentionLevel
+    public enum AlertLevel
     {
         Info,
         Success,

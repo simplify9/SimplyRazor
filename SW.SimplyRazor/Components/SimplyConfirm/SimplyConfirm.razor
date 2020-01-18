@@ -1,0 +1,51 @@
+﻿@namespace SW.SimplyRazor
+
+@if (Visible)
+{
+    <div class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Title</h5>
+                    <button @onclick="() => OnUserChoice(false)" type="button" class="close"  aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @ChildContent
+                </div>
+                <div class="modal-footer">
+                    <button @onclick="() => OnUserChoice(true)" type="button" class="btn btn-primary">Confirm</button>
+                    <button @onclick="() => OnUserChoice(false)" type="button" class="btn btn-secondary" >Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public bool Visible { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> VisibleChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnResult { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public AlertLevel Level { get; set; }
+
+    async Task OnUserChoice(bool choice)
+    {
+        await VisibleChanged.InvokeAsync(false);
+        await OnResult.InvokeAsync(choice);
+    }
+}
