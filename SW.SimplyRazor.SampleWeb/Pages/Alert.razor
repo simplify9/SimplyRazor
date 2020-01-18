@@ -20,7 +20,7 @@
 
     void OnTestClick(EventArgs args)
     {
-        notify.Publish(new UserMessage { Body = $"Test {Guid.NewGuid().ToString("N")}", Level = AttentionLevel.Error });
+        notify.Publish(new UserMessage { Body = $"Test {Guid.NewGuid().ToString("N")}", Level = AlertLevel.Error });
     }
 
 }
