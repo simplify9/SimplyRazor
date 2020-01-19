@@ -2,7 +2,13 @@
 
 <label for="@State.Id">@State.Text</label>
 
-<SimplyChoices Id="@State.Id" Lookup="@State.Lookup" TypeAhead="@State.TypeAhead" Value="@State.Value" ValueChanged=" (value) =>  ValueChanged.InvokeAsync(value)" @attributes="UnmatchedAttributes"></SimplyChoices>
+<SimplyChoices Id="@State.Id" 
+               Lookup="@State.Lookup" 
+               TypeAhead="@State.TypeAhead" 
+               Value="@State.Value" 
+               ValueChanged=" (value) =>  ValueChanged.InvokeAsync(value)" 
+               Disabled="State.ReadOnly"
+               @attributes="UnmatchedAttributes"></SimplyChoices>
 
 @code {
 

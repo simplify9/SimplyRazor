@@ -1,15 +1,16 @@
 ﻿@namespace SW.SimplyRazor
 @inject IJSRuntime JSRuntime
+@inject ComponentOptions componentOptions
 @using SW.PrimitiveTypes
 
 <div class="input-group mb-3">
     <div class="custom-file">
 
-        <input class="custom-file-input" 
-               @ref="inputRef" 
-               @onchange="InputOnChange" 
-               type="file" 
-               accept="image/*" 
+        <input class="custom-file-input"
+               @ref="inputRef"
+               @onchange="InputOnChange"
+               type="file"
+               accept="image/*"
                @attributes="UnmatchedParameters" />
 
         <label class="custom-file-label" for="customFile">Select</label>
@@ -56,7 +57,7 @@
         if (firstRender)
         {
             //styling
-            await JSRuntime.InvokeVoidAsync("simplyUploadInterop.initBsCustomFileInput");
+            await JSRuntime.InvokeVoidAsync("simplyUploadInterop.init");
         }
     }
 
@@ -71,7 +72,7 @@
 
         try
         {
-            var rb = await JSRuntime.InvokeAsync<RemoteBlob>("simplyUploadInterop.saveFile", inputRef);
+            var rb = await JSRuntime.InvokeAsync<RemoteBlob>("simplyUploadInterop.saveFile", inputRef, componentOptions.RemoteBlobUri.ToString());
             await ValueChanged.InvokeAsync(rb);
         }
         catch (Exception)

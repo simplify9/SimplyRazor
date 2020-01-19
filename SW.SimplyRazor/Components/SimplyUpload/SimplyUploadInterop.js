@@ -1,7 +1,7 @@
 ﻿(function () {
     window.simplyUploadInterop = {
 
-        saveFile: function (element) {
+        saveFile: function (element, url) {
             //var id = { name: 'john', age: 34 };
             var formData = new FormData();
             var file = element.files[0];
@@ -14,7 +14,7 @@
 
             //try {
 
-            return fetch('api/upload', { method: "POST", body: formData })
+            return fetch(url, { method: "POST", body: formData })
                 .then(response => response.json());
                 //.then((body) => console.log(body));
             //}
@@ -24,7 +24,7 @@
 
         },
 
-        initBsCustomFileInput: function () {
+        init: function () {
             bsCustomFileInput.init();
         }
 

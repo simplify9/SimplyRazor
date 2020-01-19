@@ -36,6 +36,8 @@ namespace SW.BogusDataModels
 
         public ICollection<string> Roles { get; set; }
 
+        public ICollection<RemoteBlob> Photos { get; set; }
+
         public IDictionary<string, string> AdditionalValues { get; set; }
 
         //public static IList<Employee> Sample = new List<Employee>

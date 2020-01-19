@@ -5,6 +5,7 @@
                checked="@State.Value"
                type="checkbox"
                class="form-check-input @((State.IsInvalid ? "is-invalid" : null))"
+               disabled="@State.ReadOnly"
                @onchange="e=> ValueChanged.InvokeAsync(e.Value)"
                @attributes="UnmatchedAttributes" />
 

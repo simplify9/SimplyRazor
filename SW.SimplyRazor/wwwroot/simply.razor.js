@@ -17383,8 +17383,6 @@ function () {
             window[id] = new Choices(element, {
                 searchFloor: searchFloor,
 
-
-
             });
 
             element.addEventListener(
@@ -17416,6 +17414,16 @@ function () {
             window[id].destroy();
         },
 
+        disable: function (id) {
+
+            window[id].disable();
+        },
+
+        enable: function (id) {
+
+            window[id].enable();
+        },
+
     };
 
 })();
@@ -17423,7 +17431,7 @@ function () {
 (function () {
     window.simplyUploadInterop = {
 
-        saveFile: function (element) {
+        saveFile: function (element, url) {
             //var id = { name: 'john', age: 34 };
             var formData = new FormData();
             var file = element.files[0];
@@ -17436,7 +17444,7 @@ function () {
 
             //try {
 
-            return fetch('api/upload', { method: "POST", body: formData })
+            return fetch(url, { method: "POST", body: formData })
                 .then(response => response.json());
                 //.then((body) => console.log(body));
             //}
@@ -17446,7 +17454,7 @@ function () {
 
         },
 
-        initBsCustomFileInput: function () {
+        init: function () {
             bsCustomFileInput.init();
         }
 

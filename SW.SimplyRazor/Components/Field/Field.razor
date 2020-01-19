@@ -185,14 +185,11 @@
     protected override void OnInitialized()
     {
 
-        id = Name == null
-            ? $"field{Guid.NewGuid().ToString("N")}"
-            : $"{Name}".Replace(".", "_").ToLower();
+        id = $"f_{Name}_{Guid.NewGuid().ToString("N")}";
 
         if (Name is null) return;
 
         nameArray = Name.Split('.');
-
 
         PropertyInfo = (ModelType ?? Model.GetType()).GetProperty(nameArray[0]);
 

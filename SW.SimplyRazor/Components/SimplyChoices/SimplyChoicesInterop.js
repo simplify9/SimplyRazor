@@ -6,8 +6,6 @@
             window[id] = new Choices(element, {
                 searchFloor: searchFloor,
 
-
-
             });
 
             element.addEventListener(
@@ -37,6 +35,16 @@
         destroy: function (id) {
 
             window[id].destroy();
+        },
+
+        disable: function (id) {
+
+            window[id].disable();
+        },
+
+        enable: function (id) {
+
+            window[id].enable();
         },
 
     };

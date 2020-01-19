@@ -7,7 +7,8 @@
     <textarea id="@State.Id"
               rows="3"
               value="@State.Value"
-              class="@(State.ReadOnly ? "form-control-plaintext" : "form-control") @((State.IsInvalid ? "is-invalid" : null))"
+              class="form-control @((State.IsInvalid ? "is-invalid" : null))"
+              disabled="@State.ReadOnly"
               @onchange="(e)=> ValueChanged.InvokeAsync(e.Value)"
               @attributes="UnmatchedAttributes">@State.Value</textarea>
 
@@ -17,7 +18,8 @@ else
     <input id="@State.Id"
            value="@State.Value"
            type="@inputType"
-           class="@(State.ReadOnly ? "form-control-plaintext" : "form-control") @((State.IsInvalid ? "is-invalid" : null))"
+           class="form-control @((State.IsInvalid ? "is-invalid" : null))"
+           disabled="@State.ReadOnly"
            @onchange="(e)=> ValueChanged.InvokeAsync(e.Value)"
            @attributes="UnmatchedAttributes" />
 }

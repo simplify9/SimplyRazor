@@ -4,6 +4,7 @@
 
 <SimplySelect id="@State.Id" 
               class="@cssClass"
+              disabled="@State.ReadOnly"
               ValueChanged="(e)=> ValueChanged.InvokeAsync(e)"
               Value="@State.Value"
               EmptyText="Select"
