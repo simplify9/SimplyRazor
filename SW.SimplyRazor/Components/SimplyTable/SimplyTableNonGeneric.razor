@@ -1,0 +1,171 @@
+﻿@implements IFieldAction
+@namespace SW.SimplyRazor
+@inject NotifyService  notify
+@using System.Reflection
+@using System.Collections
+
+<div class="row">
+    @if (Text != null)
+    {
+        <div class="col-auto">
+            <label>@Text</label>
+        </div>
+    }
+</div>
+
+@if (Value != null && ((IEnumerable)Value).GetEnumerator().MoveNext())
+{
+    <CascadingValue IsFixed="true" Value="this" Name="FieldAction">
+        <SimplyGridNonGeneric Data="(IEnumerable)Value">
+            @Columns
+        </SimplyGridNonGeneric>
+    </CascadingValue>
+}
+else
+{
+    <div class="mb-3"><em><a href="javascript:void();" @onclick="() => Add()">click</a> to add...</em></div>
+}
+
+@if (newModel != null)
+{
+    <div class="modal" tabindex="-1" role="dialog" style="display:block">
+        <div class="modal-dialog modal-dialog-scrollable" role="document" style="display:block">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add or edit..</h5>
+                </div>
+                <div class="modal-body">
+                    <SimplyFormNonGeneric Value="newModel">
+                        @Form
+                    </SimplyFormNonGeneric>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="()=> OnFormSubmit()"> Ok </button>
+                    <button type="button" class="btn btn-secondary" @onclick="()=> CancelEdit()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public Type Type { get; set; }
+
+    [Parameter]
+    public object Value { get; set; }
+
+    [Parameter]
+    public EventCallback<object> ValueChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<TableItem<object>> OnItem { get; set; }
+
+    [Parameter]
+    public RenderFragment Columns { get; set; }
+
+    [Parameter]
+    public string Text { get; set; }
+
+    [Parameter]
+    public RenderFragment Form { get; set; }
+
+    object newModel;
+    object originalModel;
+    MethodInfo addMethod;
+    MethodInfo removeMethod;
+
+
+    void Add()
+    {
+        newModel = Activator.CreateInstance(Type);
+    }
+
+    void RemoveAll()
+    {
+
+    }
+
+    void CancelEdit()
+    {
+        newModel = null;
+        originalModel = null;
+    }
+
+    async public Task Invoke(string actionName, object actionValue)
+    {
+
+        switch (actionName.ToLower())
+        {
+            case "add":
+
+                Add();
+                break;
+
+            case "remove":
+
+                await OnItem.InvokeAsync(new TableItem<object>
+                {
+                    Item = actionValue,
+                    Flag = TableItemFlag.Removed
+                });
+
+                removeMethod.Invoke(Value, new object[] { actionValue });
+                //Value.Remove(actionValue);
+                break;
+
+            case "edit":
+
+                originalModel = actionValue;
+                newModel = Object.DeepClone(originalModel);
+                break;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        addMethod = typeof(List<>).MakeGenericType(Type).GetMethod("Add");
+        removeMethod = typeof(List<>).MakeGenericType(Type).GetMethod("Remove");
+    }
+
+
+    async Task OnFormSubmit()
+    {
+        try
+        {
+            if (originalModel == null)
+            {
+                if (Value == null) Value = Activator.CreateInstance(typeof(List<>).MakeGenericType(Type));
+
+                await OnItem.InvokeAsync(new TableItem<object>
+                {
+                    Item = newModel,
+                    Flag = TableItemFlag.Added
+                });
+
+                addMethod.Invoke(Value, new object[] { newModel });
+            }
+            else
+            {
+                await OnItem.InvokeAsync(new TableItem<object>
+                {
+                    Item = newModel,
+                    Flag = TableItemFlag.Changed
+                });
+
+                Object.DeepClone(newModel, originalModel);
+            }
+
+            await ValueChanged.InvokeAsync(Value);
+            newModel = null;
+            originalModel = null;
+
+        }
+        catch (Exception ex)
+        {
+            await notify.Publish(new UserMessage { Body = ex.Message, Level = AlertLevel.Warning });
+        }
+    }
+
+}
