@@ -2,12 +2,12 @@
 
 @if (Visible)
 {
-    <div class="modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+    <div class="modal" tabindex="-1" role="dialog" style="display:block">
+        <div class="modal-dialog" role="document" style="display:block">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">@Title</h5>
-                    <button @onclick="() => OnUserChoice(false)" type="button" class="close"  aria-label="Close">
+                    <button @onclick="() => OnUserChoice(false)" type="button" class="close" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -15,8 +15,19 @@
                     @ChildContent
                 </div>
                 <div class="modal-footer">
-                    <button @onclick="() => OnUserChoice(true)" type="button" class="btn btn-primary">Confirm</button>
-                    <button @onclick="() => OnUserChoice(false)" type="button" class="btn btn-secondary" >Cancel</button>
+                    <button @onclick="() => OnUserChoice(true)" type="button" class="btn btn-primary">
+
+                        @if (Working)
+                        {
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        }
+                        else
+                        {
+                            @:Confirm
+                        }
+
+                    </button>
+                    <button @onclick="() => OnUserChoice(false)" type="button" class="btn btn-secondary">Cancel</button>
                 </div>
             </div>
         </div>
@@ -38,6 +49,12 @@
     public RenderFragment ChildContent { get; set; }
 
     [Parameter]
+    public bool Working { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> WorkingChanged { get; set; }
+
+    [Parameter]
     public string Title { get; set; }
 
     [Parameter]
@@ -45,7 +62,7 @@
 
     async Task OnUserChoice(bool choice)
     {
-        await VisibleChanged.InvokeAsync(false);
         await OnResult.InvokeAsync(choice);
+        await VisibleChanged.InvokeAsync(false);
     }
 }

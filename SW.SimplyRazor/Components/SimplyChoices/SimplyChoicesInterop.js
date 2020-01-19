@@ -34,6 +34,11 @@
             window[id].setChoices(data, value, label, true);
         },
 
+        destroy: function (id) {
+
+            window[id].destroy();
+        },
+
     };
 
 })();

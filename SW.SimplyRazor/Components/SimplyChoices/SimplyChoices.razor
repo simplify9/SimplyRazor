@@ -1,4 +1,5 @@
 ﻿@namespace SW.SimplyRazor
+@implements IDisposable
 @inject IJSRuntime JSRuntime
 @inject ApiService apiClient
 
@@ -80,5 +81,14 @@
     {
         if (apiResult.Success)
             await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, new[] { new { Key = Value, Value = apiResult.Response, selected = true } }, "key", "value");
+    }
+
+    //async ValueTask IAsyncDisposable.DisposeAsync()
+    //{
+    //}
+
+    void IDisposable.Dispose()
+    {
+        JSRuntime.InvokeVoidAsync("simplyChoicesInterop.destroy", Id);
     }
 }

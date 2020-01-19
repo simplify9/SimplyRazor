@@ -12,13 +12,26 @@
     }
     else
     {
-        @Text
+        @Title
     }
 </button>
+
+<SimplyConfirm @bind-Visible="confirmVisible" Title="@Title" OnResult="OnConfirmResult" @bind-Working="working">
+    @if (ChildContent == null)
+    {
+        <p>This action might be irriversible. Are you sure you want to perform this action?</p>
+    }
+    else 
+    {
+        @ChildContent
+    }
+</SimplyConfirm>
 
 @code {
 
     bool working;
+    bool confirmVisible;
+
 
     [Parameter]
     public string CommandUrl { get; set; }
@@ -33,10 +46,38 @@
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
     [Parameter]
-    public string Text { get; set; }
+    public ApiMethod Method { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public bool Confirm { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+
+    async Task OnConfirmResult(bool result)
+    {
+        if (result) await PerformAction();
+    }
 
     async Task ButtonOnClick(EventArgs args)
     {
+        if (Confirm)
+        {
+            confirmVisible = true;
+            return;
+        };
+
+        await PerformAction();
+
+    }
+
+    async Task PerformAction()
+    {
+
         try
         {
             working = true;
@@ -47,7 +88,22 @@
 
                 apiService.HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
 
-            var result = await apiService.HttpClient.PostAsync(CommandUrl, Request);
+            HttpResponseMessage result;
+
+            switch (Method)
+            {
+                case ApiMethod.Post:
+                case ApiMethod.Default:
+                    result = await apiService.HttpClient.PostAsync(CommandUrl, Request);
+                    break;
+
+                case ApiMethod.Delete:
+                    result = await apiService.HttpClient.DeleteAsync(CommandUrl);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
 
             if ((int)result.StatusCode >= 200 && (int)result.StatusCode < 300)
             {
@@ -56,6 +112,10 @@
                 if (typeof(TResponse) == typeof(string))
 
                     response = (TResponse)(object)(await result.Content.ReadAsStringAsync());
+
+                else if (typeof(TResponse) == typeof(NoT))
+
+                    response = default(TResponse);
 
                 else
                     response = await result.Content.ReadAsAsync<TResponse>();
