@@ -1,29 +1,7 @@
 ﻿@typeparam TModel
 @namespace SW.SimplyRazor
 
-<table class="table table-sm table-hover">
-    <thead>
-        <tr>
-            <CascadingValue IsFixed="true" Value="FieldRole.ColumnName" Name="RenderMode">
-                <CascadingValue Value="Data.First()" Name="Model">
-                    @ChildContent
-                </CascadingValue>
-            </CascadingValue>
-        </tr>
-    </thead>
-    <tbody>
-        <CascadingValue IsFixed="true" Value="FieldRole.ColumnValue" Name="RenderMode">
-            @foreach (var item in Data)
-            {
-                <tr @key="item" @onclick="() => RowClicked.InvokeAsync(item)">
-                    <CascadingValue Value="item" Name="Model">
-                        @ChildContent
-                    </CascadingValue>
-                </tr>
-            }
-        </CascadingValue>
-    </tbody>
-</table>
+<SimplyGridNonGeneric Data="Data" RowClicked="GridRowClicked" ChildContent="ChildContent" />
 
 
 @code {
@@ -36,5 +14,10 @@
 
     [Parameter]
     public EventCallback<TModel> RowClicked { get; set; }
+
+    async Task GridRowClicked(object row)
+    {
+        await RowClicked.InvokeAsync((TModel)row);
+    }
 
 }

@@ -1,0 +1,45 @@
+﻿@namespace SW.SimplyRazor
+@using System.Collections
+
+<table class="table table-sm table-hover">
+    <thead>
+        <tr>
+            @{
+                var enumerator = Data.GetEnumerator();
+                enumerator.MoveNext();
+
+                <CascadingValue IsFixed="true" Value="FieldRole.ColumnName" Name="RenderMode">
+                    <CascadingValue Value="enumerator.Current" Name="Model">
+                        @ChildContent
+                    </CascadingValue>
+                </CascadingValue>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        <CascadingValue IsFixed="true" Value="FieldRole.ColumnValue" Name="RenderMode">
+            @foreach (var item in Data)
+            {
+                <tr @key="item" @onclick="() => RowClicked.InvokeAsync(item)">
+                    <CascadingValue Value="item" Name="Model">
+                        @ChildContent
+                    </CascadingValue>
+                </tr>
+            }
+        </CascadingValue>
+    </tbody>
+</table>
+
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public IEnumerable Data { get; set; }
+
+    [Parameter]
+    public EventCallback<object> RowClicked { get; set; }
+
+}

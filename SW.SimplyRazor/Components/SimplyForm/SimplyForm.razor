@@ -1,12 +1,7 @@
 ﻿@typeparam TModel
-@implements ISimplyForm
 @namespace SW.SimplyRazor
 
-<CascadingValue IsFixed="true" Value="this" Name="Form">
-    <CascadingValue Value="Value" Name="Model">
-        @ChildContent
-    </CascadingValue>
-</CascadingValue>
+<SimplyFormNonGeneric ChildContent="ChildContent" Value="Value" ValueChanged="FormValueChanged" />
 
 @code {
 
@@ -19,8 +14,9 @@
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
-    public async Task FieldValueChanged(string name)
+
+    async Task FormValueChanged(object value)
     {
-        await ValueChanged.InvokeAsync(Value);
+        await ValueChanged.InvokeAsync((TModel)value);
     }
 }

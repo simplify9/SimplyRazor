@@ -1,0 +1,28 @@
+﻿@implements ISimplyForm
+@namespace SW.SimplyRazor
+
+<CascadingValue IsFixed="true" Value="this" Name="Form">
+    <CascadingValue Value="Value" Name="Model">
+        @ChildContent
+    </CascadingValue>
+</CascadingValue>
+
+@code {
+
+    //[Parameter]
+    //public Type Type { get; set; }
+
+    [Parameter]
+    public object Value { get; set; }
+
+    [Parameter]
+    public EventCallback<object> ValueChanged { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    public async Task FieldValueChanged(string name)
+    {
+        await ValueChanged.InvokeAsync(Value);
+    }
+}

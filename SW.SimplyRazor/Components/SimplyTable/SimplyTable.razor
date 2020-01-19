@@ -22,9 +22,9 @@
 @if (Value?.Count > 0)
 {
     <CascadingValue IsFixed="true" Value="this" Name="FieldAction">
-        <SimplyGrid Data="Value">
+        <SimplyGridNonGeneric Data="Value">
             @Columns
-        </SimplyGrid>
+        </SimplyGridNonGeneric>
     </CascadingValue>
 }
 else
@@ -41,9 +41,9 @@ else
                     <h5 class="modal-title">Add or edit..</h5>
                 </div>
                 <div class="modal-body">
-                    <SimplyForm Value="newModel">
+                    <SimplyFormNonGeneric Value="newModel">
                         @Form
-                    </SimplyForm>
+                    </SimplyFormNonGeneric>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" @onclick="()=> OnFormSubmit()"> Ok </button>
