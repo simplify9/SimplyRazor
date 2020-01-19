@@ -50,16 +50,15 @@
         if (State.Value != null)
         {
             value = State.Value;
-            var _wrapper = Activator.CreateInstance(typeof(PrimitiveTypeWrapper<>).MakeGenericType(collectionType));
+            var wrapperType = typeof(PrimitiveTypeWrapper<>).MakeGenericType(collectionType);
+            var _wrapper = Activator.CreateInstance(typeof(List<>).MakeGenericType(wrapperType));
             var _addMethod = _wrapper.GetType().GetMethod("Add");
             foreach (var item in (IEnumerable)value)
             {
-                _addMethod.Invoke(_wrapper, new object[] {
-                    new PrimitiveTypeWrapper
-                    {
-                        Value = item
-                    }
-                });
+                var obj = Activator.CreateInstance(wrapperType);
+                obj.GetType().GetProperty("Value").SetValue(obj, item);
+                _addMethod.Invoke(_wrapper, new object[] { obj });
+
             }
 
             wrapper = _wrapper;

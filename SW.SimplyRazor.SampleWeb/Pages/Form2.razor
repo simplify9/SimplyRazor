@@ -79,6 +79,10 @@
         if (apiResult.Success)
         {
             employee = apiResult.Response;
+            employee.Roles = new List<string>
+            {
+                "JO"
+            };
             ready = true;
         }
     }
