@@ -1,58 +1,13 @@
 ﻿@typeparam TModel
-@implements ITableAction
-@implements IFieldAction
 @namespace SW.SimplyRazor
-@inject NotifyService  notify
 
-<div class="row">
-    @if (Text != null)
-    {
-        <div class="col-auto">
-            <label>@Text</label>
-        </div>
-    }
-    @if (NewText != null)
-    {
-        @*<div class="col-auto">
-                <a href="javascript:void();"  @onclick="() => Add()">@NewText</a>
-            </div>*@
-    }
-</div>
-
-@if (Value?.Count > 0)
-{
-    <CascadingValue IsFixed="true" Value="this" Name="FieldAction">
-        <SimplyGridNonGeneric Data="Value">
-            @Columns
-        </SimplyGridNonGeneric>
-    </CascadingValue>
-}
-else
-{
-    <div class="mb-3"><em><a href="javascript:void();" @onclick="() => Add()">click</a> to add...</em></div>
-}
-
-@if (newModel != null)
-{
-    <div class="modal" tabindex="-1" role="dialog" style="display:block">
-        <div class="modal-dialog modal-dialog-scrollable" role="document" style="display:block">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add or edit..</h5>
-                </div>
-                <div class="modal-body">
-                    <SimplyFormNonGeneric Value="newModel">
-                        @Form
-                    </SimplyFormNonGeneric>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @onclick="()=> OnFormSubmit()"> Ok </button>
-                    <button type="button" class="btn btn-secondary" @onclick="()=> CancelEdit()">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
-}
+<SimplyTableNonGeneric Value="Value" 
+                       Type="typeof(TModel)" 
+                       Text="@Text"
+                       Form="Form" 
+                       Columns="Columns" 
+                       OnItem="TableOnItem"
+                       ValueChanged="TableValueChanged"/>
 
 @code {
 
@@ -72,121 +27,25 @@ else
     public string Text { get; set; }
 
     [Parameter]
-    public string NewText { get; set; }
-
-    //[Parameter]
-    //public RenderFragment Footer { get; set; }
-
-    [Parameter]
     public RenderFragment Form { get; set; }
 
     TModel newModel;
     TModel originalModel;
 
-    async public Task Add()
+    async Task TableOnItem(TableItem<object> tableItem)
     {
-        newModel = Activator.CreateInstance<TModel>();
-    }
-
-    async public Task RemoveAll()
-    {
-
-    }
-
-    void CancelEdit()
-    {
-        newModel = default(TModel);
-        originalModel = default(TModel);
-    }
-
-    async public Task Invoke(string actionName, object actionValue)
-    {
-
-        switch (actionName.ToLower())
+        await OnItem.InvokeAsync(new TableItem<TModel>
         {
-            case "add":
-
-                await Add();
-                break;
-
-            case "remove":
-
-                await OnItem.InvokeAsync(new TableItem<TModel>
-                {
-                    Item = (TModel)actionValue,
-                    Flag = TableItemFlag.Removed
-                });
-
-                Value.Remove((TModel)actionValue);
-                break;
-
-            case "edit":
-
-                originalModel = (TModel)actionValue;
-                newModel = Object.DeepClone(originalModel);
-                break;
-        }
+            Flag = tableItem.Flag,
+            Item = (TModel)tableItem.Item
+        });
     }
 
-    //public Task ChangeModel(int index)
-    //{
-    //    beingEditedModelIndex = index;
-    //    beingEditedModel = Object.DeepClone(Value.GetAt(index));
-    //    //StateHasChanged();
-    //    return Task.CompletedTask;
-    //}
-
-    //async public Task RemoveModel(int index)
-    //{
-
-    //    await OnItem.InvokeAsync(new TableItem<TModel>
-    //    {
-    //        Item = Value.GetAt(index),
-    //        Flag = TableItemFlag.Removed
-    //    });
-
-    //    Value.RemoveAt(index);
-
-    //    //StateHasChanged();
-
-    //}
-
-    async Task OnFormSubmit()
+    async Task TableValueChanged(object obj)
     {
-        try
-        {
-            if (originalModel == null)
-            {
-                if (Value == null) Value = new List<TModel>();
-
-                await OnItem.InvokeAsync(new TableItem<TModel>
-                {
-                    Item = newModel,
-                    Flag = TableItemFlag.Added
-                });
-
-                Value.Add(newModel);
-            }
-            else
-            {
-                await OnItem.InvokeAsync(new TableItem<TModel>
-                {
-                    Item = newModel,
-                    Flag = TableItemFlag.Changed
-                });
-
-                Object.DeepClone(newModel, originalModel);
-            }
-
-            await ValueChanged.InvokeAsync(Value);
-            newModel = default(TModel);
-            originalModel = default(TModel);
-
-        }
-        catch (Exception ex)
-        {
-            await notify.Publish(new UserMessage { Body = ex.Message, Level = AlertLevel.Warning });
-        }
+        await ValueChanged.InvokeAsync((ICollection<TModel>)obj);
     }
+
+
 
 }

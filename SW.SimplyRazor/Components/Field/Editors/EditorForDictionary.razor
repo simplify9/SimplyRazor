@@ -1,14 +1,14 @@
 ﻿@namespace SW.SimplyRazor
 
 
-<SimplyTable @bind-Value="wrapper" OnItem="OnItem" TModel="KeyValueWrapper" Text="@State.Text" NewText="Add new..">
+<SimplyTable @bind-Value="wrapper" OnItem="OnItem" TModel="KeyValueWrapper" Text="@State.Text" >
     <Columns>
         <Field >
             <ColumnHeader>
-                Action (<a href="javascript:void();" @onclick="@(() => context.Action.Invoke("add", null))">add</a>)
+                Action (<a href="JavaScript:void(0);" @onclick="@(() => context.Action.Invoke("add", null))">add</a>)
             </ColumnHeader>
             <ColumnValue>
-                <a href="javascript:void();"  @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</a>
+                <a href="JavaScript:void(0);"  @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</a>
             </ColumnValue>
         </Field>
         <Field Name="Key" />

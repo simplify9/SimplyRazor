@@ -1,23 +1,27 @@
 ﻿@namespace SW.SimplyRazor
 @using System.Collections
 @using System.Reflection
+@{
+    var type = typeof(PrimitiveTypeWrapper<>).MakeGenericType(State.PropertyInfo.PropertyType.GetGenericArguments()[0]);
 
-<SimplyTable @bind-Value="wrapper" OnItem="OnItem" Text="@State.Text" TModel="PrimitiveTypeWrapper" >
-    <Columns>
-        <Field Text="Action">
-            <ColumnHeader>
-                Action (<a href="javascript:void();" @onclick="@(() => context.Action.Invoke("add", null))">add</a>)
-            </ColumnHeader>
-            <ColumnValue>
-                <a href="javascript:void();" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</a>
-            </ColumnValue>
-        </Field>
-        <Field Name="Value" Lookup="@State.Lookup" />
-    </Columns>
-    <Form>
-        <Field Name="Value" Lookup="@State.Lookup" />
-    </Form>
-</SimplyTable>
+    <SimplyTableNonGeneric @bind-Value="wrapper" OnItem="OnItem" Text="@State.Text" Type="type">
+        <Columns>
+            <Field Text="Action">
+                <ColumnHeader>
+                    Action (<a href="JavaScript:void(0);" @onclick="@(() => context.Action.Invoke("add", null))">add</a>)
+                </ColumnHeader>
+                <ColumnValue>
+                    <a href="JavaScript:void(0);" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</a>
+                </ColumnValue>
+            </Field>
+            <Field Name="Value" Lookup="@State.Lookup" />
+        </Columns>
+        <Form>
+            <Field Name="Value" Lookup="@State.Lookup" />
+        </Form>
+    </SimplyTableNonGeneric>
+}
+
 
 @code {
 
@@ -31,7 +35,7 @@
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
     object value { get; set; }
-    ICollection<PrimitiveTypeWrapper> wrapper;
+    object wrapper;
     Type collectionType;
     MethodInfo addMethod;
     MethodInfo removeMethod;
@@ -41,16 +45,20 @@
         collectionType = State.PropertyInfo.PropertyType.GetGenericArguments()[0];
         addMethod = typeof(List<>).MakeGenericType(collectionType).GetMethod("Add");
         removeMethod = typeof(List<>).MakeGenericType(collectionType).GetMethod("Remove");
+
+
         if (State.Value != null)
         {
             value = State.Value;
-            var _wrapper = new List<PrimitiveTypeWrapper>();
-
+            var _wrapper = Activator.CreateInstance(typeof(PrimitiveTypeWrapper<>).MakeGenericType(collectionType));
+            var _addMethod = _wrapper.GetType().GetMethod("Add");
             foreach (var item in (IEnumerable)value)
             {
-                _wrapper.Add(new PrimitiveTypeWrapper
-                {
-                    Value = item
+                _addMethod.Invoke(_wrapper, new object[] {
+                    new PrimitiveTypeWrapper
+                    {
+                        Value = item
+                    }
                 });
             }
 
@@ -58,12 +66,14 @@
         }
     }
 
-    async Task OnItem(TableItem<PrimitiveTypeWrapper> tableItem)
+    async Task OnItem(TableItem<object> tableItem)
     {
 
         if (value == null) value = Activator.CreateInstance(typeof(List<>).MakeGenericType(collectionType));
 
-        var typedValue = Object.ConvertValueToType(tableItem.Item.Value, collectionType);
+        var typedValue = tableItem.Item.GetType().GetProperty("Value").GetValue(tableItem.Item);
+
+        if (typedValue==null) throw new Exception("Cannot insert null value.");
 
         if (tableItem.Flag == TableItemFlag.Added)
 
