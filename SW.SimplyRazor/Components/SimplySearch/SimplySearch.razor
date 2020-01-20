@@ -3,7 +3,6 @@
 @implements ISimplySearch
 @inject NotifyService notify
 
-
 <CascadingValue IsFixed="true" Value="this" Name="Search">
     <CascadingValue IsFixed="true" Value="typeof(TModel)" Name="ModelType">
         <CascadingValue IsFixed="true" Value="FieldRole.Filter" Name="RenderMode">
@@ -12,96 +11,85 @@
     </CascadingValue>
 </CascadingValue>
 
-<SimplyQuery QueryUrl="@FilterUrl" @bind-Working="filterQueryBusy" OnResult="OnFilterQueryResult" TResponse="IEnumerable<SearchyFilterSetup>" ></SimplyQuery>
+<SimplyQuery QueryUrl="@FilterUrl" @bind-Working="filterQueryBusy" OnResult="OnFilterQueryResult" TResponse="IEnumerable<SearchyFilterSetup>"></SimplyQuery>
 <SimplyQuery QueryUrl="@query" @bind-Working="searchQueryBusy" OnResult="OnSearchQueryResult" TResponse="SearchyResponse<TModel>"></SimplyQuery>
 
-<div class="container-fluid">
+<div class="form-row align-items-center mb-3">
+    <label for="filterSelect" class="col-sm-1 col-form-label">Search</label>
+    <div class="col-auto">
+        <div class="input-group">
+            <SimplySelect @bind-Value="filterValue"
+                          EmptyText="Select filter"
+                          Items="@(filterSetup.Select(e=>e.Text).ToList())"
+                          class="form-control" />
 
-    <div class="form-row align-items-center mb-3">
-        <label for="filterSelect" class="col-sm-1 col-form-label">Search</label>
-        <div class="col-auto">
-            <div class="input-group">
-                <SimplySelect @bind-Value="filterValue"
-                              EmptyText="Select filter"
-                              Items="@(filterSetup.Select(e=>e.Text).ToList())"
-                              class="form-control" />
-
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
-                </div>
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
             </div>
         </div>
-        <div class="col-auto ">
-            <button type="button" @onclick="() => Search(0)" class="btn btn-secondary" style="width: 100px;">
-                @if (filterQueryBusy || searchQueryBusy)
-                {
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                }
-                else
-                {
-                    @:Search
-                }
-            </button>
-        </div>
-        @if (Commands != null)
-        {
-            @Commands
-        }
     </div>
-
-    @foreach (var filter in filters)
+    <div class="col-auto ">
+        <button type="button" @onclick="() => Search(0)" class="btn btn-secondary" style="width: 100px;">
+            @if (filterQueryBusy || searchQueryBusy)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            }
+            else
+            {
+                @:Search
+            }
+        </button>
+    </div>
+    @if (Commands != null)
     {
+        @Commands
+    }
+</div>
 
-        <div class="form-group row" @key="filter">
-            <div class=" input-group col">
+@foreach (var filter in filters)
+{
+    <div class="form-group row" @key="filter">
+        <div class=" input-group col">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="">@filter.Text</span>
+            </div>
 
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="">@filter.Text</span>
-                </div>
+            <SimplySelect @bind-value="filter.Rule"
+                          Items="filter.Rules"
+                          TKey="SearchyRule"
+                          class="form-control" />
 
-                <SimplySelect @bind-value="filter.Rule"
-                              Items="filter.Rules"
-                              TKey="SearchyRule"
-                              class="form-control" />
+            @switch (filter.Type)
+            {
+                case SearchyDataType.Number:
 
-                @switch (filter.Type)
-                {
+                    <input @bind="filter.ValueDecimal" type="number" class="form-control" />
+                    break;
 
-                    case SearchyDataType.Number:
+                case SearchyDataType.Date:
 
-                        <input @bind="filter.ValueDecimal" type="number" class="form-control" />
-                        break;
+                    <input @bind="filter.ValueDateTime" type="date" class="form-control" />
+                    break;
 
-                    case SearchyDataType.Date:
+                default:
 
-                        <input @bind="filter.ValueDateTime" type="date" class="form-control" />
-                        break;
-
-                    default:
-
-                        <input @bind="filter.ValueString" type="text" class="form-control" />
-                        break;
-
-                }
-                <div class="input-group-append">
-                    <button @onclick="@(e => RemoveFilter(filter))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
-                </div>
+                    <input @bind="filter.ValueString" type="text" class="form-control" />
+                    break;
+            }
+            <div class="input-group-append">
+                <button @onclick="@(e => RemoveFilter(filter))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
             </div>
         </div>
-    }
+    </div>
+}
 
-</div>
-
-<div class="container-fluid mt-5">
-    @if (result != null && result.Result.Count() > 0)
-    {
-        <SimplyGrid Data="result.Result" RowClicked="GridRowClicked" TModel="TModel">
-            @Columns
-        </SimplyGrid>
-
-        <SimplyPager Count="result.TotalCount" Page="page" PageSize="PageSize" PageChanged="page => Search(page)"></SimplyPager>
-    }
-</div>
+@if (result != null && result.Result.Count() > 0)
+{
+    <SimplyGridNonGeneric Data="result.Result" RowClicked="GridRowClicked" >
+        @Columns
+    </SimplyGridNonGeneric>
+    <SimplyPager Count="result.TotalCount" Page="page" PageSize="PageSize" PageChanged="page => Search(page)"></SimplyPager>
+}
 
 @code{
 
@@ -123,12 +111,6 @@
     [Parameter]
     public RenderFragment Commands { get; set; }
 
-    //[Parameter]
-    //public string NewHref { get; set; }
-
-    //[Parameter]
-    //public string Height { get; set; }
-
     [Parameter]
     public EventCallback<TModel> RowClicked { get; set; }
 
@@ -140,7 +122,6 @@
     int page;
     SearchyResponse<TModel> result;
     string query;
-
 
     Task FilterAddOnClick(object e)
     {
@@ -194,9 +175,9 @@
         filterSetup.Remove(filter);
     }
 
-    Task GridRowClicked(TModel model)
+    Task GridRowClicked(object model)
     {
-        return RowClicked.InvokeAsync(model);
+        return RowClicked.InvokeAsync((TModel)model);
     }
 
     async Task OnSearchQueryResult(ApiResult<SearchyResponse<TModel>> apiResult)

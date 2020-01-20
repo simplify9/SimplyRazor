@@ -44,10 +44,11 @@ gulp.task('js', function () {
 gulp.task('css', function () {
     return gulp.src([
 
+
+        'node_modules/choices.js/public/assets/styles/choices.css',
         'components/simplychoices/simplychoices.css',
         'node_modules/quill/dist/quill.snow.css',
         //'node_modules/tabulator-tables/dist/css/bootstrap/tabulator_bootstrap.min.css',
-        'node_modules/choices.js/public/assets/styles/choices.css',
 
     ])
         .pipe(concat('simply.razor.css'))

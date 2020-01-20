@@ -8,13 +8,6 @@ namespace SW.SimplyRazor
 {
     public interface ISimplySearch
     {
-
-        //int PageSize { get; set; }
-        //string Index { get; set; }
-        //string Height { get; set; }
-
-
-
         Task AddFilterSetup(ISearchyFilterSetup filter);
         void RemoveFilterSetup(ISearchyFilterSetup filter);
         //Task RowClick(string index);
