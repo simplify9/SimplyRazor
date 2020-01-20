@@ -101,6 +101,9 @@
     public string Lookup { get; set; }
 
     [Parameter]
+    public object Default { get; set; }
+
+    [Parameter]
     public string Name { get; set; }
 
     [Parameter]
@@ -254,6 +257,12 @@
                 else
                 {
                     editor = typeof(EditorForText);
+                }
+
+
+                if (Value == null && Default != null)
+                {
+                    TrySetValue(Default);
                 }
 
                 editorFragment = CreateEditor();
