@@ -8,7 +8,7 @@
 </CascadingValue>
 
 <!-- Display body for only the active tab -->
-<div class="nav-tabs-body p-4"  style="@( Height == null ? "" : $" height:{Height};" )">
+<div class="nav-tabs-body pt-4"  style="@( Height == null ? "" : $" height:{Height};" )">
     @ActiveTab?.ChildContent
 </div>
 
