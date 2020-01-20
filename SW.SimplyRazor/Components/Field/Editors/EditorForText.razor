@@ -41,40 +41,60 @@ else
     {
         var nakedType = Nullable.GetUnderlyingType(State.PropertyInfo.PropertyType) ?? State.PropertyInfo.PropertyType;
 
-        if (nakedType == typeof(int))
+        switch (Type.GetTypeCode(nakedType))
         {
-            inputType = "number";
-        }
-        else if (nakedType == typeof(DateTime))
-        {
-            inputType = "date";
-        }
-        else if (State.PropertyInfo.PropertyType == typeof(string))
-        {
-            switch (State.InputType)
-            {
+            case TypeCode.Byte:
+            case TypeCode.SByte:
+            case TypeCode.UInt16:
+            case TypeCode.UInt32:
+            case TypeCode.UInt64:
+            case TypeCode.Int16:
+            case TypeCode.Int32:
+            case TypeCode.Int64:
+            case TypeCode.Decimal:
+            case TypeCode.Double:
+            case TypeCode.Single:
 
-                case InputType.Multiline:
+                inputType = "number";
+                break;
 
-                    inputType = "textarea";
-                    break;
+            case TypeCode.DateTime:
 
-                case InputType.Password:
+                inputType = "date";
+                break;
 
-                    inputType = "password";
-                    break;
+            default:
 
-                case 0:
+                if (State.PropertyInfo.PropertyType == typeof(string))
+                {
+                    switch (State.InputType)
+                    {
+
+                        case InputType.Multiline:
+
+                            inputType = "textarea";
+                            break;
+
+                        case InputType.Password:
+
+                            inputType = "password";
+                            break;
+
+                        case 0:
+                            inputType = "text";
+                            break;
+
+                    }
+
+                }
+                else
+                {
                     inputType = "text";
-                    break;
-
-            }
-
+                }
+                break;
         }
-        else
-        {
-            inputType = "text";
-        }
+
+
     }
 
 }
