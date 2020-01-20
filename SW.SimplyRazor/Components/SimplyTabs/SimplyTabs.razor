@@ -8,11 +8,14 @@
 </CascadingValue>
 
 <!-- Display body for only the active tab -->
-<div class="nav-tabs-body p-4">
+<div class="nav-tabs-body p-4"  style="@( Height == null ? "" : $" height:{Height};" )">
     @ActiveTab?.ChildContent
 </div>
 
 @code {
+
+    [Parameter]
+    public string Height { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
