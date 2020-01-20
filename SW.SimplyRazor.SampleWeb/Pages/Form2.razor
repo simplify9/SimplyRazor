@@ -18,25 +18,34 @@
         <Field Name="EmploymentStatus" Lookup="mockmodels" ReadOnly="true" />
         <Field Name="Country" Lookup="countries" TypeAhead="3" ReadOnly="true" />
         <Field Name="Country" Lookup="countries" TypeAhead="3" />
-        <Field Name="Roles" Lookup="countries"></Field>
+        @*<Field Name="Roles" Lookup="countries"></Field>*@
 
         <Field Name="Photo" />
-        <Field Name="AdditionalValues"></Field>
+        @*<Field Name="AdditionalValues"></Field>*@
         <Field Name="Salary.Amount" />
         <Field Name="Salary.Currency" />
 
-        <Field Name="Photos" />
-
+        @*<Field Name="Photos" />*@
+        <Subform Name="Leaves">
+            <Columns>
+                <Field Text="Action">
+                    <ColumnValue>
+                        <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</button>
+                        <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("edit", context.Model))">Edit</button>
+                    </ColumnValue>
+                </Field>
+                <Field Name="Reason" />
+                <Field Name="Days" />
+            </Columns>
+            <Form>
+                <Field Name="Reason" />
+                <Field Name="Days" />
+            </Form>
+        </Subform>
     </SimplyForm>
 
-    <SimplyTable @bind-Value="employee.Leaves"   >
-
-
-        @*<TableHeader>
-                <button type="button" class="btn btn-outline-secondary btn-sm" ><span class="oi oi-plus" /></button>
-            </TableHeader>*@
+    @*<SimplyTable @bind-Value="employee.Leaves">
         <Columns>
-
             <Field Text="Action">
                 <ColumnValue>
                     <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</button>
@@ -50,7 +59,9 @@
             <Field Name="Reason" />
             <Field Name="Days" />
         </Form>
-    </SimplyTable>
+    </SimplyTable>*@
+
+
 
     <div class="container-fluid mt-5">
         <SimplyCommand Title="Save" Confirm="true" CommandUrl="employees/5" Request="employee" OnResult="OnSaveResult" class="btn btn-secondary" />
@@ -79,6 +90,14 @@
         if (apiResult.Success)
         {
             employee = apiResult.Response;
+            employee.Leaves = new List<Leave>
+            {
+                new Leave
+                {
+                    Days = 1,
+                    Reason = "test"
+                }
+            };
             employee.Roles = new List<string>
             {
                 "JO"

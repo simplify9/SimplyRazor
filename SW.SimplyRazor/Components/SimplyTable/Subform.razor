@@ -1,0 +1,92 @@
+﻿@namespace SW.SimplyRazor
+@using System.Reflection
+@using Humanizer
+
+@if (modelType != null)
+{
+    <SimplyTableNonGeneric Value="value"
+                           Type="modelType"
+                           Text="@Text"
+                           Form="Form"
+                           Columns="Columns"
+                           ValueChanged="TableValueChanged" />
+
+}
+
+@code {
+
+    [CascadingParameter(Name = "ChangeMaster")]
+    public IChangeMaster ChangeMaster { get; set; }
+
+    [CascadingParameter(Name = "Model")]
+    public object Model { get; set; }
+
+    [Parameter]
+    public EventCallback<object> ValueChanged { get; set; }
+
+    [Parameter]
+    public RenderFragment Columns { get; set; }
+
+    [Parameter]
+    public string Name { get; set; }
+
+    string text = null;
+
+    [Parameter]
+    public string Text
+    {
+        get => text ?? Name?.Humanize();
+        set => text = value;
+    }
+
+    [Parameter]
+    public RenderFragment Form { get; set; }
+
+    string[] nameArray;
+    PropertyInfo propInfo;
+    Type modelType;
+    object value;
+
+    async Task TableValueChanged(object newValue)
+    {
+        object obj = Model;
+
+        for (int i = 0; i < nameArray.Length - 1; i++)
+        {
+            var targetProp = obj.GetType().GetProperty(nameArray[i]);
+            var nextType = targetProp.PropertyType;
+            var nextObj = targetProp.GetValue(obj);
+            if (nextObj == null)
+            {
+                nextObj = Activator.CreateInstance(nextType);
+                targetProp.SetValue(obj, nextObj);
+            }
+
+            obj = nextObj;
+        }
+
+        propInfo.SetValue(obj, newValue);
+
+        await ChangeMaster.FieldValueChanged(Name);
+        value = newValue;
+    }
+
+    protected override void OnInitialized()
+    {
+        if (Name is null) return;
+
+        nameArray = Name.Split('.');
+
+        propInfo = Model.GetType().GetProperty(nameArray[0]);
+
+        for (int i = 1; i < nameArray.Length; i++)
+
+            propInfo = propInfo.PropertyType.GetProperty(nameArray[i]);
+
+        if (propInfo == null) throw new ArgumentException("Field not found.", Name);
+
+        modelType = propInfo.PropertyType.GetGenericArguments()[0];
+        value = propInfo.GetValue(Model);
+    }
+
+}

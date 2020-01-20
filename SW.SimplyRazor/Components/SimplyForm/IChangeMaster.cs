@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor
 {
-    public interface ISimplyForm
+    public interface IChangeMaster
     {
         Task FieldValueChanged(string name);
     }

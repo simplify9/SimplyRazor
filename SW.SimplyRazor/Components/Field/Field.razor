@@ -82,8 +82,8 @@
     [CascadingParameter(Name = "Search")]
     public ISimplySearch Search { get; set; }
 
-    [CascadingParameter(Name = "Form")]
-    public ISimplyForm Form { get; set; }
+    [CascadingParameter(Name = "ChangeMaster")]
+    public IChangeMaster ChangeMaster { get; set; }
 
     [CascadingParameter(Name = "Model")]
     public object Model { get; set; }
@@ -269,7 +269,7 @@
         {
             serverFeedback = null;
             await ValueChanged.InvokeAsync(value);
-            await Form?.FieldValueChanged(Name);
+            await ChangeMaster?.FieldValueChanged(Name);
         }
     }
 
