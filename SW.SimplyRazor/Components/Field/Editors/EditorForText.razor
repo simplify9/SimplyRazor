@@ -39,11 +39,13 @@ else
 
     protected override void OnInitialized()
     {
-        if (State.PropertyInfo.PropertyType == typeof(int))
+        var nakedType = Nullable.GetUnderlyingType(State.PropertyInfo.PropertyType) ?? State.PropertyInfo.PropertyType;
+
+        if (nakedType == typeof(int))
         {
             inputType = "number";
         }
-        else if (State.PropertyInfo.PropertyType == typeof(DateTime) || State.PropertyInfo.PropertyType == typeof(DateTime?))
+        else if (nakedType == typeof(DateTime))
         {
             inputType = "date";
         }

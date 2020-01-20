@@ -9,39 +9,63 @@
 
     <SimplyForm @bind-Value="employee">
 
-        <Field Name="FirstName" InputType="InputType.Multiline" ReadOnly="true"></Field>
-        <Field Name="LastName" ReadOnly="true"></Field>
+        <SimplyTabs>
 
-        <Field Name="@nameof(Employee.Age)" />
-        <div>test</div>
-        <Field Name="Married" />
-        <Field Name="EmploymentStatus" Lookup="mockmodels" ReadOnly="true" />
-        <Field Name="Country" Lookup="countries" TypeAhead="3" ReadOnly="true" />
-        <Field Name="Country" Lookup="countries" TypeAhead="3" />
-        @*<Field Name="Roles" Lookup="countries"></Field>*@
+            <Tab Title="General">
 
-        <Field Name="Photo" />
-        @*<Field Name="AdditionalValues"></Field>*@
-        <Field Name="Salary.Amount" />
-        <Field Name="Salary.Currency" />
+                <Field Name="FirstName" InputType="InputType.Multiline" ReadOnly="true"></Field>
+                <Field Name="LastName" ReadOnly="true"></Field>
 
-        @*<Field Name="Photos" />*@
-        <Subform Name="Leaves">
-            <Columns>
-                <Field Text="Action">
-                    <ColumnValue>
-                        <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</button>
-                        <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("edit", context.Model))">Edit</button>
-                    </ColumnValue>
-                </Field>
-                <Field Name="Reason" />
-                <Field Name="Days" />
-            </Columns>
-            <Form>
-                <Field Name="Reason" />
-                <Field Name="Days" />
-            </Form>
-        </Subform>
+                <Field Name="@nameof(Employee.Age)" />
+                <div>test</div>
+                <Field Name="Married" />
+                <Field Name="EmploymentStatus" Lookup="mockmodels" ReadOnly="true" />
+                <Field Name="Country" Lookup="countries" TypeAhead="3" ReadOnly="true" />
+                <Field Name="Country" Lookup="countries" TypeAhead="3" />
+                <Field Name="Roles" Lookup="countries"></Field>
+
+
+            </Tab>
+            <Tab Title="Album">
+
+                <Field Name="Photo" />
+                <Field Name="Photos" />
+
+            </Tab>
+
+
+            <Tab Title="Properties">
+
+                <Field Name="AdditionalValues"></Field>
+
+            </Tab>
+            <Tab Title="Salary">
+
+                <Field Name="Salary.Amount" />
+                <Field Name="Salary.Currency" />
+
+            </Tab>
+
+            <Tab Title="Leaves">
+                <Subform Name="Leaves">
+                    <Columns>
+                        <Field Text="Action">
+                            <ColumnValue>
+                                <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</button>
+                                <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("edit", context.Model))">Edit</button>
+                            </ColumnValue>
+                        </Field>
+                        <Field Name="Reason" />
+                        <Field Name="Days" />
+                    </Columns>
+                    <Form>
+                        <Field Name="Reason" />
+                        <Field Name="Days" />
+                    </Form>
+                </Subform>
+
+            </Tab>
+        </SimplyTabs>
     </SimplyForm>
 
     @*<SimplyTable @bind-Value="employee.Leaves">
