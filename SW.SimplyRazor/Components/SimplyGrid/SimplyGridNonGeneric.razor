@@ -1,35 +1,36 @@
 ﻿@namespace SW.SimplyRazor
 @using System.Collections
 
-<table class="table table-sm table-hover" style="width: max-content; ">
-    <thead>
-        <tr>
-            @{
-                var enumerator = Data.GetEnumerator();
-                enumerator.MoveNext();
+<div style="@(Height==null ? "" : $"height: {Height};overflow-y: auto; ") overflow-x: auto;">
+    <table class="table table-sm table-hover" style="@(Width == null ? "" : $"width: {Width};" )">
+        <thead>
+            <tr>
+                @{
+                    var enumerator = Data.GetEnumerator();
+                    enumerator.MoveNext();
 
-                <CascadingValue IsFixed="true" Value="FieldRole.ColumnName" Name="RenderMode">
-                    <CascadingValue Value="enumerator.Current" Name="Model">
-                        @ChildContent
+                    <CascadingValue IsFixed="true" Value="FieldRole.ColumnName" Name="RenderMode">
+                        <CascadingValue Value="enumerator.Current" Name="Model">
+                            @ChildContent
+                        </CascadingValue>
                     </CascadingValue>
-                </CascadingValue>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        <CascadingValue IsFixed="true" Value="FieldRole.ColumnValue" Name="RenderMode">
-            @foreach (var item in Data)
-            {
-                <tr @key="item" @onclick="() => RowClicked.InvokeAsync(item)">
-                    <CascadingValue Value="item" Name="Model">
-                        @ChildContent
-                    </CascadingValue>
-                </tr>
-            }
-        </CascadingValue>
-    </tbody>
-</table>
-
+                }
+            </tr>
+        </thead>
+        <tbody>
+            <CascadingValue IsFixed="true" Value="FieldRole.ColumnValue" Name="RenderMode">
+                @foreach (var item in Data)
+                {
+                    <tr @key="item" @onclick="() => RowClicked.InvokeAsync(item)">
+                        <CascadingValue Value="item" Name="Model">
+                            @ChildContent
+                        </CascadingValue>
+                    </tr>
+                }
+            </CascadingValue>
+        </tbody>
+    </table>
+</div>
 
 @code {
 
@@ -38,6 +39,12 @@
 
     [Parameter]
     public IEnumerable Data { get; set; }
+
+    [Parameter]
+    public string Height { get; set; }
+
+    [Parameter]
+    public string Width { get; set; }
 
     [Parameter]
     public EventCallback<object> RowClicked { get; set; }

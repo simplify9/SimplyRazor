@@ -85,8 +85,8 @@
 
 @if (result != null && result.Result.Count() > 0)
 {
-    <div class="mb-3" style="@(Height==null ? "" : $"height: {Height};overflow-y: auto; ") overflow-x: auto;">
-        <SimplyGridNonGeneric Data="result.Result" RowClicked="GridRowClicked">
+    <div class="mb-3" >
+        <SimplyGridNonGeneric Data="result.Result" RowClicked="GridRowClicked" Height="@Height" Width="@Width">
             @Columns
         </SimplyGridNonGeneric>
     </div>
@@ -112,6 +112,9 @@
 
     [Parameter]
     public string Height { get; set; }
+
+    [Parameter]
+    public string Width { get; set; }
 
     [Parameter]
     public RenderFragment Commands { get; set; }

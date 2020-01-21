@@ -10,15 +10,6 @@
     [Parameter]
     public string QueryUrl { get; set; }
 
-    //[Parameter]
-    //public TResponse Value { get; set; }
-
-    //[Parameter]
-    //public EventCallback<TResponse> ValueChanged { get; set; }
-
-    //[Parameter]
-    //public bool Ready { get; set; }
-
     [Parameter]
     public EventCallback<ApiResult<TResponse>> OnResult { get; set; }
 
@@ -27,12 +18,6 @@
 
     [Parameter]
     public EventCallback<bool> WorkingChanged { get; set; }
-
-    //[Parameter]
-    //public EventCallback<object> OnSuccess { get; set; }
-
-    //[Parameter]
-    //public EventCallback<object> OnFailure { get; set; }
 
 
     async public override Task SetParametersAsync(ParameterView parameters)
