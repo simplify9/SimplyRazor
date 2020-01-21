@@ -1,20 +1,25 @@
 ﻿@namespace SW.SimplyRazor
 
-
-@if (Count > 0)
+@if (Count == PageSize || TotalCount > PageSize)
 {
     <ul class="pagination">
         <li class="page-item @(Page <= 0 ? "disabled" : null)" @onclick="e=> ChangePage(0)">
-            <span class="page-link">First</span>
+            <span class="page-link" style="cursor:pointer ">First</span>
         </li>
         <li class="page-item @(Page <= 0 ? "disabled" : null)" @onclick="e=> ChangePage(Page - 1)">
-            <span class="page-link">Previous</span>
+            <span class="page-link" style="cursor:pointer ">Previous</span>
         </li>
         <li class="page-item @(Count < PageSize || totalPages == Page + 1 ? "disabled" : null)" @onclick="e=> ChangePage(Page + 1)">
-            <span class="page-link">Next</span>
+            <span class="page-link" style="cursor:pointer ">Next</span>
         </li>
         <li class="page-item @(totalPages == 0 || totalPages == Page + 1  ? "disabled" : null)" @onclick="e=> ChangePage(totalPages-1)">
-            <span class="page-link">Last</span>
+            <span class="page-link" style="cursor:pointer ">
+                Last
+                @if (TotalCount > 0)
+                {
+                    <span class="badge badge-pill badge-primary">@TotalCount</span>
+                }
+            </span>
         </li>
     </ul>
 }
@@ -31,18 +36,16 @@
     public int PageSize { get; set; }
 
     [Parameter]
+    public int TotalCount { get; set; }
+
+    [Parameter]
     public int Count { get; set; }
 
-    //[Parameter]
-    //public int TotalCount { get; set; }
-
-    int totalPages => PageSize == 0 ? 0 : (int)Math.Ceiling(decimal.Divide(Count, PageSize));
+    int totalPages => PageSize == 0 ? 0 : (int)Math.Ceiling(decimal.Divide(TotalCount, PageSize));
 
     async Task ChangePage(int page)
     {
         await PageChanged.InvokeAsync(page);
     }
-
-
 
 }
