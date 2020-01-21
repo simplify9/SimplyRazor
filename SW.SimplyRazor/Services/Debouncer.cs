@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor
 {
-    internal class Debouncer
+    public class Debouncer
     {
         private List<CancellationTokenSource> StepperCancelTokens = new List<CancellationTokenSource>();
         private readonly int millisecondsToWait;
