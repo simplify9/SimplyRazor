@@ -39,7 +39,7 @@ namespace SW.SimplyRazor
         async public Task<ApiResult<TResponse>> PostAsync<TResponse>(string url, object payload)
         {
 
-            var httpResponseMessage = await HttpClient.PostAsync(url, payload);
+            var httpResponseMessage = await PostAsync(url, payload);
 
             if ((int)httpResponseMessage.StatusCode >= 200 && (int)httpResponseMessage.StatusCode < 300)
             {
