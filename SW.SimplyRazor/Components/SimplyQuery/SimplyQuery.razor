@@ -4,6 +4,7 @@
 @inject ApiService apiService
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject ComponentOptions componentOptions
+@inject ApiJwtStore apiJwtStore
 
 @code {
 
@@ -34,7 +35,7 @@
 
         try
         {
-            var jwt = await authenticationStateProvider.GenerateJwt(componentOptions.ApiTokenKey, componentOptions.ApiTokenIssuer, componentOptions.ApiTokenAudience);
+            var jwt = await apiJwtStore.GetJwt(); //authenticationStateProvider.GenerateJwt(componentOptions.ApiTokenKey, componentOptions.ApiTokenIssuer, componentOptions.ApiTokenAudience);
 
             if (jwt != null)
 

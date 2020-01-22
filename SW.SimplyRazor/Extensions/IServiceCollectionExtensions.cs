@@ -26,7 +26,7 @@ namespace SW.SimplyRazor
             configure.Invoke(componentOptions);
             serviceCollection.AddSingleton(componentOptions);
 
-            serviceCollection.AddHttpClient<ApiService>((serviceProvider, httpClient) => 
+            serviceCollection.AddHttpClient<ApiService>((serviceProvider, httpClient) =>
             {
                 httpClient.BaseAddress = componentOptions.ApiBaseUri;
             });
@@ -36,13 +36,17 @@ namespace SW.SimplyRazor
 
         static IServiceCollection addSimplyRazor(this IServiceCollection serviceCollection)
         {
-            
 
-            serviceCollection.AddSingleton<Notifier<Ping>>();
+
+            //serviceCollection.AddSingleton<Notifier<Ping>>();
             serviceCollection.AddSingleton<Notifier<UserMessage>>();
             serviceCollection.AddSingleton<Notifier<InvalidFieldNotification>>();
 
+            serviceCollection.AddScoped<ApiJwtStore>();
+
+
             return serviceCollection.AddScoped<NotifyService>();
+
         }
 
 
