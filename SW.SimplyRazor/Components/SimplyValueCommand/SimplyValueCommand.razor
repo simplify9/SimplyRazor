@@ -2,8 +2,7 @@
 @namespace SW.SimplyRazor
 @inject NotifyService notify
 @inject ApiService apiService
-@inject AuthenticationStateProvider authenticationStateProvider
-@inject ComponentOptions componentOptions
+@using Newtonsoft.Json
 
 <button disabled="@working" type="button" @onclick="ButtonOnClick" @attributes="UnmatchedAttributes">
     @if (working)
@@ -21,7 +20,7 @@
     {
         <p>This action might be irriversible. Are you sure you want to perform this action?</p>
     }
-    else 
+    else
     {
         @ChildContent
     }
@@ -77,115 +76,66 @@
 
     async Task PerformAction()
     {
+        working = true;
 
-        try
+        ApiResult<TResponse> result;
+
+        switch (Method)
         {
-            working = true;
+            case ApiMethod.Post:
+            case ApiMethod.Default:
+                result = await apiService.PostAsync<TResponse>(CommandUrl, Request);
+                break;
 
-            var jwt = await authenticationStateProvider.GenerateJwt(componentOptions.ApiTokenKey, componentOptions.ApiTokenIssuer, componentOptions.ApiTokenAudience);
+            case ApiMethod.Delete:
+                var result1 = await apiService.DeleteAsync(CommandUrl);
 
-            if (jwt != null)
+                result = new ApiResult<TResponse>
+                {
+                    StatusCode = result1.StatusCode,
+                    Success = result1.Success
+                };
 
-                apiService.HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
+                break;
 
-            HttpResponseMessage result;
+            default:
+                throw new NotImplementedException();
+        }
 
-            switch (Method)
+        if (result.StatusCode >= 400 && result.StatusCode < 500)
+        {
+            var messages = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(result.Body);
+
+            foreach (var kvp in messages)
             {
-                case ApiMethod.Post:
-                case ApiMethod.Default:
-                    result = await apiService.HttpClient.PostAsync(CommandUrl, Request);
-                    break;
+                if (kvp.Key.StartsWith("Field."))
 
-                case ApiMethod.Delete:
-                    result = await apiService.HttpClient.DeleteAsync(CommandUrl);
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
-
-            if ((int)result.StatusCode >= 200 && (int)result.StatusCode < 300)
-            {
-
-                TResponse response;
-                if (typeof(TResponse) == typeof(string))
-
-                    response = (TResponse)(object)(await result.Content.ReadAsStringAsync());
-
-                else if (typeof(TResponse) == typeof(NoT))
-
-                    response = default(TResponse);
+                    await notify.Publish(new InvalidFieldNotification
+                    {
+                        Message = string.Join(", ", kvp.Value),
+                    }, kvp.Key.Split('.')[1]);
 
                 else
-                    response = await result.Content.ReadAsAsync<TResponse>();
 
-                await OnResult.InvokeAsync(new ApiResult<TResponse>
-                {
-                    StatusCode = (int)result.StatusCode,
-                    Success = true,
-                    Response = response
-                });
-            }
-            else if ((int)result.StatusCode >= 400 && (int)result.StatusCode < 500)
-            {
-                var messages = await result.Content.ReadAsAsync<Dictionary<string, IEnumerable<string>>>();
-
-                foreach (var kvp in messages)
-                {
-                    if (kvp.Key.StartsWith("Field."))
+                    await notify.Publish(new UserMessage
                     {
-                        await notify.Publish(new InvalidFieldNotification
-                        {
-                            Message = string.Join(", ", kvp.Value),
-                        }, kvp.Key.Split('.')[1]);
-                    }
-                    else
-                    {
-                        await notify.Publish(new UserMessage
-                        {
-                            Body = string.Join(",", kvp.Value),
-                            Level = AlertLevel.Warning,
+                        Body = string.Join(",", kvp.Value),
+                        Level = AlertLevel.Warning,
 
-                        });
-                    }
-
-                }
-
-                await OnResult.InvokeAsync(new ApiResult<TResponse>
-                {
-                    StatusCode = (int)result.StatusCode,
-                });
+                    });
             }
-            else if ((int)result.StatusCode >= 500)
-            {
-                await notify.Publish(new UserMessage
-                {
-                    Body = "server error",
-                    Level = AlertLevel.Error
-                });
-
-                await OnResult.InvokeAsync(new ApiResult<TResponse>
-                {
-                    StatusCode = (int)result.StatusCode,
-                });
-            }
-
-            working = false;
         }
-        catch (Exception ex)
+        else if (result.StatusCode == 0 || result.StatusCode >= 500)
         {
             await notify.Publish(new UserMessage
             {
-                Body = ex.Message,
+                Body = "server error",
                 Level = AlertLevel.Error
             });
-
-            await OnResult.InvokeAsync(new ApiResult<TResponse>
-            {
-                StatusCode = 0,
-            });
-
         }
+
+        await OnResult.InvokeAsync(result);
+        working = false;
+
     }
 }

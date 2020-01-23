@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor
 {
-    internal static  class HttpContentExtensions
-    {
-        async public static Task<T> ReadAsAsync<T>(this HttpContent httpContent)
-        {
-            var resutlStr = await httpContent.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<T>(resutlStr);
-        }
+    //internal static  class HttpContentExtensions
+    //{
+    //    async public static Task<T> ReadAsAsync<T>(this HttpContent httpContent)
+    //    {
+    //        var resutlStr = await httpContent.ReadAsStringAsync();
+    //        return JsonConvert.DeserializeObject<T>(resutlStr);
+    //    }
 
-    }
+    //}
 }

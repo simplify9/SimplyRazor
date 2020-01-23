@@ -2,9 +2,6 @@
 @namespace SW.SimplyRazor
 @inject NotifyService notify
 @inject ApiService apiService
-@inject AuthenticationStateProvider authenticationStateProvider
-@inject ComponentOptions componentOptions
-@inject ApiJwtStore apiJwtStore
 
 @code {
 
@@ -20,10 +17,8 @@
     [Parameter]
     public EventCallback<bool> WorkingChanged { get; set; }
 
-
     async public override Task SetParametersAsync(ParameterView parameters)
     {
-
         var queryUrl = parameters.GetValueOrDefault<string>("QueryUrl");
         var oldQueryUrl = QueryUrl;
         await base.SetParametersAsync(parameters);
@@ -31,75 +26,15 @@
         if (string.IsNullOrEmpty(queryUrl) || queryUrl == oldQueryUrl) return;
 
         await WorkingChanged.InvokeAsync(true);
-        await Task.Delay(TimeSpan.FromMilliseconds(100));
 
-        try
+        var result = await apiService.GetAsync<TResponse>(queryUrl);
+
+        if (result.StatusCode == 0 || result.StatusCode >= 500)
         {
-            var jwt = await apiJwtStore.GetJwt(); //authenticationStateProvider.GenerateJwt(componentOptions.ApiTokenKey, componentOptions.ApiTokenIssuer, componentOptions.ApiTokenAudience);
-
-            if (jwt != null)
-
-                apiService.HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
-
-            var result = await apiService.HttpClient.GetAsync(queryUrl);
-
-            if ((int)result.StatusCode >= 200 && (int)result.StatusCode < 300)
-            {
-                TResponse response;
-                if (typeof(TResponse) == typeof(string))
-
-                    response = (TResponse)(object)(await result.Content.ReadAsStringAsync());
-
-                else
-                    response = await result.Content.ReadAsAsync<TResponse>();
-
-                await OnResult.InvokeAsync(new ApiResult<TResponse>
-                {
-                    Response = response,
-                    Success = true,
-                    StatusCode = (int)result.StatusCode
-
-                });
-            }
-            else if ((int)result.StatusCode >= 400 && (int)result.StatusCode < 500)
-            {
-
-                //var messages = await result.Content.ReadAsAsync<Dictionary<string, IEnumerable<string>>>();
-
-                //await notify.Publish(new UserMessage { Body = "error", Level = AttentionLevel.Warning });
-                await OnResult.InvokeAsync(new ApiResult<TResponse>
-                {
-                    Success = false,
-                    StatusCode = (int)result.StatusCode
-
-                });
-            }
-            else if ((int)result.StatusCode >= 500)
-            {
-                await notify.Publish(new UserMessage { Body = "Server error.", Level = AlertLevel.Error });
-                await OnResult.InvokeAsync(new ApiResult<TResponse>
-                {
-                    Success = false,
-                    StatusCode = (int)result.StatusCode
-
-                });
-            }
-
+            await notify.Publish(new UserMessage { Body = "Server error.", Level = AlertLevel.Error });
         }
-        catch (Exception ex)
-        {
-            await notify.Publish(new UserMessage { Body = ex.Message, Level = AlertLevel.Error });
-            await OnResult.InvokeAsync(new ApiResult<TResponse>
-            {
-                Success = false,
-                StatusCode = 0
 
-            });
-        }
-        finally
-        {
-            await WorkingChanged.InvokeAsync(false);
-        }
+        await OnResult.InvokeAsync(result);
+        await WorkingChanged.InvokeAsync(false);
     }
-
 }

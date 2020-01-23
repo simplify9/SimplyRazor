@@ -8,7 +8,8 @@ namespace SW.SimplyRazor
     {
         public bool Success { get; set; }
         public int StatusCode { get; set; }
-        public string StatusText { get; set; }
+        //public string StatusText { get; set; }
+        public string Body { get; set; }
     }
 
     public class ApiResult<TResponse> : ApiResult
