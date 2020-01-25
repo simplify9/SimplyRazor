@@ -30,7 +30,11 @@ namespace SW.SimplyRazor
 
         async public Task<ApiResult<TResponse>> PostAsync<TResponse>(string url, object payload)
         {
-            var httpResponseMessage = await PostAsync(url, payload);
+            //var httpResponseMessage = await PostAsync(url, payload);
+            await PopulateJwt();
+            //var payloadStr = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+            var httpResponseMessage = await httpClient.PostAsync(url, new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"));
+
 
             if ((int)httpResponseMessage.StatusCode >= 200 && (int)httpResponseMessage.StatusCode < 300)
             {
@@ -126,12 +130,12 @@ namespace SW.SimplyRazor
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
         }
 
-        async Task<HttpResponseMessage> PostAsync(string url, object payload)
-        {
-            await PopulateJwt();
-            var payloadStr = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-            return await httpClient.PostAsync(url, payloadStr);
-        }
+        //async Task<HttpResponseMessage> PostAsync(string url, object payload)
+        //{
+        //    await PopulateJwt();
+        //    var payloadStr = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+        //    return await httpClient.PostAsync(url, payloadStr);
+        //}
 
         async Task<T> ReadAsAsync<T>(HttpContent httpContent)
         {

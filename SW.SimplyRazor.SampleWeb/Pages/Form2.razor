@@ -3,101 +3,98 @@
 
 <SimplyAlertHub></SimplyAlertHub>
 
-<SimplyQuery QueryUrl="@($"employees/5")" OnResult="OnQueryResult" TResponse="Employee" />
+<SimplyQuery QueryUrl="@($"employees/5")" OnResult="OnQueryResult" TResponse="Employee">
+    <Result>
+        <SimplyForm @bind-Value="context">
 
-<SimplyReady @bind-Ready="ready">
+            <SimplyTabs Height="600px">
 
-    <SimplyForm @bind-Value="employee">
+                <Tab Title="General">
 
-        <SimplyTabs Height="600px" >
+                    <Field Name="FirstName" InputType="InputType.Multiline" ReadOnly="true"></Field>
+                    <Field Name="LastName" ReadOnly="true"></Field>
 
-            <Tab Title="General">
-
-                <Field Name="FirstName" InputType="InputType.Multiline" ReadOnly="true"></Field>
-                <Field Name="LastName" ReadOnly="true"></Field>
-
-                <Field Name="@nameof(Employee.Age)" Default="20" />
-                <div>test</div>
-                <Field Name="Married" />
-                <Field Name="EmploymentStatus" Lookup="mockmodels" ReadOnly="true" />
-                <Field Name="Country" Lookup="countries" TypeAhead="3" ReadOnly="true" />
-                <Field Name="Country" Lookup="countries" TypeAhead="3" />
-                <Field Name="Roles" Lookup="countries"></Field>
+                    <Field Name="@nameof(Employee.Age)" Default="20" />
+                    <div>test</div>
+                    <Field Name="Married" />
+                    <Field Name="EmploymentStatus" Lookup="mockmodels" ReadOnly="true" />
+                    <Field Name="Country" Lookup="countries" TypeAhead="3" ReadOnly="true" />
+                    <Field Name="Country" Lookup="countries" TypeAhead="3" />
+                    <Field Name="Roles" Lookup="countries"></Field>
 
 
-            </Tab>
-            <Tab Title="Album">
+                </Tab>
+                <Tab Title="Album">
 
-                <Field Name="Photo" />
-                <Field Name="Photos" />
+                    <Field Name="Photo" />
+                    <Field Name="Photos" />
 
-            </Tab>
+                </Tab>
 
 
-            <Tab Title="Properties">
+                <Tab Title="Properties">
 
-                <Field Name="AdditionalValues"></Field>
+                    <Field Name="AdditionalValues"></Field>
 
-            </Tab>
-            <Tab Title="Salary">
+                </Tab>
+                <Tab Title="Salary">
 
-                <Field Name="Salary.Amount" />
-                <Field Name="Salary.Currency" />
+                    <Field Name="Salary.Amount" />
+                    <Field Name="Salary.Currency" />
 
-            </Tab>
+                </Tab>
 
-            <Tab Title="Leaves">
-                <Subform Name="Leaves">
-                    <Columns>
-                        <Field Text="Action">
-                            <ColumnValue>
-                                <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</button>
-                                <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("edit", context.Model))">Edit</button>
-                            </ColumnValue>
-                        </Field>
-                        <Field Name="Reason" />
-                        <Field Name="Days" />
-                    </Columns>
-                    <Form>
-                        <Field Name="Reason" />
-                        <Field Name="Days" />
-                    </Form>
-                </Subform>
+                <Tab Title="Leaves">
+                    <Subform Name="Leaves">
+                        <Columns>
+                            <Field Text="Action">
+                                <ColumnValue Context="fieldContext">
+                                    <button type="button" class="btn btn-link" @onclick="@(() => fieldContext.Action.Invoke("remove", fieldContext.Model))">Remove</button>
+                                    <button type="button" class="btn btn-link" @onclick="@(() => fieldContext.Action.Invoke("edit", fieldContext.Model))">Edit</button>
+                                </ColumnValue>
+                            </Field>
+                            <Field Name="Reason" />
+                            <Field Name="Days" />
+                        </Columns>
+                        <Form>
+                            <Field Name="Reason" />
+                            <Field Name="Days" />
+                        </Form>
+                    </Subform>
 
-            </Tab>
-        </SimplyTabs>
-    </SimplyForm>
+                </Tab>
+            </SimplyTabs>
+        </SimplyForm>
 
-    @*<SimplyTable @bind-Value="employee.Leaves">
-        <Columns>
-            <Field Text="Action">
-                <ColumnValue>
-                    <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</button>
-                    <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("edit", context.Model))">Edit</button>
-                </ColumnValue>
-            </Field>
-            <Field Name="Reason" />
-            <Field Name="Days" />
-        </Columns>
-        <Form>
-            <Field Name="Reason" />
-            <Field Name="Days" />
-        </Form>
-    </SimplyTable>*@
+        @*<SimplyTable @bind-Value="employee.Leaves">
+            <Columns>
+                <Field Text="Action">
+                    <ColumnValue>
+                        <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</button>
+                        <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("edit", context.Model))">Edit</button>
+                    </ColumnValue>
+                </Field>
+                <Field Name="Reason" />
+                <Field Name="Days" />
+            </Columns>
+            <Form>
+                <Field Name="Reason" />
+                <Field Name="Days" />
+            </Form>
+        </SimplyTable>*@
 
 
 
-    <div class="container-fluid mt-5">
-        <SimplyCommand Title="Save" Confirm="true" CommandUrl="employees/5" Request="employee" OnResult="OnSaveResult" class="btn btn-secondary" />
-    </div>
+        <div class="container-fluid mt-5">
+            <SimplyCommand Title="Save" Confirm="true" CommandUrl="employees/5" Request="context" OnResult="OnSaveResult" class="btn btn-secondary" />
+        </div>
 
-    <p>Age: @employee?.Age</p>
-    <p>Emp Status: @employee?.EmploymentStatus</p>
-    <p>Country: @employee?.Country</p>
-    <p>Photo: @employee?.Photo</p>
-
-</SimplyReady>
-
+        <p>Age: @context?.Age</p>
+        <p>Emp Status: @context?.EmploymentStatus</p>
+        <p>Country: @context?.Country</p>
+        <p>Photo: @context?.Photo</p>
+    </Result>
+</SimplyQuery>
 @code {
 
     Employee employee;
@@ -115,7 +112,7 @@
         {
             employee = apiResult.Response;
             employee.Leaves = new List<Leave>
-            {
+        {
                 new Leave
                 {
                     Days = 1,
@@ -123,7 +120,7 @@
                 }
             };
             employee.Roles = new List<string>
-            {
+        {
                 "JO"
             };
             ready = true;

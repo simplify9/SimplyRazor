@@ -3,6 +3,33 @@
 @inject NotifyService notify
 @inject ApiService apiService
 
+@if (currentResult != null && currentResult.Success)
+{
+    if (Result != null)
+    {
+        @Result(currentResult.Response)
+    }
+}
+else if (currentResult != null)
+{
+    if (Error == null)
+    {
+        @:Error
+    }
+    else
+    {
+        @Error
+    }
+}
+else if (Loading == null)
+{
+    @:Loading...
+}
+else
+{
+    @Loading
+}
+
 @code {
 
     [Parameter]
@@ -17,6 +44,17 @@
     [Parameter]
     public EventCallback<bool> WorkingChanged { get; set; }
 
+    [Parameter]
+    public RenderFragment<TResponse> Result { get; set; }
+
+    [Parameter]
+    public RenderFragment Error { get; set; }
+
+    [Parameter]
+    public RenderFragment Loading { get; set; }
+
+    ApiResult<TResponse> currentResult;
+
     async public override Task SetParametersAsync(ParameterView parameters)
     {
         var queryUrl = parameters.GetValueOrDefault<string>("QueryUrl");
@@ -24,6 +62,8 @@
         await base.SetParametersAsync(parameters);
 
         if (string.IsNullOrEmpty(queryUrl) || queryUrl == oldQueryUrl) return;
+
+        //currentResult = null;
 
         await WorkingChanged.InvokeAsync(true);
 
@@ -36,5 +76,9 @@
 
         await OnResult.InvokeAsync(result);
         await WorkingChanged.InvokeAsync(false);
+
+        currentResult = result;
+
+        StateHasChanged();
     }
 }
