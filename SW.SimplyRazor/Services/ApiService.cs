@@ -30,11 +30,8 @@ namespace SW.SimplyRazor
 
         async public Task<ApiResult<TResponse>> PostAsync<TResponse>(string url, object payload)
         {
-            //var httpResponseMessage = await PostAsync(url, payload);
             await PopulateJwt();
-            //var payloadStr = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
             var httpResponseMessage = await httpClient.PostAsync(url, new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"));
-
 
             if ((int)httpResponseMessage.StatusCode >= 200 && (int)httpResponseMessage.StatusCode < 300)
             {
@@ -63,9 +60,10 @@ namespace SW.SimplyRazor
                 return new ApiResult<TResponse>
                 {
                     StatusCode = (int)httpResponseMessage.StatusCode,
+                    Body = await httpResponseMessage.Content.ReadAsStringAsync()
                 };
 
-            else //((int)httpResponseMessage.StatusCode >= 500)
+            else
 
                 return new ApiResult<TResponse>
                 {
@@ -99,22 +97,16 @@ namespace SW.SimplyRazor
             else if ((int)httpResponseMessage.StatusCode >= 400 && (int)httpResponseMessage.StatusCode < 500)
             {
 
-                //var messages = await result.Content.ReadAsAsync<Dictionary<string, IEnumerable<string>>>();
-
-                //await notify.Publish(new UserMessage { Body = "error", Level = AttentionLevel.Warning });
                 return new ApiResult<TResponse>
                 {
-                    Success = false,
                     StatusCode = (int)httpResponseMessage.StatusCode,
                     Body = await httpResponseMessage.Content.ReadAsStringAsync()
                 };
             }
-            else 
+            else
             {
-                //await notify.Publish(new UserMessage { Body = "Server error.", Level = AlertLevel.Error });
                 return new ApiResult<TResponse>
                 {
-                    Success = false,
                     StatusCode = (int)httpResponseMessage.StatusCode
 
                 };
@@ -123,19 +115,12 @@ namespace SW.SimplyRazor
 
         async Task PopulateJwt()
         {
-            var jwt = await apiJwtStore.GetJwt(); //authenticationStateProvider.GenerateJwt(componentOptions.ApiTokenKey, componentOptions.ApiTokenIssuer, componentOptions.ApiTokenAudience);
+            var jwt = await apiJwtStore.GetJwt();
 
             if (jwt != null)
 
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
         }
-
-        //async Task<HttpResponseMessage> PostAsync(string url, object payload)
-        //{
-        //    await PopulateJwt();
-        //    var payloadStr = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-        //    return await httpClient.PostAsync(url, payloadStr);
-        //}
 
         async Task<T> ReadAsAsync<T>(HttpContent httpContent)
         {
