@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SW.SimplyRazor
 {
-    class InvalidFieldNotification : INotification
+    internal class InvalidFieldNotification : INotification
     {
         public string Message { get; set; }
     }
