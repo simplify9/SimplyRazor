@@ -9,8 +9,4 @@ namespace SW.SimplyRazor
         public T Value { get; set; }
     }
 
-    //class PrimitiveTypeWrapper
-    //{
-    //    public object Value { get; set; }
-    //}
 }

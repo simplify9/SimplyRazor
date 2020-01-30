@@ -7,7 +7,6 @@ namespace SW.SimplyRazor
 {
     public static  class Object
     {
-
         private static Type GetNullableType(Type type)
         {
             if (type == typeof(string)) return typeof(string);
