@@ -8,12 +8,6 @@ resources:
 - repo: self
 
 variables:
-  # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'f4a9626d-b56b-4305-bc18-c2e15aa134ef'
-  imageRepository: 'simplyrazor'
-  containerRegistry: 'simplyworks.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  tag: '$(Build.BuildId)'
   buildConfiguration: 'Release'
   
   # Agent VM image name
@@ -30,10 +24,10 @@ stages:
     steps:
 
     - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk 3.1.100'
+      displayName: 'Use .NET Core sdk 3.1.101'
       inputs:
         packageType: sdk
-        version: 3.1.100
+        version: 3.1.101
         installationPath: $(Agent.ToolsDirectory)/dotnet
 
     - task: DotNetCoreCLI@2
@@ -71,21 +65,4 @@ stages:
         publishVstsFeed: 'e5fb2e9c-1207-48a4-8f7b-2e6b32308210'
 
 
-- stage: BuildDocker
-  displayName: Build and push SampleWeb Docker 
-  jobs:  
-  - job: BuildDocker
-    displayName: Build
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-    - task: Docker@2
-      displayName: Build and push an image to container registry
-      inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(Build.BuildId)
-          latest
+

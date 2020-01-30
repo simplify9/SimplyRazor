@@ -55,19 +55,20 @@ namespace SW.SimplyRazor
                     Response = response
                 };
             }
-            else if ((int)httpResponseMessage.StatusCode >= 400 && (int)httpResponseMessage.StatusCode < 500)
+            //else if ((int)httpResponseMessage.StatusCode >= 400 && (int)httpResponseMessage.StatusCode < 500)
 
-                return new ApiResult<TResponse>
-                {
-                    StatusCode = (int)httpResponseMessage.StatusCode,
-                    Body = await httpResponseMessage.Content.ReadAsStringAsync()
-                };
+            //    return new ApiResult<TResponse>
+            //    {
+            //        StatusCode = (int)httpResponseMessage.StatusCode,
+            //        Body = await httpResponseMessage.Content.ReadAsStringAsync()
+            //    };
 
             else
 
                 return new ApiResult<TResponse>
                 {
                     StatusCode = (int)httpResponseMessage.StatusCode,
+                    Body = await httpResponseMessage.Content.ReadAsStringAsync()
                 };
         }
 
@@ -94,21 +95,21 @@ namespace SW.SimplyRazor
                     StatusCode = (int)httpResponseMessage.StatusCode
                 };
             }
-            else if ((int)httpResponseMessage.StatusCode >= 400 && (int)httpResponseMessage.StatusCode < 500)
-            {
+            //else if ((int)httpResponseMessage.StatusCode >= 400 && (int)httpResponseMessage.StatusCode < 500)
+            //{
 
-                return new ApiResult<TResponse>
-                {
-                    StatusCode = (int)httpResponseMessage.StatusCode,
-                    Body = await httpResponseMessage.Content.ReadAsStringAsync()
-                };
-            }
+            //    return new ApiResult<TResponse>
+            //    {
+            //        StatusCode = (int)httpResponseMessage.StatusCode,
+            //        Body = await httpResponseMessage.Content.ReadAsStringAsync()
+            //    };
+            //}
             else
             {
                 return new ApiResult<TResponse>
                 {
-                    StatusCode = (int)httpResponseMessage.StatusCode
-
+                    StatusCode = (int)httpResponseMessage.StatusCode,
+                    Body = await httpResponseMessage.Content.ReadAsStringAsync()
                 };
             }
         }

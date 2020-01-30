@@ -129,7 +129,7 @@
         {
             await notify.Publish(new UserMessage
             {
-                Body = "server error",
+                Body = $"Error: {result.Body?.Remove(50)}...",
                 Level = AlertLevel.Error
             });
         }

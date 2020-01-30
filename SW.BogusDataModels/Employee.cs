@@ -31,6 +31,8 @@ namespace SW.BogusDataModels
         public Money Salary { get; set; }
         public int EmploymentStatus { get; set; }
         public string Country { get; set; }
+
+        public DateTime? EmploymentDate { get; set; }
         public RemoteBlob Photo { get; set; }
         public ICollection<Leave> Leaves { get; set; }
 
