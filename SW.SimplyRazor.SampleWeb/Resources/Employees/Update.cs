@@ -12,9 +12,9 @@ namespace SW.SimplyRazor.SampleWeb.Resources.Employees
     {
         async public Task<object> Handle(int key, Employee request)
         {
-            await Task.Delay(TimeSpan.FromSeconds(5));
+            //await Task.Delay(TimeSpan.FromSeconds(5));
 
-            //throw new SWException("Invalid employee nunmber"); 
+            throw new SWException("Invalid employee nunmber"); 
             return null;
         }
 

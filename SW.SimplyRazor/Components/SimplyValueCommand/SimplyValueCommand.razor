@@ -104,32 +104,45 @@
 
         if (result.StatusCode >= 400 && result.StatusCode < 500)
         {
-            var messages = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(result.Body);
+            if (result.Body==null)
 
-            foreach (var kvp in messages)
+                await notify.Publish(new UserMessage
+                {
+                    Body = $"Error ({result.StatusCode}): ...",
+                    Level = AlertLevel.Warning,
+
+                });
+
+            else
             {
-                if (kvp.Key.StartsWith("Field."))
+                var messages = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(result.Body);
 
-                    await notify.Publish(new InvalidFieldNotification
-                    {
-                        Message = string.Join(", ", kvp.Value),
-                    }, kvp.Key.Split('.')[1]);
+                foreach (var kvp in messages)
+                {
+                    if (kvp.Key.StartsWith("Field."))
 
-                else
+                        await notify.Publish(new InvalidFieldNotification
+                        {
+                            Message = string.Join(", ", kvp.Value),
+                        }, kvp.Key.Split('.')[1]);
 
-                    await notify.Publish(new UserMessage
-                    {
-                        Body = string.Join(",", kvp.Value),
-                        Level = AlertLevel.Warning,
+                    else
 
-                    });
+                        await notify.Publish(new UserMessage
+                        {
+                            Body = string.Join(",", kvp.Value),
+                            Level = AlertLevel.Warning,
+
+                        });
+                }
             }
+
         }
         else if (result.StatusCode == 0 || result.StatusCode >= 500)
         {
             await notify.Publish(new UserMessage
             {
-                Body = $"Error: {result.Body?.Remove(50)}...",
+                Body = $"Error ({result.StatusCode}): {result.Body?.Remove(50)}...",
                 Level = AlertLevel.Error
             });
         }
