@@ -8,7 +8,16 @@ namespace SW.SimplyRazor.SampleWeb.Models
 {
     public class Parcel
     {
+        public Parcel()
+        {
+            //Address.Street.  
+        }
+
         public string Reference { get; set; }
         public Weight Weight { get; set; }
+
+        public StreetAddress Address { get; set; }
+
+
     }
 }

@@ -1,0 +1,58 @@
+﻿@namespace SW.SimplyRazor
+@using System.Collections
+
+<label for="@State.Id">@State.Text</label>
+
+<textarea id="@State.Id"
+          class="form-control @((State.IsInvalid ? "is-invalid" : null))"
+          disabled="@State.ReadOnly"
+          rows="3"
+          @onchange="ValueOnChange"
+          @attributes="UnmatchedAttributes" >@value</textarea>
+
+@code {
+
+    string value;
+
+    [Parameter]
+    public EventCallback<object> ValueChanged { get; set; }
+
+    [Parameter]
+    public IField State { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (State.Value != null)
+        {
+            foreach (var item in (IEnumerable)State.Value)
+            {
+                value = $"{value}{item.ToString()}\n";
+            }
+        }
+    }
+
+    void ValueOnChange(ChangeEventArgs args)
+    {
+        if (string.IsNullOrWhiteSpace(args.Value.ToString()))
+        {
+            ValueChanged.InvokeAsync(null);
+            return;
+        }
+
+        var list = args.Value.ToString().Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Select(e => e.Trim('\r')).ToList();
+
+        if (State.PropertyInfo.PropertyType.IsArray)
+
+            ValueChanged.InvokeAsync(list.ToArray());
+
+        else
+
+            ValueChanged.InvokeAsync(list);
+
+
+    }
+
+}

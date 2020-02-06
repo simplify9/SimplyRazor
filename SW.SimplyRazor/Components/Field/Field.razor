@@ -240,9 +240,20 @@
                 {
                     editor = typeof(EditorForDictionary);
                 }
-                else if (typeof(IEnumerable).IsAssignableFrom(PropertyInfo.PropertyType) && PropertyInfo.PropertyType != typeof(string))
+                else if (PropertyInfo.PropertyType.IsArray && PropertyInfo.PropertyType.GetElementType() == typeof(string))
                 {
-                    editor = typeof(EditorForList);
+                    editor = typeof(EditorForListAsTextArea);
+                }
+                else if (PropertyInfo.PropertyType.IsArray)
+                {
+                    throw new ArgumentException("Only string arrays supported.", Name); 
+                }
+                else if (PropertyInfo.PropertyType.IsGenericType && typeof(IEnumerable).IsAssignableFrom(PropertyInfo.PropertyType))
+                {
+                    if (InputType == InputType.Multiline && PropertyInfo.PropertyType.GetGenericArguments()[0] == typeof(string))
+                        editor = typeof(EditorForListAsTextArea);
+                    else
+                        editor = typeof(EditorForList);
                 }
                 else if (Lookup != null)
                 {
