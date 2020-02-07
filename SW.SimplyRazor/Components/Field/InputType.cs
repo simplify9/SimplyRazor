@@ -8,6 +8,7 @@ namespace SW.SimplyRazor
     {
         Text,
         Multiline,
-        Password
+        Password,
+        Date
     }
 }
