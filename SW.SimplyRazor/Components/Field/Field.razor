@@ -178,7 +178,6 @@
         builder.AddAttribute(2, "ValueChanged", EventCallback.Factory.Create<object>(this, OnChange));
         builder.AddMultipleAttributes(3, UnmatchedAttributes);
         builder.CloseComponent();
-
     };
 
     string[] nameArray;
@@ -213,7 +212,8 @@
                     Field = Name,
                     Text = Text,
                     Type = filterTypeString,
-                    Rules = SearchyDataType.RulesFor(filterTypeString)
+                    Rules = SearchyDataType.RulesFor(filterTypeString),
+                    Required = Required
                 };
 
                 Search.AddFilterSetup(filterSetup);

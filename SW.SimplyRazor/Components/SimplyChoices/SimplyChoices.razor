@@ -42,6 +42,8 @@
     {
         if (firstRender)
         {
+            if (Id == null) Id = $"dt_{Guid.NewGuid().ToString("N")}";
+
             await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.init",
                 inputRef,
                 DotNetObjectReference.Create(this),

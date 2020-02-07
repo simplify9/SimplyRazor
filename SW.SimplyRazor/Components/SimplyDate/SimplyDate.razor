@@ -1,0 +1,80 @@
+﻿@namespace SW.SimplyRazor
+@implements IDisposable
+@inject IJSRuntime JSRuntime
+
+<input id="@Id" @ref="inputRef" @onchange="OnChange" disabled="@Disabled" @attributes="UnmatchedAttributes"  />
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    [Parameter]
+    public DateMode Mode { get; set; }
+
+    [Parameter]
+    public object Value { get; set; }
+
+    [Parameter]
+    public EventCallback<object> ValueChanged { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+    ElementReference inputRef;
+    object inputValue;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (Id == null) Id = $"dt_{Guid.NewGuid().ToString("N")}";
+
+            await JSRuntime.InvokeVoidAsync("simplyDateInterop.init",
+                inputRef,
+                DotNetObjectReference.Create(this),
+                Id,
+                Value,
+                Mode.ToString().ToLower());
+
+        }
+    }
+
+    async Task OnChange(ChangeEventArgs args)
+    {
+        if (Mode == DateMode.Single)
+        {
+            if (string.IsNullOrWhiteSpace(args.Value.ToString()))
+                await ValueChanged.InvokeAsync(null);
+            else
+                await ValueChanged.InvokeAsync(args.Value);
+        }
+
+    }
+
+    [JSInvokable]
+    async public Task OnValueUpdate(DateTime[] selectedDates)
+    {
+        //if (selectedDates.Length > 0)
+        //    await ValueChanged.InvokeAsync(selectedDates[0]);
+        //else
+        //    await ValueChanged.InvokeAsync(null);
+    }
+
+    [JSInvokable]
+    async public Task OnChange(DateTime[] selectedDates)
+    {
+        //if (selectedDates.Length > 0)
+        //    await ValueChanged.InvokeAsync(selectedDates[0]);
+        //else
+        //    await ValueChanged.InvokeAsync(null);
+    }
+
+    void IDisposable.Dispose()
+    {
+        JSRuntime.InvokeVoidAsync("simplyDateInterop.destroy", Id);
+    }
+}
