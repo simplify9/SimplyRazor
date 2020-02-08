@@ -54,7 +54,8 @@
                 <span class="input-group-text" id="">@filter.Text</span>
             </div>
 
-            <SimplySelect @bind-value="filter.Rule"
+            <SimplySelect Value="filter.Rule"
+                          ValueChanged="((value) => OnRuleChange(filter, value))"
                           Items="filter.Rules"
                           TKey="SearchyRule"
                           class="form-control" />
@@ -68,7 +69,15 @@
 
                 case SearchyDataType.Date:
 
-                    <input @bind="filter.ValueDateTime" type="date" class="form-control" />
+                    if (filter.DateMode == DateMode.Single)
+                    {
+                        <SimplyDate Value="filter.ValueDateTime" ValueChanged="((value) => OnFilterValueChange(filter, value))" class="form-control"></SimplyDate>
+                    }
+                    else
+                    {
+                        <SimplyDate Value="filter.ValueDateTimeArray" ValueChanged="((value) => OnFilterValueChange(filter, value))" Mode="DateMode.Range" class="form-control" ></SimplyDate>
+                    }
+                    
                     break;
 
                 default:
@@ -85,7 +94,7 @@
 
 @if (result != null && result.Result.Count() > 0)
 {
-    <div class="mb-3" >
+    <div class="mb-3">
         <SimplyGridNonGeneric Data="result.Result" RowClicked="GridRowClicked" Height="@Height" Width="@Width">
             @Columns
         </SimplyGridNonGeneric>
@@ -130,6 +139,31 @@
     int page;
     SearchyResponse<TModel> result;
     string query;
+
+    void OnRuleChange(FilterModel filter, SearchyRule rule)
+    {
+        filter.Rule = rule;
+        if (filter.Rule == SearchyRule.Range)
+        {
+            filter.DateMode = DateMode.Range;
+            filter.ValueDateTime = null;
+        }
+        else
+        {
+            filter.DateMode = DateMode.Single;
+            filter.ValueDateTimeArray = null;
+        }
+
+    }
+
+    void OnFilterValueChange(FilterModel filter, object value)
+    {
+        if (filter.Rule == SearchyRule.Range)
+            filter.ValueDateTimeArray = (DateTime[])value;
+        else
+            filter.ValueDateTime = (DateTime)value;
+
+    }
 
     Task FilterAddOnClick(object e)
     {

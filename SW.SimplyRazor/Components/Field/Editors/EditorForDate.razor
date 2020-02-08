@@ -1,0 +1,24 @@
+﻿@namespace SW.SimplyRazor
+
+<label for="@State.Id">@State.Text</label>
+
+<SimplyDate Id="@State.Id"
+            Value="@State.Value"
+            ValueChanged="ValueChanged"
+            Disabled="@State.ReadOnly"
+            class="@cssClass"
+            @attributes="UnmatchedAttributes" />
+@code {
+
+    [Parameter]
+    public EventCallback<object> ValueChanged { get; set; }
+
+    [Parameter]
+    public IField State { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+    string cssClass => "form-control " + (State.IsInvalid ? "is-invalid" : null);
+
+}

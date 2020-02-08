@@ -35,6 +35,8 @@ namespace SW.SimplyRazor
         public string[] ValueStringArray { get; set; }
         public DateTime[] ValueDateTimeArray { get; set; }
 
+        public DateMode DateMode { get; set; }
+
     }
 
 }

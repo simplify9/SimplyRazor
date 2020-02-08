@@ -17341,7 +17341,7 @@ function () {
             window[id] = flatpickr(element, {
                 defaultDate: defaultDate,
                 mode: mode,
-                allowInput: ((mode == 'single') ? true : false),
+                allowInput: ((mode == 'single') ? false : false),
                 onValueUpdate: function (selectedDates, dateStr, instance) {
                     dotNetObjRef.invokeMethodAsync('OnValueUpdate', selectedDates);
                 },
@@ -17358,16 +17358,15 @@ function () {
             window[id].destroy();
         },
 
-        //disable: function (id) {
+        setDate: function (id, date) {
 
-        //    window[id].disable();
-        //},
+            window[id].setDate(date);
+        },
 
-        //enable: function (id) {
+        clear: function (id) {
 
-        //    window[id].enable();
-        //},
-
+            window[id].clear();
+        },
     };
 
 })();

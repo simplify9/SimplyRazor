@@ -63,7 +63,12 @@ else if (Loading != null)
 
         if (result.StatusCode == 0 || result.StatusCode >= 500)
         {
-            await notify.Publish(new UserMessage { Body = "Server error.", Level = AlertLevel.Error });
+            await notify.Publish(new UserMessage
+            {
+                Body = $"Error ({result.StatusCode}): {result.Body?.Remove(50)}...",
+                Level = AlertLevel.Error
+            });
+            //await notify.Publish(new UserMessage { Body = "Server error.", Level = AlertLevel.Error });
         }
 
         await OnResult.InvokeAsync(result);

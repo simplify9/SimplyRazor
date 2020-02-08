@@ -45,23 +45,32 @@
 
     async Task OnChange(ChangeEventArgs args)
     {
-        if (Mode == DateMode.Single)
-        {
-            if (string.IsNullOrWhiteSpace(args.Value.ToString()))
-                await ValueChanged.InvokeAsync(null);
-            else
-                await ValueChanged.InvokeAsync(args.Value);
-        }
+
+        //if (Mode == DateMode.Single)
+        //{
+        //    if (string.IsNullOrWhiteSpace(args.Value.ToString()))
+        //        await JSRuntime.InvokeVoidAsync("simplyDateInterop.clear", Id);
+        //    else
+        //        await JSRuntime.InvokeVoidAsync("simplyDateInterop.setDate", Id, args.Value);
+        //}
 
     }
 
     [JSInvokable]
     async public Task OnValueUpdate(DateTime[] selectedDates)
     {
-        //if (selectedDates.Length > 0)
-        //    await ValueChanged.InvokeAsync(selectedDates[0]);
-        //else
-        //    await ValueChanged.InvokeAsync(null);
+        if (Mode == DateMode.Single)
+        {
+            if (selectedDates.Length > 0)
+                await ValueChanged.InvokeAsync(selectedDates[0]);
+            else
+                await ValueChanged.InvokeAsync(null);
+        }
+        else
+        {
+            await ValueChanged.InvokeAsync(selectedDates);
+        }
+
     }
 
     [JSInvokable]

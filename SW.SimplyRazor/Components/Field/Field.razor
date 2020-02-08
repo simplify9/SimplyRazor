@@ -246,7 +246,7 @@
                 }
                 else if (PropertyInfo.PropertyType.IsArray)
                 {
-                    throw new ArgumentException("Only string arrays supported.", Name); 
+                    throw new ArgumentException("Only string arrays supported.", Name);
                 }
                 else if (PropertyInfo.PropertyType.IsGenericType && typeof(IEnumerable).IsAssignableFrom(PropertyInfo.PropertyType))
                 {
@@ -254,6 +254,10 @@
                         editor = typeof(EditorForListAsTextArea);
                     else
                         editor = typeof(EditorForList);
+                }
+                else if (nakedType == typeof(DateTime) && InputType == InputType.DateCalendar)
+                {
+                    editor = typeof(EditorForDate);
                 }
                 else if (Lookup != null)
                 {
