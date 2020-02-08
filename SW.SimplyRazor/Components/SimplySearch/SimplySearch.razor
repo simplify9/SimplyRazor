@@ -75,9 +75,9 @@
                     }
                     else
                     {
-                        <SimplyDate Value="filter.ValueDateTimeArray" ValueChanged="((value) => OnFilterValueChange(filter, value))" Mode="DateMode.Range" class="form-control" ></SimplyDate>
+                        <SimplyDate Value="filter.ValueDateTimeArray" ValueChanged="((value) => OnFilterValueChange(filter, value))" Mode="DateMode.Range" class="form-control"></SimplyDate>
                     }
-                    
+
                     break;
 
                 default:
@@ -185,7 +185,14 @@
 
     void Search(int page)
     {
-        var searchRequest = new SearchyRequest(new SearchyCondition(filters))
+        var filledFilters = filters.Where(filter => filter.ValueDateTime != null || 
+                                            filter.ValueDateTimeArray != null || 
+                                            filter.ValueDecimal != null || 
+                                            filter.ValueDecimalArray != null || 
+                                            filter.ValueString != null || 
+                                            filter.ValueStringArray != null);
+
+        var searchRequest = new SearchyRequest(new SearchyCondition(filledFilters))
         {
             PageSize = PageSize,
             PageIndex = page
