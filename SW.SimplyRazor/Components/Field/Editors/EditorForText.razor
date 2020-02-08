@@ -24,6 +24,7 @@ else
            type="@inputType"
            class="form-control @((State.IsInvalid ? "is-invalid" : null))"
            disabled="@State.ReadOnly"
+           placeholder="@State.Placeholder"
            @onchange="(e)=> ValueChanged.InvokeAsync(e.Value)"
            @attributes="UnmatchedAttributes" />
 }
