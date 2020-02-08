@@ -2,6 +2,7 @@
 @namespace SW.SimplyRazor
 @inject NotifyService notify
 @inject ApiService apiService
+@using Newtonsoft.Json
 
 @if (currentResult != null && currentResult.Success)
 {
@@ -61,14 +62,33 @@ else if (Loading != null)
 
         var result = await apiService.GetAsync<TResponse>(queryUrl);
 
+        if (result.StatusCode == 400)
+        {
+            var messages = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(result.Body);
+
+            await notify.Publish(new UserMessage
+            {
+                Body = $"Error ({result.StatusCode}): {messages.Values.First().First()}",
+                Level = AlertLevel.Error
+            });
+        }
+
+        if (result.StatusCode == 404)
+        {
+            await notify.Publish(new UserMessage
+            {
+                Body = $"Error ({result.StatusCode}): Not found.",
+                Level = AlertLevel.Error
+            });
+        }
+
         if (result.StatusCode == 0 || result.StatusCode >= 500)
         {
             await notify.Publish(new UserMessage
             {
-                Body = $"Error ({result.StatusCode}): {result.Body?.Remove(50)}...",
+                Body = $"Error ({result.StatusCode}): {(result.Body ?? "...")}",
                 Level = AlertLevel.Error
             });
-            //await notify.Publish(new UserMessage { Body = "Server error.", Level = AlertLevel.Error });
         }
 
         await OnResult.InvokeAsync(result);

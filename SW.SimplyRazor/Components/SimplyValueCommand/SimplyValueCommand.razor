@@ -142,7 +142,7 @@
         {
             await notify.Publish(new UserMessage
             {
-                Body = $"Error ({result.StatusCode}): {result.Body?.Remove(50)}...",
+                Body = $"Error ({result.StatusCode}): {(result.Body ?? "...")}",
                 Level = AlertLevel.Error
             });
         }
