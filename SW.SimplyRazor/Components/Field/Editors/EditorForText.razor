@@ -1,6 +1,9 @@
 ﻿@namespace SW.SimplyRazor
 
-<label for="@State.Id">@State.Text</label>
+@if (!string.IsNullOrEmpty(State.Text))
+{
+    <label for="@State.Id">@State.Text</label>
+}
 
 @if (inputType == "textarea")
 {
@@ -9,6 +12,7 @@
               value="@State.Value"
               class="form-control @((State.IsInvalid ? "is-invalid" : null))"
               disabled="@State.ReadOnly"
+              placeholder="@State.Placeholder"
               @onchange="(e)=> ValueChanged.InvokeAsync(e.Value)"
               @attributes="UnmatchedAttributes">@State.Value</textarea>
 

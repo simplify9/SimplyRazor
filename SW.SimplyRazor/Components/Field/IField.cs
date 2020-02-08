@@ -11,6 +11,7 @@ namespace SW.SimplyRazor
         string Name { get; set; }
         string Text { get; set; }
         string Help { get; set; }
+        string Placeholder { get; set; }
         string Lookup { get; set; }
         string Id { get; }
         object Value { get; }
@@ -21,7 +22,6 @@ namespace SW.SimplyRazor
         IFieldAction Action { get; }
         object Model { get;  }
         int TypeAhead { get; }
-
         bool ReadOnly { get; }
 
     }

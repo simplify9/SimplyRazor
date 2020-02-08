@@ -1,12 +1,15 @@
 ﻿@namespace SW.SimplyRazor
 
-<label for="@State.Id">@State.Text</label>
+@if (!string.IsNullOrEmpty(State.Text))
+{
+    <label for="@State.Id">@State.Text</label>
+}
 
-<SimplyChoices Id="@State.Id" 
-               Lookup="@State.Lookup" 
-               TypeAhead="@State.TypeAhead" 
-               Value="@State.Value" 
-               ValueChanged=" (value) =>  ValueChanged.InvokeAsync(value)" 
+<SimplyChoices Id="@State.Id"
+               Lookup="@State.Lookup"
+               TypeAhead="@State.TypeAhead"
+               Value="@State.Value"
+               ValueChanged=" (value) =>  ValueChanged.InvokeAsync(value)"
                Disabled="State.ReadOnly"
                @attributes="UnmatchedAttributes"></SimplyChoices>
 

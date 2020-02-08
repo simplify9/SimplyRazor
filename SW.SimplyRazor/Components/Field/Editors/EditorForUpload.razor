@@ -1,10 +1,12 @@
 ﻿@namespace SW.SimplyRazor
 
-<label for="@State.Id">@State.Text</label>
-
+@if (!string.IsNullOrEmpty(State.Text))
+{
+    <label for="@State.Id">@State.Text</label>
+}
 <SimplyUpload id="@State.Id"
               ValueChanged="(e)=> ValueChanged.InvokeAsync(e)"
-              @attributes="UnmatchedAttributes"  />
+              @attributes="UnmatchedAttributes" />
 
 @code {
 

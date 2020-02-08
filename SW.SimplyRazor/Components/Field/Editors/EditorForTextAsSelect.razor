@@ -1,15 +1,18 @@
 ﻿@namespace SW.SimplyRazor
 
-<label for="@State.Id">@State.Text</label>
+@if (!string.IsNullOrEmpty(State.Text))
+{
+    <label for="@State.Id">@State.Text</label>
+}
 
-<SimplySelect id="@State.Id" 
+<SimplySelect id="@State.Id"
               class="@cssClass"
               disabled="@State.ReadOnly"
               ValueChanged="(e)=> ValueChanged.InvokeAsync(e)"
               Value="@State.Value"
-              EmptyText="Select"
+              EmptyText="@(State.Placeholder ?? "Select")"
               Lookup="@State.Lookup"
-              @attributes="UnmatchedAttributes" 
+              @attributes="UnmatchedAttributes"
               TKey="object" />
 
 @code {
