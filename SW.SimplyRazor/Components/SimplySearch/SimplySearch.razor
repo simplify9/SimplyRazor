@@ -14,10 +14,11 @@
 <SimplyQuery QueryUrl="@FilterUrl" @bind-Working="filterQueryBusy" OnResult="OnFilterQueryResult" TResponse="IEnumerable<SearchyFilterSetup>"></SimplyQuery>
 <SimplyQuery QueryUrl="@query" @bind-Working="searchQueryBusy" OnResult="OnSearchQueryResult" TResponse="SearchyResponse<TModel>"></SimplyQuery>
 
-<div class="form-row align-items-center mb-3">
-    <label for="filterSelect" class="col-sm-1 col-form-label">Search</label>
-    <div class="col-auto">
-        <div class="input-group">
+@if (filterSetup.Any(filter => !filter.Required))
+{
+    <div class="row align-items-center mb-2">
+        <label class="col-2 col-form-label" for="filterSelect" >Search filter</label>
+        <div class="input-group col-7">
             <SimplySelect @bind-Value="filterValue"
                           EmptyText="Select filter"
                           Items="@(filterSetup.Select(e=>e.Text).ToList())"
@@ -27,38 +28,20 @@
                 <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
             </div>
         </div>
+
     </div>
-    <div class="col-auto ">
-        <button type="button" @onclick="() => Search(0)" class="btn btn-secondary" style="width: 100px;">
-            @if (filterQueryBusy || searchQueryBusy)
-            {
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            }
-            else
-            {
-                @:Search
-            }
-        </button>
-    </div>
-    @if (Commands != null)
-    {
-        @Commands
-    }
-</div>
+}
 
 @foreach (var filter in filters)
 {
-    <div class="form-group row" @key="filter">
-        <div class=" input-group col">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="">@filter.Text</span>
-            </div>
-
+    <div class="row mb-2" @key="filter">
+        <label class="col-2 col-form-label">@filter.Text</label>
+        <div class="input-group col-7">
             <SimplySelect Value="filter.Rule"
                           ValueChanged="((value) => OnRuleChange(filter, value))"
                           Items="filter.Rules"
                           TKey="SearchyRule"
-                          class="form-control" />
+                          class="input-group-prepend" />
 
             @switch (filter.Type)
             {
@@ -85,12 +68,36 @@
                     <input @bind="filter.ValueString" type="text" class="form-control" />
                     break;
             }
-            <div class="input-group-append">
-                <button @onclick="@(e => RemoveFilter(filter))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
-            </div>
+            @if (!filter.Required)
+            {
+                <div class="input-group-append">
+                    <button @onclick="@(e => RemoveFilter(filter))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
+                </div>
+            }
+
         </div>
     </div>
+
 }
+
+<div class="row align-items-center mb-3">
+    <div class="col-auto">
+        <button type="button" @onclick="() => Search(0)" class="btn btn-primary" style="width: 90px;">
+            @if (filterQueryBusy || searchQueryBusy)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            }
+            else
+            {
+                @:Search
+            }
+        </button>
+    </div>
+    @if (Commands != null)
+    {
+        @Commands
+    }
+</div>
 
 @if (result != null && result.Result.Count() > 0)
 {
@@ -185,11 +192,11 @@
 
     void Search(int page)
     {
-        var filledFilters = filters.Where(filter => filter.ValueDateTime != null || 
-                                            filter.ValueDateTimeArray != null || 
-                                            filter.ValueDecimal != null || 
-                                            filter.ValueDecimalArray != null || 
-                                            filter.ValueString != null || 
+        var filledFilters = filters.Where(filter => filter.ValueDateTime != null ||
+                                            filter.ValueDateTimeArray != null ||
+                                            filter.ValueDecimal != null ||
+                                            filter.ValueDecimalArray != null ||
+                                            filter.ValueString != null ||
                                             filter.ValueStringArray != null);
 
         var searchRequest = new SearchyRequest(new SearchyCondition(filledFilters))
