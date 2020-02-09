@@ -11,11 +11,11 @@
                 <a href="JavaScript:void(0);"  @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</a>
             </ColumnValue>
         </Field>
-        <Field Name="Key" />
+        <Field Name="Key" Lookup="@State.Lookup" />
         <Field Name="Value" />
     </Columns>
     <Form>
-        <Field Name="Key" />
+        <Field Name="Key" Lookup="@State.Lookup" />
         <Field Name="Value" />
     </Form>
 </SimplyTable>
