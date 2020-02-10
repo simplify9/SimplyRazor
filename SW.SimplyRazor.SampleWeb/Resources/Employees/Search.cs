@@ -19,7 +19,7 @@ namespace SW.SimplyRazor.SampleWeb.Resources.Employees
             return new SearchyResponse<Employee>
             {
                 Result = result,
-                TotalCount = FakeEmployees.Data.AsQueryable().Search(request.Conditions).Count()
+                TotalCount = 10 // FakeEmployees.Data.AsQueryable().Search(request.Conditions).Count()
             };
         }
     }

@@ -3,24 +3,62 @@
 @if (Count == PageSize || TotalCount > PageSize)
 {
     <ul class="pagination">
-        <li class="page-item @(Page <= 0 ? "disabled" : null)" @onclick="e=> ChangePage(0)">
-            <span class="page-link" style="cursor:pointer ">First</span>
-        </li>
-        <li class="page-item @(Page <= 0 ? "disabled" : null)" @onclick="e=> ChangePage(Page - 1)">
-            <span class="page-link" style="cursor:pointer ">Previous</span>
-        </li>
-        <li class="page-item @(Count < PageSize || totalPages == Page + 1 ? "disabled" : null)" @onclick="e=> ChangePage(Page + 1)">
-            <span class="page-link" style="cursor:pointer ">Next</span>
-        </li>
-        <li class="page-item @(totalPages == 0 || totalPages == Page + 1  ? "disabled" : null)" @onclick="e=> ChangePage(totalPages-1)">
-            <span class="page-link" style="cursor:pointer ">
-                Last
-                @if (TotalCount > 0)
-                {
-                    <span class="badge badge-pill badge-primary">@TotalCount</span>
-                }
-            </span>
-        </li>
+        @if (Page <= 0)
+        {
+            <li class="page-item disabled">
+                <span class="page-link" style="cursor:pointer ">First</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" style="cursor:pointer ">Previous</span>
+            </li>
+        }
+        else
+        {
+            <li class="page-item " @onclick="e=> ChangePage(0)">
+                <span class="page-link" style="cursor:pointer ">First</span>
+            </li>
+            <li class="page-item " @onclick="e=> ChangePage(Page - 1)">
+                <span class="page-link" style="cursor:pointer ">Previous</span>
+            </li>
+        }
+
+        @if (Count < PageSize || totalPages == Page + 1)
+        {
+            <li class="page-item disabled">
+                <span class="page-link" style="cursor:pointer ">Next</span>
+            </li>
+        }
+        else
+        {
+            <li class="page-item" @onclick="e=> ChangePage(Page + 1)">
+                <span class="page-link" style="cursor:pointer ">Next</span>
+            </li>
+        }
+        @if (totalPages == 0 || totalPages == Page + 1)
+        {
+            <li class="page-item disabled">
+                <span class="page-link" style="cursor:pointer ">
+                    Last
+                    @if (TotalCount > 0)
+                    {
+                        <span class="badge badge-pill badge-primary">@TotalCount</span>
+                    }
+                </span>
+            </li>
+        }
+        else
+        {
+            <li class="page-item" @onclick="e=> ChangePage(totalPages-1)">
+                <span class="page-link" style="cursor:pointer ">
+                    Last
+                    @if (TotalCount > 0)
+                    {
+                        <span class="badge badge-pill badge-primary">@TotalCount</span>
+                    }
+                </span>
+            </li>
+        }
+
     </ul>
 }
 
