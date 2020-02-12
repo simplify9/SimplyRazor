@@ -59,9 +59,12 @@
                     <Subform Name="Leaves">
                         <Columns>
                             <Field Text="Action">
+                                <ColumnHeader Context="fieldContext">
+                                    Action (<a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("add", null))">add</a>)
+                                </ColumnHeader>
                                 <ColumnValue Context="fieldContext">
-                                    <button type="button" class="btn btn-link" @onclick="@(() => fieldContext.Action.Invoke("remove", fieldContext.Model))">Remove</button>
-                                    <button type="button" class="btn btn-link" @onclick="@(() => fieldContext.Action.Invoke("edit", fieldContext.Model))">Edit</button>
+                                    <a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("remove", fieldContext.Model))">Remove</a>
+                                    <a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("edit", fieldContext.Model))">Edit</a>
                                 </ColumnValue>
                             </Field>
                             <Field Name="Reason" />
@@ -76,25 +79,6 @@
                 </Tab>
             </SimplyTabs>
         </SimplyForm>
-
-        @*<SimplyTable @bind-Value="employee.Leaves">
-            <Columns>
-                <Field Text="Action">
-                    <ColumnValue>
-                        <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("remove", context.Model))">Remove</button>
-                        <button type="button" class="btn btn-link" @onclick="@(() => context.Action.Invoke("edit", context.Model))">Edit</button>
-                    </ColumnValue>
-                </Field>
-                <Field Name="Reason" />
-                <Field Name="Days" />
-            </Columns>
-            <Form>
-                <Field Name="Reason" />
-                <Field Name="Days" />
-            </Form>
-        </SimplyTable>*@
-
-
 
         <div class="container-fluid mt-5">
             <SimplyCommand Title="Save" Confirm="true" CommandUrl="employees/5" Request="context" OnResult="OnSaveResult" class="btn btn-secondary" />
@@ -122,16 +106,16 @@
         if (apiResult.Success)
         {
             employee = apiResult.Response;
-            employee.Leaves = new List<Leave>
-        {
-                new Leave
-                {
-                    Days = 1,
-                    Reason = "test"
-                }
-            };
+            employee.Leaves = new List<Leave>();
+            //{
+            //    new Leave
+            //    {
+            //        Days = 1,
+            //        Reason = "test"
+            //    }
+            //};
             employee.Roles = new List<string>
-        {
+            {
                 "JO"
             };
             ready = true;

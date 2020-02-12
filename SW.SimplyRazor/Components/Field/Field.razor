@@ -225,6 +225,8 @@
 
             case FieldRole.Input:
 
+                if (PropertyInfo.GetSetMethod() ==null) throw new ArgumentException("Field does not have public setter.", Name);
+
                 var nakedType = Nullable.GetUnderlyingType(PropertyInfo.PropertyType) ?? PropertyInfo.PropertyType;
 
                 if (PropertyInfo.PropertyType == typeof(bool))
