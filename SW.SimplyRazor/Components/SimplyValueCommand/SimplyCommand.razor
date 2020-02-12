@@ -56,8 +56,8 @@ else
         await OnResult.InvokeAsync(new ApiResult
         {
             StatusCode = apiResult.StatusCode,
-            //StatusText = apiResult.StatusText,
-            Success = apiResult.Success
+            Success = apiResult.Success,
+            Body = apiResult.Body
         });
     }
 
