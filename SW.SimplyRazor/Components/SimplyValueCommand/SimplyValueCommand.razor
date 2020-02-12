@@ -102,40 +102,38 @@
                 throw new NotImplementedException();
         }
 
-        if (result.StatusCode >= 400 && result.StatusCode < 500)
+        if (result.StatusCode == 400)
         {
-            if (result.Body==null)
+            var messages = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(result.Body);
 
-                await notify.Publish(new UserMessage
-                {
-                    Body = $"Error ({result.StatusCode}): ...",
-                    Level = AlertLevel.Warning,
-
-                });
-
-            else
+            foreach (var kvp in messages)
             {
-                var messages = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(result.Body);
+                if (kvp.Key.StartsWith("Field."))
 
-                foreach (var kvp in messages)
-                {
-                    if (kvp.Key.StartsWith("Field."))
+                    await notify.Publish(new InvalidFieldNotification
+                    {
+                        Message = string.Join(", ", kvp.Value),
+                    }, kvp.Key.Split('.')[1]);
 
-                        await notify.Publish(new InvalidFieldNotification
-                        {
-                            Message = string.Join(", ", kvp.Value),
-                        }, kvp.Key.Split('.')[1]);
+                else
 
-                    else
+                    await notify.Publish(new UserMessage
+                    {
+                        Body = string.Join(",", kvp.Value),
+                        Level = AlertLevel.Warning,
 
-                        await notify.Publish(new UserMessage
-                        {
-                            Body = string.Join(",", kvp.Value),
-                            Level = AlertLevel.Warning,
-
-                        });
-                }
+                    });
             }
+        }
+
+        else if (result.StatusCode > 400 && result.StatusCode < 500)
+        {
+            await notify.Publish(new UserMessage
+            {
+                Body = $"Error ({result.StatusCode}): ...",
+                Level = AlertLevel.Warning,
+
+            });
 
         }
         else if (result.StatusCode == 0 || result.StatusCode >= 500)

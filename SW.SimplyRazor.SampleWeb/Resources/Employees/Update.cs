@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor.SampleWeb.Resources.Employees
 {
+    [Protect(RequireRole=true)]
     public class Update : ICommandHandler<int, Employee>
     {
         async public Task<object> Handle(int key, Employee request)
