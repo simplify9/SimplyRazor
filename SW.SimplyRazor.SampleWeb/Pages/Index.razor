@@ -5,12 +5,11 @@
 <SimplyAlertHub></SimplyAlertHub>
 
 <SimplySearch PageSize="10" SearchUrl="employees" FilterUrl="employees/filters" RowClicked="RowClicked" TModel="Employee" Height="200px" Width="max-content">
-    <Commands>
-        <div class="col-auto ">
+    <Commands Context="action">
+            <button class="btn btn-primary" type="button" @onclick="@(() => action.Invoke("test", null))" >Export</button>
             <a href="form2">
                 New Employee
             </a>
-        </div>
     </Commands>
     <Filters>
         <Field Name="Id" Text="Id" Required="true"></Field>
