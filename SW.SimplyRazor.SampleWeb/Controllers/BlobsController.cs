@@ -13,17 +13,14 @@ namespace SW.SimplyRazor.SampleWeb.Controllers
     public class BlobsController : Controller
     {
 
-        // GET api/<controller>/5
         [HttpGet("{id}")]
         async public Task<IActionResult> Get(string id)
         {
             var fileStream = System.IO.File.OpenRead($"./uploads/{id}");
 
             return File(fileStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-
         }
 
-        // POST api/<controller>
         [HttpPost, DisableRequestSizeLimit]
         public async Task<IActionResult> Upload([FromForm] UploadReuqest ur)
         {
@@ -52,7 +49,6 @@ namespace SW.SimplyRazor.SampleWeb.Controllers
             return new OkObjectResult(result);
         }
 
-        //// DELETE api/<controller>/5
         //[HttpDelete("{id}")]
         //public void Delete(int id)
         //{
