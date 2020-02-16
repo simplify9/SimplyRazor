@@ -14,7 +14,7 @@ namespace SW.SimplyRazor.SampleWeb.Controllers
     {
 
         [HttpGet("{id}")]
-        async public Task<IActionResult> Get(string id)
+        public IActionResult Get(string id)
         {
             var fileStream = System.IO.File.OpenRead($"./uploads/{id}");
 
