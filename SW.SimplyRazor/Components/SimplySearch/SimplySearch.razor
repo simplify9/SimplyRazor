@@ -201,14 +201,8 @@
 
     void Search(int page)
     {
-        var filledFilters = filters.Where(filter => filter.ValueDateTime != null ||
-                                            filter.ValueDateTimeArray != null ||
-                                            filter.ValueDecimal != null ||
-                                            filter.ValueDecimalArray != null ||
-                                            filter.ValueString != null ||
-                                            filter.ValueStringArray != null);
 
-        var searchRequest = new SearchyRequest(new SearchyCondition(filledFilters))
+        var searchRequest = new SearchyRequest(new SearchyCondition(GetFilledFilters()))
         {
             PageSize = PageSize,
             PageIndex = page
@@ -264,14 +258,7 @@
         {
             case "exporttoexcel":
 
-                var filledFilters = filters.Where(filter => filter.ValueDateTime != null ||
-                                                    filter.ValueDateTimeArray != null ||
-                                                    filter.ValueDecimal != null ||
-                                                    filter.ValueDecimalArray != null ||
-                                                    filter.ValueString != null ||
-                                                    filter.ValueStringArray != null);
-
-                var searchRequest = new SearchyRequest(new SearchyCondition(filledFilters));
+                var searchRequest = new SearchyRequest(new SearchyCondition(GetFilledFilters()));
 
                 var result = await apiService.PostAsync<RemoteBlob>(ExportUrl, searchRequest);
 
@@ -285,6 +272,16 @@
 
                 break;
         }
+    }
+
+    IEnumerable<FilterModel> GetFilledFilters()
+    {
+        return filters.Where(filter => filter.ValueDateTime != null ||
+                                            filter.ValueDateTimeArray != null ||
+                                            filter.ValueDecimal != null ||
+                                            filter.ValueDecimalArray != null ||
+                                            filter.ValueString != null ||
+                                            filter.ValueStringArray != null);
     }
 
 }
