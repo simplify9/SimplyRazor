@@ -10,14 +10,17 @@ using SW.PrimitiveTypes;
 namespace SW.SimplyRazor.SampleWeb.Controllers
 {
     [Route("api/[controller]")]
-    public class UploadController : Controller
+    public class BlobsController : Controller
     {
 
         // GET api/<controller>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        async public Task<IActionResult> Get(string id)
         {
-            return "value";
+            var fileStream = System.IO.File.OpenRead($"./uploads/{id}");
+
+            return File(fileStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
         }
 
         // POST api/<controller>

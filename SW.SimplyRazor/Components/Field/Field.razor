@@ -187,7 +187,8 @@
     bool lookupReady;
     string lookupValue;
 
-    async protected Task OnInitialized()
+
+    async override protected Task OnInitializedAsync()
     {
 
         id = $"f_{Name}_{Guid.NewGuid().ToString("N")}";
@@ -219,7 +220,7 @@
                     Required = Required
                 };
 
-                Search.AddFilterSetup(filterSetup);
+                await Search.AddFilterSetup(filterSetup);
 
                 break;
 

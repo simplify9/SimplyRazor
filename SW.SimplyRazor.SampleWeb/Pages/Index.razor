@@ -4,12 +4,12 @@
 
 <SimplyAlertHub></SimplyAlertHub>
 
-<SimplySearch PageSize="10" SearchUrl="employees" FilterUrl="employees/filters" RowClicked="RowClicked" TModel="Employee" Height="200px" Width="max-content">
+<SimplySearch PageSize="10" SearchUrl="employees" FilterUrl="employees/filters" ExportUrl="employees/export" RowClicked="RowClicked" TModel="Employee" Height="200px" Width="max-content">
     <Commands Context="action">
-            <button class="btn btn-primary" type="button" @onclick="@(() => action.Invoke("test", null))" >Export</button>
-            <a href="form2">
-                New Employee
-            </a>
+        <button class="btn btn-primary" type="button" @onclick="@(() => action.Invoke("exporttoexcel", null))">Export</button>
+        <a href="form2">
+            New Employee
+        </a>
     </Commands>
     <Filters>
         <Field Name="Id" Text="Id" Required="true"></Field>
@@ -17,7 +17,7 @@
 
 
         @*<Field Name="HandlerName"  Text="Handler" ></Field>
-        <Field Name="Started" Text="Date" ></Field>*@
+            <Field Name="Started" Text="Date" ></Field>*@
     </Filters>
     <Columns>
         <Field Name="Id" Text="Id">

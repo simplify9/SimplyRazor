@@ -3,6 +3,10 @@
 @implements ISimplySearch
 @implements IFieldAction
 @inject NotifyService notify
+@inject NavigationManager navigationManager
+@inject ApiService apiService
+@inject IJSRuntime JSRuntime
+@inject ComponentOptions componentOptions
 
 <CascadingValue IsFixed="true" Value="this" Name="Search">
     <CascadingValue IsFixed="true" Value="typeof(TModel)" Name="ModelType">
@@ -18,7 +22,7 @@
 @if (filterSetup.Any(filter => !filter.Required))
 {
     <div class="row align-items-center mb-2">
-        <label class="col-2 col-form-label" for="filterSelect" >Search filter</label>
+        <label class="col-2 col-form-label" for="filterSelect">Search filter</label>
         <div class="input-group col-7">
             <SimplySelect @bind-Value="filterValue"
                           EmptyText="Select filter"
@@ -118,6 +122,9 @@
 
     [Parameter]
     public string FilterUrl { get; set; }
+
+    [Parameter]
+    public string ExportUrl { get; set; }
 
     [Parameter]
     public RenderFragment Filters { get; set; }
@@ -257,10 +264,22 @@
         {
             case "exporttoexcel":
 
-                //Add();
+                var filledFilters = filters.Where(filter => filter.ValueDateTime != null ||
+                                                    filter.ValueDateTimeArray != null ||
+                                                    filter.ValueDecimal != null ||
+                                                    filter.ValueDecimalArray != null ||
+                                                    filter.ValueString != null ||
+                                                    filter.ValueStringArray != null);
+
+                var searchRequest = new SearchyRequest(new SearchyCondition(filledFilters));
+
+                var result = await apiService.PostAsync<RemoteBlob>(ExportUrl, searchRequest);
+
+                if (result.Success)
+
+                    await JSRuntime.InvokeVoidAsync("simplySearchInterop.downloadFile", $"{componentOptions.BlobsUri.ToString()}{result.Response.Location}", result.Response.Name);
+
                 break;
-
-
 
             default:
 

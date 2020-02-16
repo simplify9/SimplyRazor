@@ -72,7 +72,7 @@
 
         try
         {
-            var rb = await JSRuntime.InvokeAsync<RemoteBlob>("simplyUploadInterop.saveFile", inputRef, componentOptions.RemoteBlobUri.ToString());
+            var rb = await JSRuntime.InvokeAsync<RemoteBlob>("simplyUploadInterop.saveFile", inputRef, componentOptions.BlobsUri.ToString());
             await ValueChanged.InvokeAsync(rb);
         }
         catch (Exception)

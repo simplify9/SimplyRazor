@@ -45,7 +45,7 @@ namespace SW.SimplyRazor.SampleWeb
             services.AddSimplyRazor(config =>
             {
                 config.ApiBaseUri = new Uri("https://localhost:5001/cqapi/");
-                config.RemoteBlobUri = new Uri("https://localhost:5001/api/upload/");
+                config.BlobsUri = new Uri("https://localhost:5001/api/blobs/");
                 config.ApiTokenAudience = "local";
                 config.ApiTokenIssuer = "local";
                 config.ApiTokenKey = "jhgfjhgfjhgfjhgfjhfjfj";

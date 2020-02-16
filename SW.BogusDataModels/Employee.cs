@@ -24,7 +24,7 @@ namespace SW.BogusDataModels
         public string LastName { get; set; }
 
         public string DisplayName { get; set; }
-
+        //public TimeSpan  ArrivalTime { get; set; }
         public Gender Gender { get; set; }
         public int? Age { get; set; }
         public bool Married { get; set; }
