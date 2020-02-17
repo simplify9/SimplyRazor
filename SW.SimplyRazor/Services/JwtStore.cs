@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor
 {
-    public class ApiJwtStore
+    public class JwtStore
     {
         private readonly AuthenticationStateProvider authenticationStateProvider;
         private readonly ComponentOptions componentOptions;
         private string jwt;
         //private bool jwtNotPresent;
 
-        public ApiJwtStore(AuthenticationStateProvider authenticationStateProvider, ComponentOptions componentOptions)
+        public JwtStore(AuthenticationStateProvider authenticationStateProvider, ComponentOptions componentOptions)
         {
             this.authenticationStateProvider = authenticationStateProvider;
             this.componentOptions = componentOptions;

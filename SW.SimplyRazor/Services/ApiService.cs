@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,10 +8,10 @@ namespace SW.SimplyRazor
 {
     public class ApiService
     {
-        private readonly ApiJwtStore apiJwtStore;
+        private readonly JwtStore apiJwtStore;
         private readonly HttpClient httpClient;
 
-        public ApiService(HttpClient httpClient, ApiJwtStore apiJwtStore)
+        public ApiService(HttpClient httpClient, JwtStore apiJwtStore)
         {
             this.httpClient = httpClient;
             this.apiJwtStore = apiJwtStore;
@@ -18,83 +19,120 @@ namespace SW.SimplyRazor
 
         async public Task<ApiResult> DeleteAsync(string url)
         {
-            await PopulateJwt();
-            var httpResponseMessage = await httpClient.DeleteAsync(url);
-
-            return new ApiResult
+            try
             {
-                StatusCode = (int)httpResponseMessage.StatusCode,
-                Success = (int)httpResponseMessage.StatusCode >= 200 && (int)httpResponseMessage.StatusCode < 300
-            };
+                await PopulateJwt();
+                var httpResponseMessage = await httpClient.DeleteAsync(url);
+
+                return new ApiResult
+                {
+                    StatusCode = (int)httpResponseMessage.StatusCode,
+                    Success = (int)httpResponseMessage.StatusCode >= 200 && (int)httpResponseMessage.StatusCode < 300
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResult
+                {
+                    StatusCode = 0,
+                    Body = ex.Message
+                };
+            }
         }
 
         async public Task<ApiResult<TResponse>> PostAsync<TResponse>(string url, object payload)
         {
-            await PopulateJwt();
-            var httpResponseMessage = await httpClient.PostAsync(url, new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"));
 
-            if ((int)httpResponseMessage.StatusCode >= 200 && (int)httpResponseMessage.StatusCode < 300)
+            try
             {
+                await PopulateJwt();
+                var httpResponseMessage = await httpClient.PostAsync(url, new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"));
 
-                TResponse response;
-                if (typeof(TResponse) == typeof(string))
+                if ((int)httpResponseMessage.StatusCode >= 200 && (int)httpResponseMessage.StatusCode < 300)
+                {
 
-                    response = (TResponse)(object)(await httpResponseMessage.Content.ReadAsStringAsync());
+                    TResponse response;
+                    if (typeof(TResponse) == typeof(string))
 
-                else if (typeof(TResponse) == typeof(NoT))
+                        response = (TResponse)(object)(await httpResponseMessage.Content.ReadAsStringAsync());
 
-                    response = default;
+                    else if (typeof(TResponse) == typeof(NoT))
+
+                        response = default;
+
+                    else
+                        response = await ReadAsAsync<TResponse>(httpResponseMessage.Content);
+
+                    return new ApiResult<TResponse>
+                    {
+                        StatusCode = (int)httpResponseMessage.StatusCode,
+                        Success = true,
+                        Response = response
+                    };
+                }
 
                 else
-                    response = await ReadAsAsync<TResponse>(httpResponseMessage.Content);
 
+                    return new ApiResult<TResponse>
+                    {
+                        StatusCode = (int)httpResponseMessage.StatusCode,
+                        Body = await httpResponseMessage.Content.ReadAsStringAsync()
+                    };
+            }
+            catch (Exception ex)
+            {
                 return new ApiResult<TResponse>
                 {
-                    StatusCode = (int)httpResponseMessage.StatusCode,
-                    Success = true,
-                    Response = response
+                    StatusCode = 0,
+                    Body = ex.Message
                 };
             }
 
-            else
-
-                return new ApiResult<TResponse>
-                {
-                    StatusCode = (int)httpResponseMessage.StatusCode,
-                    Body = await httpResponseMessage.Content.ReadAsStringAsync()
-                };
         }
 
         async public Task<ApiResult<TResponse>> GetAsync<TResponse>(string url)
         {
-            await PopulateJwt();
 
-            var httpResponseMessage = await httpClient.GetAsync(url);
-
-            if ((int)httpResponseMessage.StatusCode >= 200 && (int)httpResponseMessage.StatusCode < 300)
+            try
             {
-                TResponse response;
-                if (typeof(TResponse) == typeof(string))
+                await PopulateJwt();
 
-                    response = (TResponse)(object)(await httpResponseMessage.Content.ReadAsStringAsync());
+                var httpResponseMessage = await httpClient.GetAsync(url);
+
+                if ((int)httpResponseMessage.StatusCode >= 200 && (int)httpResponseMessage.StatusCode < 300)
+                {
+                    TResponse response;
+                    if (typeof(TResponse) == typeof(string))
+
+                        response = (TResponse)(object)(await httpResponseMessage.Content.ReadAsStringAsync());
+
+                    else
+                        response = await ReadAsAsync<TResponse>(httpResponseMessage.Content);
+
+                    return new ApiResult<TResponse>
+                    {
+                        Response = response,
+                        Success = true,
+                        StatusCode = (int)httpResponseMessage.StatusCode
+                    };
+                }
 
                 else
-                    response = await ReadAsAsync<TResponse>(httpResponseMessage.Content);
-
-                return new ApiResult<TResponse>
                 {
-                    Response = response,
-                    Success = true,
-                    StatusCode = (int)httpResponseMessage.StatusCode
-                };
+                    return new ApiResult<TResponse>
+                    {
+                        StatusCode = (int)httpResponseMessage.StatusCode,
+                        Body = await httpResponseMessage.Content.ReadAsStringAsync()
+                    };
+                }
             }
-
-            else
+            catch (Exception ex)
             {
                 return new ApiResult<TResponse>
                 {
-                    StatusCode = (int)httpResponseMessage.StatusCode,
-                    Body = await httpResponseMessage.Content.ReadAsStringAsync()
+                    StatusCode = 0,
+                    Body = ex.Message
                 };
             }
         }

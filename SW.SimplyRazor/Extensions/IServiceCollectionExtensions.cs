@@ -42,7 +42,7 @@ namespace SW.SimplyRazor
             serviceCollection.AddSingleton<Notifier<UserMessage>>();
             serviceCollection.AddSingleton<Notifier<InvalidFieldNotification>>();
 
-            serviceCollection.AddScoped<ApiJwtStore>();
+            serviceCollection.AddScoped<JwtStore>();
 
 
             return serviceCollection.AddScoped<NotifyService>();

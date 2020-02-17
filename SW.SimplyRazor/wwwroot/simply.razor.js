@@ -17503,7 +17503,8 @@ function () {
 })();
 
 (function () {
-    window.simplySearchInterop = {
+
+    window.iJSRuntimeExtensionsInterop = {
 
         downloadFile: function (href, fileName) {
 

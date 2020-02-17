@@ -264,7 +264,7 @@
 
                 if (result.Success)
 
-                    await JSRuntime.InvokeVoidAsync("simplySearchInterop.downloadFile", $"{componentOptions.BlobsUri.ToString()}{result.Response.Location}", result.Response.Name);
+                    await JSRuntime.DownloadFile($"{componentOptions.BlobsUri.ToString()}{result.Response.Location}", result.Response.Name);
 
                 break;
 

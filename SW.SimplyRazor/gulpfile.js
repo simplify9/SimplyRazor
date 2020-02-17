@@ -4,8 +4,7 @@
 /// <reference path="components/simplyupload/simplyuploadinterop.js" />
 /// <reference path="components/simplyalert/simplyalertinterop.js" />
 /// <reference path="node_modules/flatpickr/dist/flatpickr.min.js" />
-/// <reference path="components/simplysearch/simplysearchinterop.js" />
-
+/// <reference path="extensions/ijsruntimeextensionsinterop.js" />
 /// <reference path="components/simplydate/simplydateinterop.js" />
 /// <reference path="node_modules/choices.js/public/assets/scripts/choices.js" />
 /*
@@ -35,7 +34,7 @@ gulp.task('js', function () {
         //'components/simplytags/simplytagsinterop.js',
         'components/simplychoices/simplychoicesinterop.js',
         'components/simplyupload/simplyuploadinterop.js',
-        'components/simplysearch/simplysearchinterop.js'
+        'extensions/ijsruntimeextensionsinterop.js'
         //'components/simplymodal/SimplyModalInterop.js',
         //'components/simplyalert/simplyalertinterop.js',
         //'components/simplysearch/simplysearchinterop.js',

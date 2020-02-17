@@ -28,13 +28,8 @@ namespace SW.SimplyRazor.SampleWeb.Resources.Employees
             {
                 Location = fileId,
                 MimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                Name = "export.xlsx",
+                Name = "export",
             };
-            //    return new SearchyResponse<Employee>
-            //    {
-            //        Result = result,
-            //        TotalCount = 10 // FakeEmployees.Data.AsQueryable().Search(request.Conditions).Count()
-            //    };
         }
     }
 }
