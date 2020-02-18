@@ -51,7 +51,7 @@
                 }
                 else
 
-                    @Value
+                    @GetFormattedValue()
             }
             else
             {
@@ -365,6 +365,16 @@
         serverFeedback = null;
 
         await InvokeAsync(() => StateHasChanged());
+    }
+
+    public string GetFormattedValue()
+    {
+        if (!string.IsNullOrEmpty(Format))
+        {
+            return ((dynamic)Value).ToString(Format);
+        }
+        else
+            return Value.ToString();
     }
 
     void IDisposable.Dispose()

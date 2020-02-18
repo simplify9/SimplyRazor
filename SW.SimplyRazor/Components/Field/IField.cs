@@ -25,5 +25,7 @@ namespace SW.SimplyRazor
         bool ReadOnly { get; }
         string  Format { get; }
 
+        string GetFormattedValue();
+
     }
 }
