@@ -367,7 +367,7 @@
         await InvokeAsync(() => StateHasChanged());
     }
 
-    public string GetFormattedValue()
+    public object GetFormattedValue()
     {
         if (Value == null) return null;
 
@@ -376,7 +376,7 @@
             return ((dynamic)Value).ToString(Format);
         }
         else
-            return Value.ToString();
+            return Value;
     }
 
     void IDisposable.Dispose()
