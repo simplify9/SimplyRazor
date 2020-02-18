@@ -9,7 +9,7 @@
 {
     <textarea id="@State.Id"
               rows="3"
-              value="@State.Value"
+              value="@GetFormattedValue()"
               class="form-control @((State.IsInvalid ? "is-invalid" : null))"
               disabled="@State.ReadOnly"
               placeholder="@State.Placeholder"
@@ -20,7 +20,7 @@
 else
 {
     <input id="@State.Id"
-           value="@State.Value"
+           value="@GetFormattedValue()"
            type="@inputType"
            class="form-control @((State.IsInvalid ? "is-invalid" : null))"
            disabled="@State.ReadOnly"
@@ -41,6 +41,16 @@ else
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
     string inputType;
+
+    string GetFormattedValue()
+    {
+        if (!string.IsNullOrEmpty(State.Format))
+        {
+            return ((dynamic)State.Value).ToString(State.Format);
+        }
+        else
+            return State.Value.ToString();
+    }
 
     protected override void OnInitialized()
     {

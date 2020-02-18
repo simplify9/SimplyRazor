@@ -21,10 +21,9 @@
                     <Field Name="FirstName" InputType="InputType.Multiline" ReadOnly="true"></Field>
                     <Field Name="LastName" ReadOnly="true"></Field>
 
-                    <Field Name="@nameof(Employee.Age)" Default="20" />
+                    <Field Name="@nameof(Employee.Age)" Default="20" Format="#.#" />
                     <div>test</div>
                     <Field Name="Married" />
-                    <Field Name="ArrivalTime" />
                     <Field Name="EmploymentDate" InputType="InputType.DateCalendar" />
 
                     <Field Name="EmploymentStatus" Lookup="mockmodels" ReadOnly="true" />
@@ -119,6 +118,7 @@
             {
                 "JO"
             };
+            employee.Age = decimal.Parse("5.10000"); 
             ready = true;
         }
     }

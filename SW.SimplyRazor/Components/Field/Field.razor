@@ -131,6 +131,9 @@
     public bool ReadOnly { get; set; }
 
     [Parameter]
+    public string Format { get; set; }
+
+    [Parameter]
     public EventCallback<object> ValueChanged { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]

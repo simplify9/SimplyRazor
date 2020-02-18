@@ -23,6 +23,7 @@ namespace SW.SimplyRazor
         object Model { get;  }
         int TypeAhead { get; }
         bool ReadOnly { get; }
+        string  Format { get; }
 
     }
 }

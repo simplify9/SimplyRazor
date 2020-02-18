@@ -26,7 +26,7 @@ namespace SW.BogusDataModels
         public string DisplayName { get; set; }
         //public TimeSpan  ArrivalTime { get; set; }
         public Gender Gender { get; set; }
-        public int? Age { get; set; }
+        public decimal? Age { get; set; }
         public bool Married { get; set; }
         public Money Salary { get; set; }
         public int EmploymentStatus { get; set; }
@@ -86,6 +86,7 @@ namespace SW.BogusDataModels
             .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
             .RuleFor(u => u.Id, f => f.UniqueIndex)
             .RuleFor(u=> u.Country, f=> f.Address.CountryCode()) 
+            
             
             //Use a method outside scope.
             //.RuleFor(u => u.CartId, f => Guid.NewGuid())
