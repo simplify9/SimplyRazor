@@ -369,6 +369,8 @@
 
     public string GetFormattedValue()
     {
+        if (Value == null) return null;
+
         if (!string.IsNullOrEmpty(Format))
         {
             return ((dynamic)Value).ToString(Format);
