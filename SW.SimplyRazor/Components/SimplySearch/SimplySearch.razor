@@ -42,11 +42,13 @@
     <div class="row mb-2" @key="filter">
         <label class="col-2 col-form-label">@filter.Text</label>
         <div class="input-group col-7">
-            <SimplySelect Value="filter.Rule"
-                          ValueChanged="((value) => OnRuleChange(filter, value))"
-                          Items="filter.Rules"
-                          TKey="SearchyRule"
-                          class="input-group-prepend" />
+            <div class="input-group-prepend">
+                <SimplySelect Value="filter.Rule"
+                              ValueChanged="((value) => OnRuleChange(filter, value))"
+                              Items="filter.Rules"
+                              TKey="SearchyRule"
+                              class="form-control" />
+            </div>
 
             @switch (filter.Type)
             {
