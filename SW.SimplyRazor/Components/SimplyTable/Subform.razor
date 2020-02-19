@@ -4,12 +4,24 @@
 
 @if (modelType != null)
 {
-    <SimplyTableNonGeneric Value="value"
-                           Type="modelType"
-                           Text="@Text"
-                           Form="Form"
-                           Columns="Columns"
-                           ValueChanged="TableValueChanged"  />
+    if (Form == null)
+    {
+        <SimplyTableNonGeneric Value="value"
+                               Type="modelType"
+                               Text="@Text"
+                               Columns="Columns"
+                               ValueChanged="TableValueChanged" />
+ }
+    else
+    {
+        <SimplyTableNonGeneric Value="value"
+                               Type="modelType"
+                               Text="@Text"
+                               Form="Form"
+                               Columns="Columns"
+                               ValueChanged="TableValueChanged" />
+    }
+
 
 }
 
