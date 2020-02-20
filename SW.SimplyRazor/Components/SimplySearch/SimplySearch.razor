@@ -1,7 +1,7 @@
 ﻿@typeparam TModel
 @namespace SW.SimplyRazor
 @implements ISimplySearch
-@implements IFieldAction
+@implements IComponentAction
 @inject NotifyService notify
 @inject NavigationManager navigationManager
 @inject ApiService apiService
@@ -188,7 +188,7 @@
     public string Width { get; set; }
 
     [Parameter]
-    public RenderFragment<IFieldAction> Commands { get; set; }
+    public RenderFragment<IComponentAction> Commands { get; set; }
 
     [Parameter]
     public EventCallback<TModel> RowClicked { get; set; }

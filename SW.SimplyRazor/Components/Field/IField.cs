@@ -19,12 +19,11 @@ namespace SW.SimplyRazor
         //string InvalidFeedback { get; set; }
         PropertyInfo PropertyInfo { get; }
         InputType InputType { get; set; }
-        IFieldAction Action { get; }
+        IComponentAction Action { get; }
         object Model { get;  }
         int TypeAhead { get; }
         bool ReadOnly { get; }
         string  Format { get; }
-
         object GetFormattedValue();
 
     }

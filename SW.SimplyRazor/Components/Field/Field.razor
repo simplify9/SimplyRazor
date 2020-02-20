@@ -94,8 +94,8 @@
     [CascadingParameter(Name = "RenderMode")]
     public FieldRole RenderMode { get; set; }
 
-    [CascadingParameter(Name = "FieldAction")]
-    public IFieldAction Action { get; set; }
+    //[CascadingParameter(Name = "FieldAction")]
+    public IComponentAction Action { get; set; }
 
     [Parameter]
     public string Lookup { get; set; }
@@ -222,7 +222,7 @@
                     Rules = SearchyDataType.RulesFor(filterTypeString),
                     Required = Required,
                     Lookup = Lookup,
-                    TypeAhead = TypeAhead 
+                    TypeAhead = TypeAhead
 
                 };
 

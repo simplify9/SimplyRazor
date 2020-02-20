@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor
 {
-    public interface IFieldAction
+    public interface IComponentAction
     {
         Task Invoke(string actionName, object actionValue);
     }
