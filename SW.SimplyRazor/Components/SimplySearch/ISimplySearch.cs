@@ -8,8 +8,8 @@ namespace SW.SimplyRazor
 {
     public interface ISimplySearch
     {
-        Task AddFilterSetup(ISearchyFilterSetup filter);
-        void RemoveFilterSetup(ISearchyFilterSetup filter);
+        Task AddFilterSetup(SimplySearchFilterSetup filter);
+        void RemoveFilterSetup(SimplySearchFilterSetup filter);
         //Task RowClick(string index);
     }
 }

@@ -18,94 +18,138 @@
 
 <SimplyQuery QueryUrl="@FilterUrl" @bind-Working="filterQueryBusy" OnResult="OnFilterQueryResult" TResponse="IEnumerable<SearchyFilterSetup>"></SimplyQuery>
 <SimplyQuery QueryUrl="@query" @bind-Working="searchQueryBusy" OnResult="OnSearchQueryResult" TResponse="SearchyResponse<TModel>"></SimplyQuery>
+@{
+    int index = 0;
 
-@if (filterSetup.Any(filter => !filter.Required))
-{
-    <div class="row align-items-center mb-2">
-        <label class="col-2 col-form-label" for="filterSelect">Search filter</label>
-        <div class="input-group col-7">
-            <SimplySelect @bind-Value="filterValue"
-                          EmptyText="Select filter"
-                          Items="@(filterSetup.Select(e=>e.Text).ToList())"
-                          class="form-control" />
+    foreach (var filter in filters)
+    {
 
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" @onclick="FilterAddOnClick">Add</button>
-            </div>
-        </div>
+        var f1 = filter;
 
-    </div>
-}
+        <div class="row mb-2" @key="filter">
+            <div class="input-group col-6">
+                <div class="input-group-prepend">
+                    <SimplySelect ValueChanged="((value) => OnFilterChange(filter, value))"
+                                  EmptyText="select"
+                                  Items="@(filterSetup.ToDictionary(k => k.Field, v => v.Text))"
+                                  TKey="string"
+                                  class="form-control" />
 
-@foreach (var filter in filters)
-{
-    <div class="row mb-2" @key="filter">
-        <label class="col-2 col-form-label">@filter.Text</label>
-        <div class="input-group col-7">
-            <div class="input-group-prepend">
+                </div>
                 <SimplySelect Value="filter.Rule"
                               ValueChanged="((value) => OnRuleChange(filter, value))"
-                              Items="filter.Rules"
+                              Items="filter.CompactRules"
                               TKey="SearchyRule"
-                              class="form-control" />
-            </div>
+                              class="form-control"
+                              style="max-width: 90px" />
 
-            @switch (filter.Type)
-            {
-                case SearchyDataType.Number:
+                <SimplyForm TModel="FilterModel" @bind-Value="f1">
 
-                    <input @bind="filter.ValueDecimal" type="number" class="form-control" />
-                    break;
-
-                case SearchyDataType.Date:
-
-                    if (filter.DateMode == DateMode.Single)
+                    @switch (filter.Type)
                     {
-                        <SimplyDate Value="filter.ValueDateTime" ValueChanged="((value) => OnFilterValueChange(filter, value))" class="form-control"></SimplyDate>
+                        case SearchyDataType.Number:
+
+
+
+                            <Field Name="ValueDecimal" Text="" Lookup="@filter.Lookup" />
+
+                            break;
+
+                        case SearchyDataType.Date:
+
+                            if (filter.DateMode == DateMode.Single)
+                            {
+                                <Field Name="ValueDateTime" Text="" InputType="InputType.DateCalendar" />
+                            }
+                            else
+                            {
+
+                            }
+
+                            break;
+
+                        default:
+
+                            if (filter.Lookup == null)
+                            {
+                                <Field Name="ValueString" Text="" />
+                            }
+                            else
+                            {
+                                <Field Name="ValueString" Text="" Lookup="@filter.Lookup" TypeAhead="@filter.TypeAhead" />
+                            }
+
+                            break;
+
+                    }
+                </SimplyForm> 
+
+                @*@switch (filter.Type)
+                {
+                    case SearchyDataType.Number:
+
+                        <input @bind="filter.ValueDecimal" type="number" class="form-control" />
+                        break;
+
+                    case SearchyDataType.Date:
+
+                        if (filter.DateMode == DateMode.Single)
+                        {
+                            <SimplyDate Value="filter.ValueDateTime" ValueChanged="((value) => OnFilterValueChange(filter, value))" class="form-control"></SimplyDate>
+                        }
+                        else
+                        {
+                            <SimplyDate Value="filter.ValueDateTimeArray" ValueChanged="((value) => OnFilterValueChange(filter, value))" Mode="DateMode.Range" class="form-control "></SimplyDate>
+                        }
+
+                        break;
+
+                    default:
+
+                        <input @bind="filter.ValueString" type="text" class="form-control " />
+                        break;
+                }*@
+                <div class="input-group-append">
+
+                    @if (index == filters.Count - 1)
+                    {
+                        <button @onclick="@(e => AddFilter())" class="btn btn-outline-secondary " type="button">+</button>
                     }
                     else
                     {
-                        <SimplyDate Value="filter.ValueDateTimeArray" ValueChanged="((value) => OnFilterValueChange(filter, value))" Mode="DateMode.Range" class="form-control"></SimplyDate>
+                        <button @onclick="@(e => RemoveFilter(filter))" class="btn btn-outline-secondary " type="button">x</button>
                     }
 
-                    break;
+                </div>
 
-                default:
-
-                    <input @bind="filter.ValueString" type="text" class="form-control" />
-                    break;
-            }
-            @if (!filter.Required)
+            </div>
+            @if (index == 0)
             {
-                <div class="input-group-append">
-                    <button @onclick="@(e => RemoveFilter(filter))" class="btn btn-outline-secondary" type="button"><span class="oi oi-x" /></button>
+                <div class="col-auto pl-0">
+                    <button type="button" @onclick="() => Search(0)" class="btn btn-primary" style="width: 80px">
+                        @if (filterQueryBusy || searchQueryBusy)
+                        {
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        }
+                        else
+                        {
+                            @:Search
+                        }
+                    </button>
+
+                    @if (Commands != null)
+                    {
+                        @Commands(this)
+                    }
                 </div>
             }
-
         </div>
-    </div>
 
+        index++;
+
+    }
 }
 
-<div class="row align-items-center mb-3">
-    <div class="col-auto">
-        <button type="button" @onclick="() => Search(0)" class="btn btn-primary" style="width: 90px;">
-            @if (filterQueryBusy || searchQueryBusy)
-            {
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            }
-            else
-            {
-                @:Search
-            }
-        </button>
-        @if (Commands != null)
-        {
-            @Commands(this)
-        }
-    </div>
-
-</div>
 
 @if (result != null && result.Result.Count() > 0)
 {
@@ -149,14 +193,22 @@
     [Parameter]
     public EventCallback<TModel> RowClicked { get; set; }
 
-    int filterValue;
-    List<FilterModel> filters = new List<FilterModel>();
-    List<ISearchyFilterSetup> filterSetup = new List<ISearchyFilterSetup>();
+    List<FilterModel> filters = new List<FilterModel>()
+    {
+        new FilterModel()
+    };
+
+    List<SimplySearchFilterSetup> filterSetup = new List<SimplySearchFilterSetup>();
     bool searchQueryBusy;
     bool filterQueryBusy;
     int page;
     SearchyResponse<TModel> result;
     string query;
+
+    void AddFilter()
+    {
+        filters.Add(new FilterModel());
+    }
 
     void OnRuleChange(FilterModel filter, SearchyRule rule)
     {
@@ -174,6 +226,33 @@
 
     }
 
+    void OnFilterChange(FilterModel filter, string value)
+    {
+        filter.Field = value;
+        filter.ValueString = null;
+        filter.ValueStringArray = null;
+        filter.ValueDecimal = null;
+        filter.ValueDecimalArray = null;
+        filter.ValueDateTime = null;
+        filter.ValueDateTimeArray = null;
+        filter.Rule = default;
+
+        var selectedFilterSetup = filterSetup.Where(fs => fs.Field == value).FirstOrDefault();
+        if (selectedFilterSetup == null)
+        {
+            filter.Rules = new List<SearchyRule>();
+        }
+        else
+        {
+            filter.Rules = selectedFilterSetup.Rules;
+            filter.Rule = filter.Rules.First();
+            filter.Type = selectedFilterSetup.Type;
+            filter.Lookup = selectedFilterSetup.Lookup;
+            filter.TypeAhead = selectedFilterSetup.TypeAhead;
+
+        }
+    }
+
     void OnFilterValueChange(FilterModel filter, object value)
     {
         if (filter.Rule == SearchyRule.Range)
@@ -183,22 +262,12 @@
 
     }
 
-    Task FilterAddOnClick(object e)
-    {
-        if (filterValue > 0)
-        {
-            filters.Add(new FilterModel(filterSetup[filterValue - 1]));
-            filterValue = 0;
-        }
-        return Task.CompletedTask;
-    }
-
     async Task RemoveFilter(FilterModel filter)
     {
-        if (filter.Required)
-            await notify.Publish(new UserMessage { Body = "This filter is required for search.", Level = AlertLevel.Warning });
-        else
-            filters.Remove(filter);
+        //if (filter.Required)
+        //    await notify.Publish(new UserMessage { Body = "This filter is required for search.", Level = AlertLevel.Warning });
+        //else
+        filters.Remove(filter);
     }
 
     void Search(int page)
@@ -214,10 +283,10 @@
         this.page = page;
     }
 
-    async public Task AddFilterSetup(ISearchyFilterSetup filter)
+    async public Task AddFilterSetup(SimplySearchFilterSetup filter)
     {
         filterSetup.Add(filter);
-        if (filter.Default || filter.Required) filters.Add(new FilterModel(filter));
+        //if (filter.Default || filter.Required) filters.Add(new FilterModel(filter));
         await InvokeAsync(() => StateHasChanged());
     }
 
@@ -225,13 +294,13 @@
     {
         if (apiResult.Success)
         {
-            foreach (var fc in apiResult.Response)
+            //foreach (var fc in apiResult.Response)
 
-                await AddFilterSetup(fc);
+            //    await AddFilterSetup(fc);
         }
     }
 
-    public void RemoveFilterSetup(ISearchyFilterSetup filter)
+    public void RemoveFilterSetup(SimplySearchFilterSetup filter)
     {
         filterSetup.Remove(filter);
     }

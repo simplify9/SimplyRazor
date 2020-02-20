@@ -1,0 +1,46 @@
+﻿@page "/s2"
+@inject NavigationManager navigationManager
+@using SW.PrimitiveTypes
+
+<SimplyAlertHub></SimplyAlertHub>
+
+<SimplySearch PageSize="10" SearchUrl="employees" ExportUrl="employees/export" RowClicked="RowClicked" TModel="Employee" Height="200px" Width="max-content">
+    <Commands Context="action">
+        <button class="btn btn-primary" type="button" @onclick="@(() => action.Invoke("exporttoexcel", null))">Export</button>
+        <a href="form2">
+            New Employee
+        </a>
+    </Commands>
+    <Filters>
+        <Field Name="Id" Text="Id" Required="true"></Field>
+        <Field Name="EmploymentDate" Required="true"></Field>
+        <Field Name="FirstName"></Field>
+        <Field Name="Country" Lookup="countries" ></Field>
+
+        @*<Field Name="HandlerName"  Text="Handler" ></Field>
+        <Field Name="Started" Text="Date" ></Field>*@
+    </Filters>
+    <Columns>
+        <Field Name="Id" Text="Id">
+            <ColumnValue>
+                <a @onclick="@(() => context.Action.Invoke("s", "s"))">Edit</a>
+            </ColumnValue>
+        </Field>
+        <Field Name="FirstName" />
+        <Field Name="LastName" />
+        <Field Name="Age" />
+        <Field Name="Married" />
+        <Field Name="EmploymentStatus" />
+        <Field Name="Country" />
+        <Field Name="Salary.Amount" />
+        <Field Name="Salary.Currency" />
+    </Columns>
+</SimplySearch>
+
+@code{
+
+    void RowClicked(Employee employee)
+    {
+        navigationManager.NavigateTo($"/form2?id={employee.Id}");
+    }
+}

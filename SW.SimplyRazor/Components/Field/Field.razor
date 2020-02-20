@@ -146,7 +146,7 @@
 
     Type editor;
     string text = null;
-    ISearchyFilterSetup filterSetup;
+    SimplySearchFilterSetup filterSetup;
 
     [Parameter]
     public string Text
@@ -214,13 +214,16 @@
 
                 string filterTypeString = SearchyDataType.TypeStringFor(PropertyInfo.PropertyType);
 
-                filterSetup = new SearchyFilterSetup
+                filterSetup = new SimplySearchFilterSetup
                 {
                     Field = Name,
                     Text = Text,
                     Type = filterTypeString,
                     Rules = SearchyDataType.RulesFor(filterTypeString),
-                    Required = Required
+                    Required = Required,
+                    Lookup = Lookup,
+                    TypeAhead = TypeAhead 
+
                 };
 
                 await Search.AddFilterSetup(filterSetup);
