@@ -6,6 +6,7 @@
     <label for="@State.Id">@State.Text</label>
 }
 <select id="@State.Id"
+        disabled="@State.ReadOnly"
         @onchange="(e)=> ValueChanged.InvokeAsync(e.Value)"
         class="form-control @((State.IsInvalid ? "is-invalid" : null))"
         @attributes="UnmatchedAttributes">

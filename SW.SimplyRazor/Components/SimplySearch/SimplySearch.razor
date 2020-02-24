@@ -49,8 +49,6 @@
                     {
                         case SearchyDataType.Number:
 
-
-
                             <Field Name="ValueDecimal" Text="" Lookup="@filter.Lookup" />
 
                             break;
@@ -84,31 +82,6 @@
                     }
                 </SimplyForm> 
 
-                @*@switch (filter.Type)
-                {
-                    case SearchyDataType.Number:
-
-                        <input @bind="filter.ValueDecimal" type="number" class="form-control" />
-                        break;
-
-                    case SearchyDataType.Date:
-
-                        if (filter.DateMode == DateMode.Single)
-                        {
-                            <SimplyDate Value="filter.ValueDateTime" ValueChanged="((value) => OnFilterValueChange(filter, value))" class="form-control"></SimplyDate>
-                        }
-                        else
-                        {
-                            <SimplyDate Value="filter.ValueDateTimeArray" ValueChanged="((value) => OnFilterValueChange(filter, value))" Mode="DateMode.Range" class="form-control "></SimplyDate>
-                        }
-
-                        break;
-
-                    default:
-
-                        <input @bind="filter.ValueString" type="text" class="form-control " />
-                        break;
-                }*@
                 <div class="input-group-append">
 
                     @if (index == filters.Count - 1)
@@ -253,16 +226,16 @@
         }
     }
 
-    void OnFilterValueChange(FilterModel filter, object value)
-    {
-        if (filter.Rule == SearchyRule.Range)
-            filter.ValueDateTimeArray = (DateTime[])value;
-        else
-            filter.ValueDateTime = (DateTime)value;
+    //void OnFilterValueChange(FilterModel filter, object value)
+    //{
+    //    if (filter.Rule == SearchyRule.Range)
+    //        filter.ValueDateTimeArray = (DateTime[])value;
+    //    else
+    //        filter.ValueDateTime = (DateTime)value;
 
-    }
+    //}
 
-    async Task RemoveFilter(FilterModel filter)
+    void RemoveFilter(FilterModel filter)
     {
         //if (filter.Required)
         //    await notify.Publish(new UserMessage { Body = "This filter is required for search.", Level = AlertLevel.Warning });
