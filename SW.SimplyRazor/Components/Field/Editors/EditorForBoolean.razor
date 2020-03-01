@@ -1,16 +1,18 @@
 ﻿@namespace SW.SimplyRazor
 
-    <div class="form-check">
-        <input id="@State.Id"
-               checked="@State.Value"
-               type="checkbox"
-               class="form-check-input @((State.IsInvalid ? "is-invalid" : null))"
-               disabled="@State.ReadOnly"
-               @onchange="e=> ValueChanged.InvokeAsync(e.Value)"
-               @attributes="UnmatchedAttributes" />
-
+<div class="form-check">
+    <input id="@State.Id"
+           checked="@State.Value"
+           type="checkbox"
+           class="form-check-input @((State.IsInvalid ? "is-invalid" : null))"
+           disabled="@State.ReadOnly"
+           @onchange="e=> ValueChanged.InvokeAsync(e.Value)"
+           @attributes="UnmatchedAttributes" />
+    @if (!string.IsNullOrEmpty(State.Text))
+    {
         <label class="form-check-label" for="@State.Id">@State.Text</label>
-    </div>
+    }
+</div>
 
 @code {
 

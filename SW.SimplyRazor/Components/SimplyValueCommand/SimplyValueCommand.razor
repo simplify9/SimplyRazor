@@ -107,7 +107,7 @@
             var messages = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(result.Body);
 
             foreach (var kvp in messages)
-            {
+
                 if (kvp.Key.StartsWith("Field."))
 
                     await notify.Publish(new InvalidFieldNotification
@@ -123,7 +123,16 @@
                         Level = AlertLevel.Warning,
 
                     });
-            }
+
+        }
+
+        else if (result.StatusCode == 401)
+        {
+            await notify.Publish(new UserMessage
+            {
+                Body = $"Error ({result.StatusCode}): Unauthorized.",
+                Level = AlertLevel.Warning
+            });
         }
 
         else if (result.StatusCode > 400 && result.StatusCode < 500)

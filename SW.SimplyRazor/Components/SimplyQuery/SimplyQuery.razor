@@ -62,7 +62,16 @@ else if (Loading != null)
 
         var result = await apiService.GetAsync<TResponse>(queryUrl);
 
-        if (result.StatusCode == 400)
+        if (result.StatusCode == 401)
+        {
+            await notify.Publish(new UserMessage
+            {
+                Body = $"Error ({result.StatusCode}): Unauthorized.",
+                Level = AlertLevel.Warning
+            });
+        }
+
+        else if (result.StatusCode == 400)
         {
             var messages = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(result.Body);
 
@@ -73,7 +82,7 @@ else if (Loading != null)
             });
         }
 
-        if (result.StatusCode == 404)
+        else if (result.StatusCode == 404)
         {
             await notify.Publish(new UserMessage
             {
@@ -82,7 +91,7 @@ else if (Loading != null)
             });
         }
 
-        if (result.StatusCode == 0 || result.StatusCode >= 500)
+        else if (result.StatusCode == 0 || result.StatusCode >= 500)
         {
             await notify.Publish(new UserMessage
             {
