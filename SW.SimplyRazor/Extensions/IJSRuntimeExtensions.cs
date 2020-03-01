@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor
 {
-    static class IJSRuntimeExtensions
+    public static class IJSRuntimeExtensions
     {
         async public static Task DownloadFile(this IJSRuntime jSRuntime, string url, string fileName)
         {
