@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SW.SimplyRazor.SampleWeb.Resources.Employees
 {
-    [Protect(RequireRole = true)]
+
     public class Search : ISearchyHandler
     {
         async public Task<object> Handle(SearchyRequest request, bool lookup = false, string searchPhrase = null)
