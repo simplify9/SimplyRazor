@@ -105,6 +105,7 @@
         if (result.StatusCode == 400)
         {
             var messages = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(result.Body);
+            bool notified = false;
 
             foreach (var kvp in messages)
 
@@ -113,10 +114,10 @@
                     await notify.Publish(new InvalidFieldNotification
                     {
                         Message = string.Join(", ", kvp.Value),
-                    }, kvp.Key.Split('.')[1]);
+                    }, kvp.Key.Split(new char[] { '.' }, 2)[1]);
 
                 else
-
+                {
                     await notify.Publish(new UserMessage
                     {
                         Body = string.Join(",", kvp.Value),
@@ -124,6 +125,16 @@
 
                     });
 
+                    notified = true;
+                }
+
+            if (!notified)
+
+                await notify.Publish(new UserMessage
+                {
+                    Body = $"Error ({result.StatusCode}): Request validation failed.",
+                    Level = AlertLevel.Warning
+                });
         }
 
         else if (result.StatusCode == 401)
