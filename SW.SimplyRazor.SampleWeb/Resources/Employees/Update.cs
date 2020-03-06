@@ -25,6 +25,11 @@ namespace SW.SimplyRazor.SampleWeb.Resources.Employees
             {
                 RuleFor(p => p.Age).ExclusiveBetween(18, 130);
                 RuleFor(p => p.Salary.Amount).GreaterThan(0).When(e => e.Salary != null);
+                RuleForEach(p => p.Leaves).ChildRules(leaves =>
+                {
+                    leaves.RuleFor(p => p.Days).GreaterThan(0);
+                }); 
+
 
             }
         }

@@ -4,6 +4,9 @@
 
 @if (modelType != null)
 {
+    <SimplyNotify Notification="InvalidFieldNotification" OnReceived="OnServerFeedback" Tag="@Name" />
+
+
     if (Form == null)
     {
         <SimplyTableNonGeneric Value="value"
@@ -20,6 +23,13 @@
                                Form="Form"
                                Columns="Columns"
                                ValueChanged="TableValueChanged" />
+    }
+
+    @if (serverFeedback != null)
+    {
+        <div class="text-danger small">
+            @serverFeedback
+        </div>
     }
 
 
@@ -100,5 +110,27 @@
         modelType = propInfo.PropertyType.GetGenericArguments()[0];
         value = propInfo.GetValue(Model);
     }
+
+    System.Timers.Timer countdown;
+    string serverFeedback;
+
+    void OnServerFeedback(InvalidFieldNotification notification)
+    {
+        serverFeedback = notification.Message;
+        StateHasChanged();
+
+        countdown = new System.Timers.Timer(TimeSpan.FromSeconds(5).TotalMilliseconds);
+        countdown.Elapsed += async (s, e) => await OnDue();
+        countdown.AutoReset = false;
+        countdown.Start();
+    }
+
+    async Task OnDue()
+    {
+        serverFeedback = null;
+
+        await InvokeAsync(() => StateHasChanged());
+    }
+
 
 }

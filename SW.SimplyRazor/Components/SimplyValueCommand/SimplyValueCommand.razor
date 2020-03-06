@@ -32,141 +32,146 @@
     bool confirmVisible;
 
 
-    [Parameter]
-    public string CommandUrl { get; set; }
+[Parameter]
+public string CommandUrl { get; set; }
 
-    [Parameter]
-    public object Request { get; set; }
+[Parameter]
+public object Request { get; set; }
 
-    [Parameter]
-    public EventCallback<ApiResult<TResponse>> OnResult { get; set; }
+[Parameter]
+public EventCallback<ApiResult<TResponse>> OnResult { get; set; }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> UnmatchedAttributes { get; set; }
+[Parameter(CaptureUnmatchedValues = true)]
+public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
-    [Parameter]
-    public ApiMethod Method { get; set; }
+[Parameter]
+public ApiMethod Method { get; set; }
 
-    [Parameter]
-    public string Title { get; set; }
+[Parameter]
+public string Title { get; set; }
 
-    [Parameter]
-    public bool Confirm { get; set; }
+[Parameter]
+public bool Confirm { get; set; }
 
-    [Parameter]
-    public RenderFragment ChildContent { get; set; }
+[Parameter]
+public RenderFragment ChildContent { get; set; }
 
 
-    async Task OnConfirmResult(bool result)
+async Task OnConfirmResult(bool result)
+{
+    if (result) await PerformAction();
+}
+
+async Task ButtonOnClick(EventArgs args)
+{
+    if (Confirm)
     {
-        if (result) await PerformAction();
+        confirmVisible = true;
+        return;
+    };
+
+    await PerformAction();
+
+}
+
+async Task PerformAction()
+{
+    working = true;
+
+    ApiResult<TResponse> result;
+
+    switch (Method)
+    {
+        case ApiMethod.Post:
+        case ApiMethod.Default:
+            result = await apiService.PostAsync<TResponse>(CommandUrl, Request);
+            break;
+
+        case ApiMethod.Delete:
+            var result1 = await apiService.DeleteAsync(CommandUrl);
+
+            result = new ApiResult<TResponse>
+            {
+                StatusCode = result1.StatusCode,
+                Success = result1.Success
+            };
+
+            break;
+
+        default:
+            throw new NotImplementedException();
     }
 
-    async Task ButtonOnClick(EventArgs args)
+    if (result.StatusCode == 400)
     {
-        if (Confirm)
-        {
-            confirmVisible = true;
-            return;
-        };
+        var messages = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(result.Body);
+        bool notified = false;
 
-        await PerformAction();
+        foreach (var kvp in messages)
 
-    }
+            if (kvp.Key.StartsWith("Field."))
+            {
+                var fieldName = kvp.Key.Split(new char[] { '.' }, 2)[1];
+                var removeIndex = fieldName.IndexOf("[");
+                if (removeIndex > 0) fieldName = fieldName.Remove(removeIndex);
 
-    async Task PerformAction()
-    {
-        working = true;
-
-        ApiResult<TResponse> result;
-
-        switch (Method)
-        {
-            case ApiMethod.Post:
-            case ApiMethod.Default:
-                result = await apiService.PostAsync<TResponse>(CommandUrl, Request);
-                break;
-
-            case ApiMethod.Delete:
-                var result1 = await apiService.DeleteAsync(CommandUrl);
-
-                result = new ApiResult<TResponse>
+                await notify.Publish(new InvalidFieldNotification
                 {
-                    StatusCode = result1.StatusCode,
-                    Success = result1.Success
-                };
+                    Message = string.Join(", ", kvp.Value),
+                }, fieldName);
 
-                break;
-
-            default:
-                throw new NotImplementedException();
-        }
-
-        if (result.StatusCode == 400)
-        {
-            var messages = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(result.Body);
-            bool notified = false;
-
-            foreach (var kvp in messages)
-
-                if (kvp.Key.StartsWith("Field."))
-
-                    await notify.Publish(new InvalidFieldNotification
-                    {
-                        Message = string.Join(", ", kvp.Value),
-                    }, kvp.Key.Split(new char[] { '.' }, 2)[1]);
-
-                else
-                {
-                    await notify.Publish(new UserMessage
-                    {
-                        Body = string.Join(",", kvp.Value),
-                        Level = AlertLevel.Warning,
-
-                    });
-
-                    notified = true;
-                }
-
-            if (!notified)
-
+            }
+            else
+            {
                 await notify.Publish(new UserMessage
                 {
-                    Body = $"Error ({result.StatusCode}): Request validation failed.",
-                    Level = AlertLevel.Warning
-                });
-        }
+                    Body = string.Join(",", kvp.Value),
+                    Level = AlertLevel.Warning,
 
-        else if (result.StatusCode == 401)
-        {
+                });
+
+                notified = true;
+            }
+
+        if (!notified)
+
             await notify.Publish(new UserMessage
             {
-                Body = $"Error ({result.StatusCode}): Unauthorized.",
+                Body = $"Error ({result.StatusCode}): Request validation failed.",
                 Level = AlertLevel.Warning
             });
-        }
+    }
 
-        else if (result.StatusCode > 400 && result.StatusCode < 500)
+    else if (result.StatusCode == 401)
+    {
+        await notify.Publish(new UserMessage
         {
-            await notify.Publish(new UserMessage
-            {
-                Body = $"Error ({result.StatusCode}): ...",
-                Level = AlertLevel.Warning,
+            Body = $"Error ({result.StatusCode}): Unauthorized.",
+            Level = AlertLevel.Warning
+        });
+    }
 
-            });
-
-        }
-        else if (result.StatusCode == 0 || result.StatusCode >= 500)
+    else if (result.StatusCode > 400 && result.StatusCode < 500)
+    {
+        await notify.Publish(new UserMessage
         {
-            await notify.Publish(new UserMessage
-            {
-                Body = $"Error ({result.StatusCode}): {(result.Body ?? "...")}",
-                Level = AlertLevel.Error
-            });
-        }
+            Body = $"Error ({result.StatusCode}): ...",
+            Level = AlertLevel.Warning,
 
-        await OnResult.InvokeAsync(result);
-        working = false;
+        });
 
     }
+    else if (result.StatusCode == 0 || result.StatusCode >= 500)
+    {
+        await notify.Publish(new UserMessage
+        {
+            Body = $"Error ({result.StatusCode}): {(result.Body ?? "...")}",
+            Level = AlertLevel.Error
+        });
+    }
+
+    await OnResult.InvokeAsync(result);
+    working = false;
+
+}
 }

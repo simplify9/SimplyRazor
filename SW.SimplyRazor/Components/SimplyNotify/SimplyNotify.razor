@@ -17,7 +17,7 @@
 
     async public Task Handle(Notification notification, string[] tags)
     {
-        if (Tag == null || Tag != null && tags.Contains(Tag, StringComparer.InvariantCultureIgnoreCase))
+        if (Tag == null || Tag != null && tags.Contains(Tag, StringComparer.OrdinalIgnoreCase))
             await OnReceived.InvokeAsync(notification);
     }
 

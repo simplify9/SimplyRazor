@@ -7,9 +7,6 @@ namespace SW.SimplyRazor
 {
     public static class IServiceCollectionExtensions
     {
-
-
-
         public static IServiceCollection AddSimplyRazor(this IServiceCollection serviceCollection)
         {
             var componentOptions = new ComponentOptions();
@@ -36,19 +33,11 @@ namespace SW.SimplyRazor
 
         static IServiceCollection addSimplyRazor(this IServiceCollection serviceCollection)
         {
-
-
-            //serviceCollection.AddSingleton<Notifier<Ping>>();
-            serviceCollection.AddSingleton<Notifier<UserMessage>>();
-            serviceCollection.AddSingleton<Notifier<InvalidFieldNotification>>();
-
             serviceCollection.AddScoped<JwtStore>();
 
-
+            serviceCollection.AddScoped<Notifier<UserMessage>>();
+            serviceCollection.AddScoped<Notifier<InvalidFieldNotification>>();
             return serviceCollection.AddScoped<NotifyService>();
-
         }
-
-
     }
 }

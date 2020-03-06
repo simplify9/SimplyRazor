@@ -115,7 +115,7 @@ namespace SW.BogusDataModels
     public class Leave
     {
         public int Days { get; set; }
-        public string Reason { get; private set; }
+        public string Reason { get; set; }
     }
 
 }
