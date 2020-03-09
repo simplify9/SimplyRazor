@@ -116,6 +116,8 @@ namespace SW.BogusDataModels
     {
         public int Days { get; set; }
         public string Reason { get; set; }
+
+        public RemoteBlob Photo { get; set; }
     }
 
 }

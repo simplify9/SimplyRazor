@@ -24,12 +24,14 @@ namespace SW.SimplyRazor.SampleWeb.Controllers
         [HttpPost, DisableRequestSizeLimit]
         public async Task<IActionResult> Upload([FromForm] UploadReuqest ur)
         {
+            
             Directory.CreateDirectory("./uploads");
 
             var fileId = Guid.NewGuid().ToString("N");
             var filePath = $"./uploads/{fileId}";
 
-            await Task.Delay(TimeSpan.FromSeconds(2));
+            await Task.Delay(TimeSpan.FromSeconds(4));
+            throw new Exception();
 
             var result = new RemoteBlob
             {

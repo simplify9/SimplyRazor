@@ -301,7 +301,11 @@
 
     async Task OnChange(object value)
     {
-        if (TrySetValue(value))
+        if (value is InvalidFieldValue)
+        {
+            invalidFeedback = ((InvalidFieldValue)value).Message;
+        }
+        else if (TrySetValue(value))
         {
             serverFeedback = null;
             await ValueChanged.InvokeAsync(value);
@@ -335,7 +339,7 @@
 
             return true;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             invalidFeedback = $"{value} is not {PropertyInfo.PropertyType.Name}";
             return false;

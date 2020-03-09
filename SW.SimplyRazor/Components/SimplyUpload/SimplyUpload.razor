@@ -4,53 +4,59 @@
 @using SW.PrimitiveTypes
 
 <div class="input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text">
+            @if (saving)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+
+            }
+            else if (saved)
+            {
+                @:Done
+            }
+            else
+            {
+                @:Upload
+            }
+        </span>
+    </div>
     <div class="custom-file">
 
         <input class="custom-file-input"
                @ref="inputRef"
                @onchange="InputOnChange"
                type="file"
-               accept="image/*"
-               @attributes="UnmatchedParameters" />
+               @attributes="UnmatchedAttributes" />
 
         <label class="custom-file-label" for="customFile">Select</label>
 
     </div>
-    <div class="input-group-append">
-        <button disabled="@(!saveButtonState)" @onclick="SaveOnClick" class="btn btn-outline-secondary" type="button">
-            @if (saving)
-            {
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                @:Saving...
-            }
-            else if (saved)
-            {
-                @:Saved
-            }
-            else
-            {
-                @:Save
-            }
-        </button>
-    </div>
+    @if (error != null)
+    {
+        <div class="invalid-feedback">
+            @error
+        </div>
+    }
+
 </div>
+
+@if (saving)
+{
+    <div style="top:0;  left:0; position:fixed; width: 100%;height :100%;z-index:1060; ">
+    </div>
+}
 
 
 @code {
 
     ElementReference inputRef;
 
-    //[Parameter]
-    //public string Value { get; set; }
-
     [Parameter]
-    public EventCallback<RemoteBlob> ValueChanged { get; set; }
+    public EventCallback<object> ValueChanged { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> UnmatchedParameters { get; set; }
-
-    //[Parameter]
-    //public EventCallback<KeyValuePair<string, string>> ValueChanged { get; set; }
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -61,36 +67,37 @@
         }
     }
 
-    bool saveButtonState;
     bool saving;
     bool saved;
+    string error;
 
-    async Task SaveOnClick(EventArgs args)
+    async Task InputOnChange(ChangeEventArgs args)
     {
-        saving = true;
-        saveButtonState = false;
+        if (string.IsNullOrWhiteSpace(args.Value.ToString()))
+        {
+            saved = false;
+        }
+        else
+        {
+            saving = true;
 
-        try
-        {
-            var rb = await JSRuntime.InvokeAsync<RemoteBlob>("simplyUploadInterop.saveFile", inputRef, componentOptions.BlobsUri.ToString());
-            await ValueChanged.InvokeAsync(rb);
+            try
+            {
+                var rb = await JSRuntime.InvokeAsync<RemoteBlob>("simplyUploadInterop.saveFile", inputRef, componentOptions.BlobsUri.ToString());
+                await ValueChanged.InvokeAsync(rb);
+                saving = false;
+                saved = true;
+            }
+            catch (Exception ex)
+            {
+                //await ValueChanged.InvokeAsync(new InvalidFieldValue
+                //{
+                //    Message = ex.Message
+                //});
+                error = ex.Message;
+                saving = false;
+                saved = false;
+            }
         }
-        catch (Exception)
-        {
-            var x = 1;
-        }
-        finally
-        {
-            saving = false;
-            saved = true;
-            saveButtonState = false;
-        }
-    }
-
-    Task InputOnChange(ChangeEventArgs args)
-    {
-        saved = false;
-        saveButtonState = true;
-        return Task.CompletedTask;
     }
 }
