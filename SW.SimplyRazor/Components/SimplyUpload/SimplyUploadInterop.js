@@ -1,26 +1,37 @@
 ﻿(function () {
     window.simplyUploadInterop = {
 
-        saveFile: function (element, url) {
+        saveFile: function (element, url, sizeLimit) {
+
             //var id = { name: 'john', age: 34 };
             var formData = new FormData();
             var file = element.files[0];
-            //Promise.all(files.map(f => fetch('/upload', { method: "POST", body: formData })));
+
+            if (sizeLimit > 0 && file.size > sizeLimit) {
+                return {
+                    body: `File size limit exceeded ${sizeLimit}.`,
+                    statusCode: 0,
+                    success: false
+                }
+            }
+
             formData.append("File", file);
             //formData.append("Id", "123456");
-
-
             //formData.append("user", JSON.stringify(user));
 
-            //try {
-
             return fetch(url, { method: "POST", body: formData })
-                .then(response => response.json());
-                //.then((body) => console.log(body));
-            //}
-            //catch (e) {
-            //    console.log('Huston we have problem...:', e);
-            //}
+                .then(response =>
+                    response.status < 300
+                        ? response.json().then(json => ({
+                            response: json,
+                            statusCode: response.status,
+                            success: true
+                        }))
+                        : response.text().then(text => ({
+                            body: text,
+                            statusCode: response.status,
+                            success: false
+                        })));
 
         },
 

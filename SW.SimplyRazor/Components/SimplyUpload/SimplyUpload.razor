@@ -3,13 +3,12 @@
 @inject ComponentOptions componentOptions
 @using SW.PrimitiveTypes
 
-<div class="input-group">
+<div class="input-group ">
     <div class="input-group-prepend">
         <span class="input-group-text">
             @if (saving)
             {
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-
             }
             else if (saved)
             {
@@ -23,30 +22,28 @@
     </div>
     <div class="custom-file">
 
-        <input class="custom-file-input"
+        <input class="custom-file-input @((error == null) ? "" : "is-invalid")"
+               id="custom1"
                @ref="inputRef"
                @onchange="InputOnChange"
                type="file"
                @attributes="UnmatchedAttributes" />
 
-        <label class="custom-file-label" for="customFile">Select</label>
-
+        <label class="custom-file-label" for="custom1">@Placeholder</label>
     </div>
-    @if (error != null)
-    {
-        <div class="invalid-feedback">
-            @error
-        </div>
-    }
-
 </div>
 
-@if (saving)
+@if (error != null)
 {
-    <div style="top:0;  left:0; position:fixed; width: 100%;height :100%;z-index:1060; ">
+    <div class="text-danger small">
+        @error
     </div>
 }
 
+@if (saving)
+{
+    <div style="top:0;  left:0; position:fixed; width: 100%;height :100%;z-index:1060; "></div>
+}
 
 @code {
 
@@ -54,6 +51,9 @@
 
     [Parameter]
     public EventCallback<object> ValueChanged { get; set; }
+
+    [Parameter]
+    public string Placeholder { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
@@ -75,7 +75,10 @@
     {
         if (string.IsNullOrWhiteSpace(args.Value.ToString()))
         {
+            await ValueChanged.InvokeAsync(null);
+            error = null;
             saved = false;
+            saving = false;
         }
         else
         {
@@ -83,20 +86,39 @@
 
             try
             {
-                var rb = await JSRuntime.InvokeAsync<RemoteBlob>("simplyUploadInterop.saveFile", inputRef, componentOptions.BlobsUri.ToString());
-                await ValueChanged.InvokeAsync(rb);
-                saving = false;
-                saved = true;
+                long size = 0;
+                if (UnmatchedAttributes.TryGetValue("size", out var sizeObject))
+                {
+                    size = long.Parse(sizeObject.ToString());
+                }
+
+                var apiResult = await JSRuntime.InvokeAsync<ApiResult<RemoteBlob>>("simplyUploadInterop.saveFile", inputRef, componentOptions.BlobsUri.ToString(), size);
+                if (apiResult.Success)
+                {
+                    var rb = apiResult.Response;
+                    await ValueChanged.InvokeAsync(rb);
+                    error = null;
+                    saving = false;
+                    saved = true;
+                }
+                else
+                {
+                    if (apiResult.StatusCode < 500)
+                        throw new SWException($"{apiResult.StatusCode}, {apiResult.Body}");
+
+                    else
+                        throw new SWException($"{apiResult.StatusCode}, server error.");
+
+                }
+
             }
             catch (Exception ex)
             {
-                //await ValueChanged.InvokeAsync(new InvalidFieldValue
-                //{
-                //    Message = ex.Message
-                //});
-                error = ex.Message;
+                await ValueChanged.InvokeAsync(null);
+                error = $"Error: {ex.Message}";
                 saving = false;
                 saved = false;
+
             }
         }
     }

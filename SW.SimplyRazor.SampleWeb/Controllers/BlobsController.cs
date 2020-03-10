@@ -31,7 +31,7 @@ namespace SW.SimplyRazor.SampleWeb.Controllers
             var filePath = $"./uploads/{fileId}";
 
             await Task.Delay(TimeSpan.FromSeconds(4));
-            throw new Exception();
+            //throw new Exception();
 
             var result = new RemoteBlob
             {
