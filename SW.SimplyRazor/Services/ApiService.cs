@@ -41,6 +41,18 @@ namespace SW.SimplyRazor
             }
         }
 
+        async public Task<ApiResult> PostAsync(string url, object payload)
+        {
+            var result = await PostAsync<NoT>(url, payload);
+
+            return new ApiResult
+            {
+                Body = result.Body,
+                StatusCode = result.StatusCode,
+                Success = result.Success
+            };
+        }
+
         async public Task<ApiResult<TResponse>> PostAsync<TResponse>(string url, object payload)
         {
 
