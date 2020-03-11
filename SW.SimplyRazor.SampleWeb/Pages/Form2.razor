@@ -5,7 +5,7 @@
 
 <SimplyQuery QueryUrl="@($"employees/5")" OnResult="OnQueryResult" TResponse="Employee">
     <Result>
-        <SimplyForm @bind-Value="context">
+        <SimplyForm @bind-Value="context.CurrentResult">
 
             <SimplyTabs >
 
@@ -85,12 +85,14 @@
 
         <div class="container-fluid mt-5">
             <SimplyCommand Title="Save" Confirm="true" CommandUrl="employees/5" Request="context" OnResult="OnSaveResult" class="btn btn-secondary" />
+            <button @onclick="() => context.Refresh()" class="btn btn-secondary" >Refresh</button>
+
         </div>
 
-        <p>Age: @context?.Age</p>
-        <p>Emp Status: @context?.EmploymentStatus</p>
-        <p>Country: @context?.Country</p>
-        <p>Photo: @context?.Photo</p>
+        <p>Age: @context.CurrentResult?.Age</p>
+        <p>Emp Status: @context.CurrentResult?.EmploymentStatus</p>
+        <p>Country: @context.CurrentResult?.Country</p>
+        <p>Photo: @context.CurrentResult?.Photo</p>
     </Result>
 </SimplyQuery>
 @code {

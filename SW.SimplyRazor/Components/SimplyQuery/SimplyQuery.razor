@@ -1,23 +1,18 @@
 ﻿@typeparam TResponse
+@implements ISimplyQuery<TResponse>
 @namespace SW.SimplyRazor
 @inject NotifyService notify
 @inject ApiService apiService
 @using Newtonsoft.Json
 
-@if (currentResult != null && currentResult.Success)
+@if (CurrentResult != null )
 {
     if (Result != null)
     {
-        @Result(currentResult.Response)
+        @Result(this)
     }
 }
-else if (currentResult != null)
-{
-    if (Error != null)
-    {
-        @Error
-    }
-}
+
 else if (Loading != null)
 {
     @Loading
@@ -38,15 +33,12 @@ else if (Loading != null)
     public EventCallback<bool> WorkingChanged { get; set; }
 
     [Parameter]
-    public RenderFragment<TResponse> Result { get; set; }
-
-    [Parameter]
-    public RenderFragment Error { get; set; }
+    public RenderFragment<ISimplyQuery<TResponse>> Result { get; set; }
 
     [Parameter]
     public RenderFragment Loading { get; set; }
 
-    ApiResult<TResponse> currentResult;
+    public TResponse CurrentResult { get; set; }
 
     async public override Task SetParametersAsync(ParameterView parameters)
     {
@@ -56,11 +48,20 @@ else if (Loading != null)
 
         if (string.IsNullOrEmpty(queryUrl) || queryUrl == oldQueryUrl) return;
 
-        //currentResult = null;
+        await RunQuery();
+    }
 
+    async public Task Refresh()
+    {
+        CurrentResult = default;
+        await RunQuery();
+    }
+
+    async Task RunQuery()
+    {
         await WorkingChanged.InvokeAsync(true);
 
-        var result = await apiService.GetAsync<TResponse>(queryUrl);
+        var result = await apiService.GetAsync<TResponse>(QueryUrl);
 
         if (result.StatusCode == 401)
         {
@@ -91,7 +92,7 @@ else if (Loading != null)
             });
         }
 
-        else if (result.StatusCode == 0 || result.StatusCode >= 500)
+        else if (result.StatusCode == 0 || result.StatusCode >= 300)
         {
             await notify.Publish(new UserMessage
             {
@@ -103,7 +104,8 @@ else if (Loading != null)
         await OnResult.InvokeAsync(result);
         await WorkingChanged.InvokeAsync(false);
 
-        currentResult = result;
+        if (result.Success)
+            CurrentResult = result.Response;
 
         StateHasChanged();
     }
