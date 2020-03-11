@@ -8,7 +8,7 @@ namespace SW.SimplyRazor
 {
     public static class NotifyServiceExtensions
     {
-        async public static Task NotifyOnApiResult<TResponse>(this NotifyService notify,  ApiResult<TResponse> result)
+        async public static Task NotifyOnApiResult(this NotifyService notify, ApiResult result)
         {
             if (result.StatusCode == 400)
             {
