@@ -63,43 +63,7 @@ else if (Loading != null)
 
         var result = await apiService.GetAsync<TResponse>(QueryUrl);
 
-        if (result.StatusCode == 401)
-        {
-            await notify.Publish(new UserMessage
-            {
-                Body = $"Error ({result.StatusCode}): Unauthorized.",
-                Level = AlertLevel.Warning
-            });
-        }
-
-        else if (result.StatusCode == 400)
-        {
-            var messages = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(result.Body);
-
-            await notify.Publish(new UserMessage
-            {
-                Body = $"Error ({result.StatusCode}): {messages.Values.First().First()}",
-                Level = AlertLevel.Error
-            });
-        }
-
-        else if (result.StatusCode == 404)
-        {
-            await notify.Publish(new UserMessage
-            {
-                Body = $"Error ({result.StatusCode}): Not found.",
-                Level = AlertLevel.Error
-            });
-        }
-
-        else if (result.StatusCode == 0 || result.StatusCode >= 300)
-        {
-            await notify.Publish(new UserMessage
-            {
-                Body = $"Error ({result.StatusCode}): {(result.Body ?? "...")}",
-                Level = AlertLevel.Error
-            });
-        }
+        await notify.NotifyOnApiResult(result);
 
         await OnResult.InvokeAsync(result);
         await WorkingChanged.InvokeAsync(false);
