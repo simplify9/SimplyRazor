@@ -308,8 +308,14 @@
                 var result = await apiService.PostAsync<RemoteBlob>(ExportUrl, searchRequest);
 
                 if (result.Success)
+                {
+                    if (result.Response.Location.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                        await JSRuntime.DownloadFile(result.Response.Location, result.Response.Name);
 
-                    await JSRuntime.DownloadFile($"{componentOptions.BlobsUri.ToString()}{result.Response.Location}", result.Response.Name);
+                    else
+
+                        await JSRuntime.DownloadFile($"{componentOptions.BlobsUri.ToString()}{result.Response.Location}", result.Response.Name);
+                }
 
                 break;
 
