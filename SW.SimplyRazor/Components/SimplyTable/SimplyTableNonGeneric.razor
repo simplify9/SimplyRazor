@@ -20,7 +20,7 @@
         </SimplyGridNonGeneric>
     </CascadingValue>
 }
-else if (Form !=null)
+else if (Form != null)
 {
     <div class="mb-1"><em><a href="JavaScript:void(0);" @onclick="() => Add()">click</a> to add...</em></div>
 }
@@ -35,7 +35,7 @@ else if (Form !=null)
                 </div>
                 <div class="modal-body">
                     <SimplyFormNonGeneric Value="newModel">
-                            @Form
+                        @Form
                     </SimplyFormNonGeneric>
                 </div>
                 <div class="modal-footer">
@@ -74,6 +74,7 @@ else if (Form !=null)
     object originalModel;
     MethodInfo addMethod;
     MethodInfo removeMethod;
+    MethodInfo containsMethod;
 
 
     void Add()
@@ -126,6 +127,7 @@ else if (Form !=null)
     {
         addMethod = typeof(List<>).MakeGenericType(Type).GetMethod("Add");
         removeMethod = typeof(List<>).MakeGenericType(Type).GetMethod("Remove");
+        containsMethod = typeof(List<>).MakeGenericType(Type).GetMethod("Contains");
     }
 
 
@@ -143,7 +145,11 @@ else if (Form !=null)
                     Flag = TableItemFlag.Added
                 });
 
-                addMethod.Invoke(Value, new object[] { newModel });
+                if ((bool)containsMethod.Invoke(Value, new object[] { newModel }))
+                    await notify.Publish(new UserMessage { Body = "Item exists.", Level = AlertLevel.Warning });
+                else
+                    addMethod.Invoke(Value, new object[] { newModel });
+
             }
             else
             {
@@ -153,7 +159,12 @@ else if (Form !=null)
                     Flag = TableItemFlag.Changed
                 });
 
-                Object.DeepClone(newModel, originalModel);
+                if ((bool)containsMethod.Invoke(Value, new object[] { newModel }))
+                    await notify.Publish(new UserMessage { Body = "Item exists.", Level = AlertLevel.Warning });
+                else
+                    Object.DeepClone(newModel, originalModel);
+
+
             }
 
 
