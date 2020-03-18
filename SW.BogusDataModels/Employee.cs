@@ -87,7 +87,7 @@ namespace SW.BogusDataModels
             .RuleFor(u => u.Id, f => f.UniqueIndex)
             .RuleFor(u=> u.Country, f=> f.Address.CountryCode()) 
             
-            
+            .RuleFor(u => u.EmploymentDate, f => f.Date.Past())
             //Use a method outside scope.
             //.RuleFor(u => u.CartId, f => Guid.NewGuid())
             //Compound property with context, use the first/last name properties

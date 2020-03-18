@@ -36,10 +36,10 @@
                                   class="form-control" />
 
                 </div>
-                <SimplySelect Value="filter.Rule"
+                <SimplySelect Value="(int)filter.Rule"
                               ValueChanged="((value) => OnRuleChange(filter, value))"
                               Items="filter.CompactRules"
-                              TKey="SearchyRule"
+                              TKey="int"
                               class="form-control"
                               style="max-width: 90px" />
 
@@ -183,9 +183,9 @@
         filters.Add(new FilterModel());
     }
 
-    void OnRuleChange(FilterModel filter, SearchyRule rule)
+    void OnRuleChange(FilterModel filter, int rule)
     {
-        filter.Rule = rule;
+        filter.Rule = (SearchyRule)rule;
         if (filter.Rule == SearchyRule.Range)
         {
             filter.DateMode = DateMode.Range;
@@ -217,23 +217,16 @@
         }
         else
         {
+            filter.Rule = selectedFilterSetup.Rules.First();
             filter.Rules = selectedFilterSetup.Rules;
-            filter.Rule = filter.Rules.First();
             filter.Type = selectedFilterSetup.Type;
             filter.Lookup = selectedFilterSetup.Lookup;
             filter.TypeAhead = selectedFilterSetup.TypeAhead;
 
         }
+
+        
     }
-
-    //void OnFilterValueChange(FilterModel filter, object value)
-    //{
-    //    if (filter.Rule == SearchyRule.Range)
-    //        filter.ValueDateTimeArray = (DateTime[])value;
-    //    else
-    //        filter.ValueDateTime = (DateTime)value;
-
-    //}
 
     void RemoveFilter(FilterModel filter)
     {
@@ -327,12 +320,15 @@
 
     IEnumerable<FilterModel> GetFilledFilters()
     {
-        return filters.Where(filter => filter.ValueDateTime != null ||
-                                            filter.ValueDateTimeArray != null ||
-                                            filter.ValueDecimal != null ||
-                                            filter.ValueDecimalArray != null ||
-                                            filter.ValueString != null ||
-                                            filter.ValueStringArray != null);
+        return filters.Where(filter =>
+            (filter.ValueDateTime != null ||
+            filter.ValueDateTimeArray != null ||
+            filter.ValueDecimal != null ||
+            filter.ValueDecimalArray != null ||
+            filter.ValueString != null ||
+            filter.ValueStringArray != null)
+                && !string.IsNullOrEmpty(filter.Field)
+                && filter.Rule!=default);
     }
 
 }
