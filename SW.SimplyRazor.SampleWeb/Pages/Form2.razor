@@ -25,6 +25,7 @@
                     <div>test</div>
                     <Field Name="Married" />
                     <Field Name="EmploymentDate" InputType="InputType.Calendar" />
+                    <Field Name="AbsentPeriod"  />
 
                     <Field Name="EmploymentStatus" Lookup="mockmodels" ReadOnly="true" />
                     <Field Name="Country" Lookup="countries" TypeAhead="3" ReadOnly="true" />
@@ -123,7 +124,8 @@
             {
                 "JO"
             };
-            employee.Age = decimal.Parse("5.10000"); 
+            employee.Age = decimal.Parse("5.10000");
+            employee.AbsentPeriod = new DateTime[] { DateTime.Now, DateTime.Now.AddDays(3) };
             ready = true;
         }
     }
