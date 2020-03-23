@@ -4,11 +4,11 @@
 {
     <label for="@State.Id">@State.Text</label>
 }
-
 <SimplyDate Id="@State.Id"
             Value="@State.Value"
             ValueChanged="ValueChanged"
             Disabled="@State.ReadOnly"
+            Mode="DateMode.Range"
             class="@cssClass"
             @attributes="UnmatchedAttributes" />
 @code {

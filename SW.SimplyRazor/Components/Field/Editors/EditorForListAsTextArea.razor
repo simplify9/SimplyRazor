@@ -1,14 +1,17 @@
 ﻿@namespace SW.SimplyRazor
 @using System.Collections
 
-<label for="@State.Id">@State.Text</label>
+@if (!string.IsNullOrEmpty(State.Text))
+{
+    <label for="@State.Id">@State.Text</label>
+}
 
 <textarea id="@State.Id"
           class="form-control @((State.IsInvalid ? "is-invalid" : null))"
           disabled="@State.ReadOnly"
           rows="3"
           @onchange="ValueOnChange"
-          @attributes="UnmatchedAttributes" >@value</textarea>
+          @attributes="UnmatchedAttributes">@value</textarea>
 
 @code {
 

@@ -33,6 +33,8 @@ namespace SW.BogusDataModels
         public string Country { get; set; }
 
         public DateTime? EmploymentDate { get; set; }
+
+        public DateTime[] AbsentFor { get; set; }
         public RemoteBlob Photo { get; set; }
         public ICollection<Leave> Leaves { get; set; }
 

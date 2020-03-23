@@ -256,9 +256,13 @@
                 {
                     editor = typeof(EditorForListAsTextArea);
                 }
+                else if (PropertyInfo.PropertyType.IsArray && PropertyInfo.PropertyType.GetElementType() == typeof(DateTime))
+                {
+                    editor = typeof(EditorForDateRange);
+                }
                 else if (PropertyInfo.PropertyType.IsArray)
                 {
-                    throw new ArgumentException("Only 'string' arrays supported.", Name);
+                    throw new ArgumentException("Only 'string' and 'datetime' arrays supported.", Name);
                 }
                 else if (PropertyInfo.PropertyType.IsGenericType && typeof(IEnumerable).IsAssignableFrom(PropertyInfo.PropertyType))
                 {
