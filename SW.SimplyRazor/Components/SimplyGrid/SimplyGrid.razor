@@ -1,8 +1,7 @@
 ﻿@typeparam TModel
 @namespace SW.SimplyRazor
 
-<SimplyGridNonGeneric Data="Data" RowClicked="GridRowClicked" ChildContent="ChildContent" />
-
+<SimplyGridNonGeneric Data="Data" RowClicked="GridRowClicked" ChildContent="ChildContent" Height="@Height" Width="@Width" />
 
 @code {
 
@@ -14,6 +13,13 @@
 
     [Parameter]
     public EventCallback<TModel> RowClicked { get; set; }
+
+    [Parameter]
+    public string Height { get; set; }
+
+    [Parameter]
+    public string Width { get; set; }
+
 
     async Task GridRowClicked(object row)
     {

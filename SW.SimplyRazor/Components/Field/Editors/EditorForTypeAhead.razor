@@ -7,10 +7,11 @@
 
 <SimplyChoices Id="@State.Id"
                Lookup="@State.Lookup"
-               TypeAhead="@State.TypeAhead"
+               TypeAhead="@State.TypeAhead.Value"
                Value="@State.Value"
                ValueChanged=" (value) =>  ValueChanged.InvokeAsync(value)"
                Disabled="State.ReadOnly"
+               Placeholder="@State.Placeholder"
                @attributes="UnmatchedAttributes"></SimplyChoices>
 
 @code {

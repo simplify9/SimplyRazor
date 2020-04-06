@@ -1,10 +1,11 @@
 ﻿(function () {
     window.simplyChoicesInterop = {
 
-        init: function (element, dotNetObjRef, id, searchFloor) {
+        init: function (element, dotNetObjRef, id, searchFloor, placeholder) {
 
             window[id] = new Choices(element, {
                 searchFloor: searchFloor,
+                searchPlaceholderValue: placeholder
 
             });
 
@@ -30,6 +31,11 @@
         setChoices: function (id, data, value, label) {
 
             window[id].setChoices(data, value, label, true);
+        },
+
+        setChoice: function (id, value) {
+
+            window[id].setChoiceByValue(value);
         },
 
         destroy: function (id) {

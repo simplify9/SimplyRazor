@@ -125,7 +125,7 @@
     public InputType InputType { get; set; }
 
     [Parameter]
-    public int TypeAhead { get; set; }
+    public int? TypeAhead { get; set; }
 
     [Parameter]
     public bool ReadOnly { get; set; }
@@ -277,13 +277,14 @@
                 }
                 else if (Lookup != null)
                 {
-                    if (TypeAhead > 0)
+                    if (TypeAhead == null)
 
-                        editor = typeof(EditorForTypeAhead);
+                        editor = typeof(EditorForTextAsSelect);
 
                     else
 
-                        editor = typeof(EditorForTextAsSelect);
+                        editor = typeof(EditorForTypeAhead);
+
                 }
                 else
                 {

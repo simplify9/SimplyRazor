@@ -32,6 +32,8 @@ namespace SW.BogusDataModels
         public int EmploymentStatus { get; set; }
         public string Country { get; set; }
 
+        public string BirthCountry { get; set; }
+
         public DateTime? EmploymentDate { get; set; }
 
         public DateTime[] AbsentPeriod { get; set; }

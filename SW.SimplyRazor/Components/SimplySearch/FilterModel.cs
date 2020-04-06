@@ -69,7 +69,7 @@ namespace SW.SimplyRazor
 
         public string Lookup { get; set; }
 
-        public int TypeAhead { get; set; }
+        public int? TypeAhead { get; set; }
 
     }
 

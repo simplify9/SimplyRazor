@@ -14,6 +14,6 @@ namespace SW.SimplyRazor
         public bool Default { get; set; }
         public ICollection<SearchyRule> Rules { get; set; }
         public string Lookup { get; set; }
-        public int TypeAhead { get; set; }
+        public int? TypeAhead { get; set; }
     }
 }

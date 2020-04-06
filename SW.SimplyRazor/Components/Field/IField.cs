@@ -21,7 +21,7 @@ namespace SW.SimplyRazor
         InputType InputType { get; set; }
         IComponentAction Action { get; }
         object Model { get;  }
-        int TypeAhead { get; }
+        int? TypeAhead { get; }
         bool ReadOnly { get; }
         string  Format { get; }
         object GetFormattedValue();

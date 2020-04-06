@@ -25,11 +25,12 @@
                     <div>test</div>
                     <Field Name="Married" />
                     <Field Name="EmploymentDate" InputType="InputType.Calendar" />
-                    <Field Name="AbsentPeriod"  />
+                    <Field Name="AbsentPeriod" />
 
                     <Field Name="EmploymentStatus" Lookup="mockmodels" ReadOnly="true" />
-                    <Field Name="Country" Lookup="countries" TypeAhead="3" ReadOnly="true" />
-                    <Field Name="Country" Lookup="countries" ReadOnly="true" />
+                    <Field Name="Country" Lookup="countries" TypeAhead="2" />
+                    <Field Name="BirthCountry" Lookup="countries" TypeAhead="1" Placeholder="Type a value!" />
+                    <Field Name="Country" Lookup="countries" ReadOnly="true"  />
                     <Field Name="Roles" Lookup="countries"></Field>
 
                     <Field Name="Roles" InputType="InputType.Multiline"></Field>

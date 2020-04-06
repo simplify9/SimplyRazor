@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="29.0.1" />
-    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2020.2.8.3" />
+    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2020.4.5.1" />
   </ItemGroup>
 
 </Project>

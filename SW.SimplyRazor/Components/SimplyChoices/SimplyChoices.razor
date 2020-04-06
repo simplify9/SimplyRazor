@@ -19,6 +19,9 @@
     public string Lookup { get; set; }
 
     [Parameter]
+    public string Placeholder { get; set; }
+
+    [Parameter]
     public bool Disabled { get; set; }
 
     [Parameter]
@@ -48,14 +51,20 @@
                 inputRef,
                 DotNetObjectReference.Create(this),
                 Id,
-                TypeAhead == 0 ? 1 : TypeAhead);
+                TypeAhead == 0 ? 1 : TypeAhead,
+                Placeholder);
 
-
-            if (Value != null)
+            if (TypeAhead == 0)
             {
-                queryValueUrl = $"{Lookup}/{Value}?lookup=true";
-                StateHasChanged();
+                queryUrl = $"{Lookup}?lookup=true";
+
+
             }
+            else if (Value != default)
+                queryValueUrl = $"{Lookup}/{Value}?lookup=true";
+
+            StateHasChanged();
+
 
             if (Disabled) await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.disable", Id);
 
@@ -67,11 +76,13 @@
     [JSInvokable]
     async public Task OnSearch(string value, int resultCount)
     {
-        await StepperDeboucer.Debouce(async () =>
-        {
-            queryUrl = $"{Lookup}?lookup=true&search={value}";
-            await InvokeAsync(() => StateHasChanged());
-        });
+        if (TypeAhead > 0)
+
+            await StepperDeboucer.Debouce(async () =>
+            {
+                queryUrl = $"{Lookup}?lookup=true&search={value}";
+                await InvokeAsync(() => StateHasChanged());
+            });
     }
 
     [JSInvokable]
@@ -83,7 +94,15 @@
     async Task OnQueryResult(ApiResult<Dictionary<string, string>> apiResult)
     {
         if (apiResult.Success)
+        {
             await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, apiResult.Response.ToArray(), "Key", "Value");
+            if (Value != default)
+
+                await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoice", Id, Value);
+
+
+
+        }
     }
 
     async Task OnQueryValueResult(ApiResult<string> apiResult)
