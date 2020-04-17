@@ -9,33 +9,16 @@
     <Authors>SimplyWorks</Authors>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <CodeAnalysisRuleSet></CodeAnalysisRuleSet>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <CodeAnalysisRuleSet></CodeAnalysisRuleSet>
-  </PropertyGroup>
-
   <ItemGroup>
-    <Compile Remove="Models\FieldState.cs" />
+    <Content Remove="package-lock.json" />
+    <Content Remove="package.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Components\SimplyEditor\SimplyEditorInterop.js" />
-    <None Remove="Components\SimplyUpload\SimplyUploadInterop.js" />
+    <None Include="package-lock.json" />
+    <None Include="package.json" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Components\SimplyEditor\SimplyEditorInterop.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="Components\SimplyUpload\SimplyUploadInterop.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-  </ItemGroup>
 
 
   <ItemGroup>
