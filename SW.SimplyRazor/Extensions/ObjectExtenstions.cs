@@ -7,37 +7,37 @@ namespace SW.SimplyRazor
 {
     public static  class Object
     {
-        private static Type GetNullableType(Type type)
-        {
-            if (type == typeof(string)) return typeof(string);
-            if (type == typeof(object)) return typeof(object);
-            return Nullable.GetUnderlyingType(type);
-        }
+        //private static Type GetNullableType(Type type)
+        //{
+        //    if (type == typeof(string)) return typeof(string);
+        //    if (type == typeof(object)) return typeof(object);
+        //    return Nullable.GetUnderlyingType(type);
+        //}
 
-        public static object ConvertValueToType(object value, Type type)
-        {
+        //public static object ConvertValueToType(object value, Type type)
+        //{
              
-            bool typeNullable = (GetNullableType(type) == null) ? false : true;
+        //    bool typeNullable = (GetNullableType(type) == null) ? false : true;
 
-            if (value is null && typeNullable) return null;
+        //    if (value is null && typeNullable) return null;
 
-            else if (value is null) return Activator.CreateInstance(type);
+        //    else if (value is null) return Activator.CreateInstance(type);
 
-            if (value.GetType() == type) return value;
-            if (type.IsAssignableFrom(value.GetType())) return value;
+        //    if (value.GetType() == type) return value;
+        //    if (type.IsAssignableFrom(value.GetType())) return value;
 
-            var nakedType = GetNullableType(type);
-            if (nakedType != null) 
-            {
-                if (string.IsNullOrWhiteSpace(value.ToString())) return null;
+        //    var nakedType = GetNullableType(type);
+        //    if (nakedType != null) 
+        //    {
+        //        if (string.IsNullOrWhiteSpace(value.ToString())) return null;
 
-                if (nakedType.IsEnum) return Enum.Parse(nakedType, value.ToString());
-                return Convert.ChangeType(value, nakedType);
-            }
+        //        if (nakedType.IsEnum) return Enum.Parse(nakedType, value.ToString());
+        //        return Convert.ChangeType(value, nakedType);
+        //    }
 
-            if (type.IsEnum) return Enum.Parse(type, value.ToString());
-            return Convert.ChangeType(value, type);
-        }
+        //    if (type.IsEnum) return Enum.Parse(type, value.ToString());
+        //    return Convert.ChangeType(value, type);
+        //}
 
         public static T DeepClone<T>(T obj)
         {

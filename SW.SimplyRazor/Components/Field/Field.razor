@@ -5,6 +5,7 @@
 @using System.Reflection
 @using Humanizer
 @using System.Collections
+@using SW.ObjectConversion
 
 @switch (RenderMode)
 {
@@ -63,7 +64,7 @@
 
     case FieldRole.ColumnName:
 
-        <th class="text-secondary pr-2" scope="col" style="font-weight: unset" >
+        <th class="text-secondary pr-2" scope="col" style="font-weight: unset">
             @if (ColumnHeader == null)
             {
                 @Text
@@ -235,7 +236,7 @@
 
             case FieldRole.Input:
 
-                if (PropertyInfo.GetSetMethod() ==null) throw new ArgumentException("Field does not have public setter.", Name);
+                if (PropertyInfo.GetSetMethod() == null) throw new ArgumentException("Field does not have public setter.", Name);
 
                 var nakedType = Nullable.GetUnderlyingType(PropertyInfo.PropertyType) ?? PropertyInfo.PropertyType;
 
@@ -341,7 +342,7 @@
 
         try
         {
-            var typedValue = Object.ConvertValueToType(value, PropertyInfo.PropertyType);
+            var typedValue = value.ConvertValueToType(PropertyInfo.PropertyType);
             PropertyInfo.SetValue(obj, typedValue);
             invalidFeedback = null;
 
