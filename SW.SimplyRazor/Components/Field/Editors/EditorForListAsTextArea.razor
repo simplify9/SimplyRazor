@@ -9,7 +9,7 @@
 <textarea id="@State.Id"
           class="form-control @((State.IsInvalid ? "is-invalid" : null))"
           disabled="@State.ReadOnly"
-          rows="3"
+          rows="@State.Rows"
           @onchange="ValueOnChange"
           @attributes="UnmatchedAttributes">@value</textarea>
 

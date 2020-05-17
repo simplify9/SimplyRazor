@@ -24,6 +24,8 @@ namespace SW.SimplyRazor
         int? TypeAhead { get; }
         bool ReadOnly { get; }
         string  Format { get; }
+        int Rows { get; set; }
+
         object GetFormattedValue();
 
     }

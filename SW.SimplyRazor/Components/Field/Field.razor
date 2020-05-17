@@ -134,6 +134,9 @@
     public string Format { get; set; }
 
     [Parameter]
+    public int Rows { get; set; } = 1;
+
+    [Parameter]
     public EventCallback<object> ValueChanged { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]

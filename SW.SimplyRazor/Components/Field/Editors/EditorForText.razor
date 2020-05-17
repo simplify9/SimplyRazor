@@ -8,7 +8,7 @@
 @if (inputType == "textarea")
 {
     <textarea id="@State.Id"
-              rows="3"
+              rows="@State.Rows"
               value="@State.GetFormattedValue()"
               class="form-control @((State.IsInvalid ? "is-invalid" : null))"
               disabled="@State.ReadOnly"
