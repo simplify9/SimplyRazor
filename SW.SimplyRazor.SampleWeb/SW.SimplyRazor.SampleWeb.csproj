@@ -26,18 +26,17 @@
     </PackageReference>
     
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.4" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.3" />
     <PackageReference Include="SimplyWorks.CqApi" Version="2020.5.16.6" />
     <PackageReference Include="SimplyWorks.ExportToExcel" Version="2020.2.16.5" />
     <PackageReference Include="SimplyWorks.I18n" Version="2020.3.25.1" />
-    <PackageReference Include="SimplyWorks.Searchy" Version="2020.5.16.1" />
-    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2020.4.30.2" />
-
+    <PackageReference Include="SimplyWorks.Searchy" Version="2020.5.28.1" />
+    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2020.5.30.9" />
+    <PackageReference Include="Bogus" Version="29.0.2" />
 
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SW.BogusDataModels\SW.BogusDataModels.csproj" />
     <ProjectReference Include="..\SW.SimplyRazor\SW.SimplyRazor.csproj" />
   </ItemGroup>
 
