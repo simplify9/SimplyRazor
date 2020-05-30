@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SW.SimplyRazor", "SW.Simply
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SW.SimplyRazor.SampleWeb", "SW.SimplyRazor.SampleWeb\SW.SimplyRazor.SampleWeb.csproj", "{84BC34D7-598B-4A32-8EB6-78997FFD64F3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SW.BogusDataModels", "SW.BogusDataModels\SW.BogusDataModels.csproj", "{B683E3C2-00F6-4C6A-B617-EB191B92B782}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{84BC34D7-598B-4A32-8EB6-78997FFD64F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84BC34D7-598B-4A32-8EB6-78997FFD64F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84BC34D7-598B-4A32-8EB6-78997FFD64F3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B683E3C2-00F6-4C6A-B617-EB191B92B782}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B683E3C2-00F6-4C6A-B617-EB191B92B782}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B683E3C2-00F6-4C6A-B617-EB191B92B782}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B683E3C2-00F6-4C6A-B617-EB191B92B782}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

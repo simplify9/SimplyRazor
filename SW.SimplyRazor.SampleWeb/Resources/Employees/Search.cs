@@ -1,6 +1,6 @@
-﻿using SW.BogusDataModels;
-using SW.PrimitiveTypes;
+﻿using SW.PrimitiveTypes;
 using SW.Searchy;
+using SW.SimplyRazor.SampleWeb.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

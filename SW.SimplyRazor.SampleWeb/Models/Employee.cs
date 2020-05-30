@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using static Bogus.DataSets.Name;
 
-namespace SW.BogusDataModels
+namespace SW.SimplyRazor.SampleWeb.Models
 {
     public class Employee
     {

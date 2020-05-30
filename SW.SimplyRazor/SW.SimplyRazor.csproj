@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
     <PackageId>SimplyWorks.SimplyRazor</PackageId>
     <Product>SimplyWorks.SimplyRazor</Product>
@@ -29,9 +29,9 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="SimplyWorks.ObjectConversion" Version="2020.5.16.1" />
-    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2020.4.30.2" />
+    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2020.5.30.9" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.4" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.5.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.6.0" />
   </ItemGroup>
 
 </Project>
