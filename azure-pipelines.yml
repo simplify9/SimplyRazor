@@ -1,4 +1,3 @@
-
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
 trigger:
@@ -13,56 +12,52 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
-stages:
-- stage: BuildDotNet
-  displayName: Build and push DotNet Nuget
-  jobs:  
-  - job: BuildDotNet
-    displayName: BuildDotNet
-    pool:
-      vmImage: $(vmImageName)
-    steps:
 
-    - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk 3.1.101'
-      inputs:
-        packageType: sdk
-        version: 3.1.101
-        installationPath: $(Agent.ToolsDirectory)/dotnet
+steps:
 
-    - task: DotNetCoreCLI@2
-      displayName: Restore
-      inputs:
-        command: 'restore'
-        projects: '**/*.csproj'
-        feedsToUse: 'select'
-        vstsFeed: 'e5fb2e9c-1207-48a4-8f7b-2e6b32308210'
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk 3.1.101'
+  inputs:
+    packageType: sdk
+    version: 3.1.101
+    installationPath: $(Agent.ToolsDirectory)/dotnet
 
-    - task: DotNetCoreCLI@2
-      displayName: Build
-      inputs:
-        projects: '**/*.csproj'
-        arguments: '--configuration $(BuildConfiguration)'
+- task: DotNetCoreCLI@2
+  displayName: Restore
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
+    vstsFeed: 'e5fb2e9c-1207-48a4-8f7b-2e6b32308210'
 
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet test'
-      inputs:
-        command: test
-        projects: '**/*Tests/*.csproj'
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
 
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet pack'
-      inputs:
-        command: pack
-        packagesToPack: 'SW.SimplyRazor/SW.SimplyRazor.csproj'
-        nobuild: true
-        versioningScheme: byBuildNumber
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  inputs:
+    command: test
+    projects: '**/*Tests/*.csproj'
 
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet push'
-      inputs:
-        command: push
-        publishVstsFeed: 'e5fb2e9c-1207-48a4-8f7b-2e6b32308210'
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet pack'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  inputs:
+    command: pack
+    packagesToPack: 'SW.SimplyRazor/SW.SimplyRazor.csproj'
+    nobuild: true
+    versioningScheme: byBuildNumber
+
+- task: NuGetCommand@2
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'swnuget' 
 
 
 
