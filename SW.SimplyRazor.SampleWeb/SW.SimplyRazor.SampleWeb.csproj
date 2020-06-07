@@ -30,8 +30,8 @@
     <PackageReference Include="SimplyWorks.CqApi" Version="2020.5.16.6" />
     <PackageReference Include="SimplyWorks.ExportToExcel" Version="2020.2.16.5" />
     <PackageReference Include="SimplyWorks.I18n" Version="2020.3.25.1" />
-    <PackageReference Include="SimplyWorks.Searchy" Version="2020.5.28.1" />
-    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2020.5.30.9" />
+    <PackageReference Include="SimplyWorks.Searchy" Version="2020.6.3.2" />
+    <PackageReference Include="SimplyWorks.PrimitiveTypes" Version="2020.6.4.4" />
     <PackageReference Include="Bogus" Version="29.0.2" />
 
   </ItemGroup>
