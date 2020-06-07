@@ -5,9 +5,11 @@
     <RazorLangVersion>3.0</RazorLangVersion>
     <PackageId>SimplyWorks.SimplyRazor</PackageId>
     <Product>SimplyWorks.SimplyRazor</Product>
-    <Company>SimplyWorks</Company>
-    <Authors>SimplyWorks</Authors>
+    <Authors>Simplify9</Authors>
     <PackageIcon>icon.png</PackageIcon>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/simplify9/SimplyRazor</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/simplify9/SimplyRazor</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
