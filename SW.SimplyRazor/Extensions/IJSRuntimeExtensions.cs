@@ -8,9 +8,9 @@ namespace SW.SimplyRazor
 {
     public static class IJSRuntimeExtensions
     {
-        async public static Task DownloadFile(this IJSRuntime jSRuntime, string url, string fileName)
+        async public static Task DownloadFile(this IJSRuntime jSRuntime, string url, string fileName, string target = null)
         {
-            await jSRuntime.InvokeVoidAsync("iJSRuntimeExtensionsInterop.downloadFile", url, fileName);
+            await jSRuntime.InvokeVoidAsync("iJSRuntimeExtensionsInterop.downloadFile", url, fileName, target);
         }
     }
 }
