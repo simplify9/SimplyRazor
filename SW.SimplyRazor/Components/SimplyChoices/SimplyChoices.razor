@@ -41,8 +41,6 @@
     string queryUrl;
     string queryValueUrl;
 
-    bool rendered;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -69,23 +67,28 @@
 
 
             if (Disabled) await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.disable", Id);
-
-            rendered = true;
         }
     }
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
+        var value = parameters.GetValueOrDefault<object>("Value");
+        var oldValue = Value;
         await base.SetParametersAsync(parameters);
 
-        if(rendered)
-        {
-            if(string.IsNullOrEmpty(queryUrl))
-                queryUrl = $"{Lookup}?lookup=true";
+        if (string.IsNullOrEmpty(value?.ToString()) || value == oldValue) return;
 
+        if (TypeAhead > 0)
+
+            await StepperDeboucer.Debouce(async () =>
+            {
+                queryUrl = $"{Lookup}?lookup=true&search={value}";
+                await InvokeAsync(() => StateHasChanged());
+            });
+
+        if (!string.IsNullOrEmpty(queryUrl))
             await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoice", Id, Value);
-        }
-        
+
     }
 
     Debouncer StepperDeboucer = new Debouncer(); // one second
