@@ -45,7 +45,7 @@ namespace SW.SimplyRazor
 
                     await notify.Publish(new UserMessage
                     {
-                        Body = $"Error ({result.StatusCode}): Request validation failed.",
+                        Body = "Validation failed.",
                         Level = AlertLevel.Warning
                     });
             }
@@ -54,7 +54,7 @@ namespace SW.SimplyRazor
             {
                 await notify.Publish(new UserMessage
                 {
-                    Body = $"Error ({result.StatusCode}): Unauthorized.",
+                    Body = "Unauthorized.",
                     Level = AlertLevel.Warning
                 });
             }
