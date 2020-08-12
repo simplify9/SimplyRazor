@@ -1,0 +1,23 @@
+﻿@page "/dropdown"
+<h3>Dropdown</h3>
+
+<button class="btn btn-secondary " type="button" id="dropdownMenuButton" aria-haspopup="true" aria-expanded="false" @onclick="() => dropdownVisible = !dropdownVisible">
+    Save
+</button>
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" aria-haspopup="true" aria-expanded="false" @onclick="() => dropdownVisible = !dropdownVisible">
+        Export
+    </button>
+    <SimplyDropdown @bind-Visible="dropdownVisible">
+        <a class="dropdown-item" href="profile">Profile</a>
+        <a class="dropdown-item" href="changepassword">Change Password</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="Logout">Logout</a>
+    </SimplyDropdown>
+</div>
+@code {
+
+    bool dropdownVisible;
+
+}
