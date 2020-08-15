@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BlazorLob3.Data
+namespace SW.SimplyRazor.SampleWeb
 {
     public class WeatherForecastService
     {

@@ -1,26 +1,14 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
-
 
 namespace SW.SimplyRazor
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection AddSimplyRazor(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddSimplyRazor(this IServiceCollection serviceCollection, Action<ComponentOptions> configure = null)
         {
             var componentOptions = new ComponentOptions();
-            serviceCollection.AddSingleton(componentOptions);
-
-            serviceCollection.AddHttpClient<ApiService>();
-
-            return serviceCollection.addSimplyRazor();
-        }
-
-        public static IServiceCollection AddSimplyRazor(this IServiceCollection serviceCollection, Action<ComponentOptions> configure)
-        {
-            var componentOptions = new ComponentOptions();
-            configure.Invoke(componentOptions);
+            if (configure != null) configure.Invoke(componentOptions);
             serviceCollection.AddSingleton(componentOptions);
 
             serviceCollection.AddHttpClient<ApiService>((serviceProvider, httpClient) =>
@@ -28,11 +16,6 @@ namespace SW.SimplyRazor
                 httpClient.BaseAddress = componentOptions.ApiBaseUri;
             });
 
-            return serviceCollection.addSimplyRazor();
-        }
-
-        static IServiceCollection addSimplyRazor(this IServiceCollection serviceCollection)
-        {
             serviceCollection.AddScoped<JwtStore>();
 
             serviceCollection.AddScoped<Notifier<UserMessage>>();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 
 namespace SW.SimplyRazor
@@ -11,5 +12,6 @@ namespace SW.SimplyRazor
         public string ApiTokenKey { get; set; }
         public string ApiTokenAudience { get; set; }
         public string ApiTokenIssuer { get; set; }
+        public Func<IServiceProvider, HttpClient> DefaultHttpClientFactory { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 using System;
 
-namespace BlazorLob3.Data
+namespace SW.SimplyRazor.SampleWeb
 {
     public class WeatherForecast
     {
