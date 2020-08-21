@@ -1,15 +1,15 @@
 ﻿@typeparam TKey
-
 @namespace SW.SimplyRazor
+@inject IServiceProvider serviceProvider
 
 @using System.Collections
 @using Humanizer
 
 
-@if (Lookup != null)
+@*@if (Lookup != null)
 {
     <SimplyQuery QueryUrl="@($"{Lookup}?lookup=true")" OnResult="OnQueryResult" TResponse="Dictionary<string, string>" ></SimplyQuery>
-}
+}*@
 
 <select @onchange="SelectValueChanged" @attributes="UnmatchedAttributes">
 
@@ -84,7 +84,7 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
-    protected override void OnInitialized()
+    async protected override Task OnInitializedAsync()
     {
         var nakedType = Nullable.GetUnderlyingType(typeof(TKey)) ?? typeof(TKey);
 
@@ -96,6 +96,13 @@
                 lst.Add(new KeyValuePair<TKey, string>((TKey)item, Enum.GetName(nakedType, item).Humanize()));
             }
             Items = lst;
+        }
+
+        if (Lookup != null)
+        {
+            var apiClient = serviceProvider.GetApiClient();
+            var result = await apiClient.Search($"{Lookup}?lookup=true");
+            if (result.Success) Items = result.Response;
         }
     }
 
@@ -128,14 +135,14 @@
         }
     }
 
-    void OnQueryResult(ApiResult< Dictionary<string, string>> apiResult)
-    {
-        if (apiResult.Success)
-        {
-            Items = apiResult.Response;
-            //StateHasChanged();
+    //void OnQueryResult(ApiResult< Dictionary<string, string>> apiResult)
+    //{
+    //    if (apiResult.Success)
+    //    {
+    //        Items = apiResult.Response;
+    //        //StateHasChanged();
 
-        }
-    }
+    //    }
+    //}
 
 }

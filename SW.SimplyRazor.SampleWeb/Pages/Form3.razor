@@ -1,20 +1,53 @@
 ﻿@page "/form3"
-@using Models 
+@using Models
 
 <h3>Form3</h3>
 
-<SimplyForm @bind-Value="parcel" >
-    <Field Name="Reference" ></Field>
-    
+<SimplyForm Value="Parcel" ValueChanged="OnChange" TModel="Parcel">
+    <Field Name="Reference"></Field>
+
     <Field Name="Address.Street" InputType="InputType.Multiline"></Field>
 
 
 </SimplyForm>
 
+<SimplyForm @bind-Value="Parcel">
+    <Field Name="Reference"></Field>
+
+    <Field Name="Address.Street" InputType="InputType.Multiline"></Field>
+
+
+</SimplyForm>
+
+<p>@Parcel.Reference</p>
+
 @code {
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    async Task OnChange(Parcel parcel)
+    {
+
+    }
+
+    public Parcel Parcel
+    {
+        get
+        {
+            return parcel;
+        }
+        set
+        {
+            parcel = value;
+        }
+    }
 
     Parcel parcel = new Parcel
     {
+        Reference = "1",
         Weight = new PrimitiveTypes.Weight(12, PrimitiveTypes.WeightUnit.kg)
     };
 

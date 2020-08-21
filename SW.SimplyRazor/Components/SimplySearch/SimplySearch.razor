@@ -1,12 +1,9 @@
 ﻿@typeparam TModel
 @namespace SW.SimplyRazor
 @implements ISimplySearch
-@implements IComponentAction
+@implements ISimplySearchCommand
 @inject NotifyService notify
-@inject NavigationManager navigationManager
-@inject ApiService apiService
-@inject IJSRuntime JSRuntime
-@inject ComponentOptions componentOptions
+@inject IServiceProvider serviceProvider
 
 <CascadingValue IsFixed="true" Value="this" Name="Search">
     <CascadingValue IsFixed="true" Value="typeof(TModel)" Name="ModelType">
@@ -16,28 +13,26 @@
     </CascadingValue>
 </CascadingValue>
 
-<SimplyQuery QueryUrl="@FilterUrl" @bind-Working="filterQueryBusy" OnResult="OnFilterQueryResult" TResponse="IEnumerable<SearchyFilterSetup>"></SimplyQuery>
-<SimplyQuery QueryUrl="@query" @bind-Working="searchQueryBusy" OnResult="OnSearchQueryResult" TResponse="SearchyResponse<TModel>"></SimplyQuery>
 @{
     int index = 0;
 
-    foreach (var filter in filters)
+    foreach (var filter in Value.Filters)
     {
-
         var f1 = filter;
 
         <div class="row mb-2" @key="filter">
             <div class="input-group col-6">
                 <div class="input-group-prepend">
-                    <SimplySelect ValueChanged="((value) => OnFilterChange(filter, value))"
+                    <SimplySelect Value="filter.Field"
+                                  ValueChanged="value => OnFilterChange(filter, value)"
                                   EmptyText="select"
-                                  Items="@(filterSetup.ToDictionary(k => k.Field, v => v.Text))"
+                                  Items="filterSetup.ToDictionary(k => k.Field, v => v.Text)"
                                   TKey="string"
                                   class="form-control" />
 
                 </div>
                 <SimplySelect Value="(int)filter.Rule"
-                              ValueChanged="((value) => OnRuleChange(filter, value))"
+                              ValueChanged="value => OnRuleChange(filter, value)"
                               Items="filter.CompactRules"
                               TKey="int"
                               class="form-control"
@@ -48,9 +43,7 @@
                     @switch (filter.Type)
                     {
                         case SearchyDataType.Number:
-
                             <Field Name="ValueDecimal" Text="" Lookup="@filter.Lookup" />
-
                             break;
 
                         case SearchyDataType.Date:
@@ -61,7 +54,7 @@
                             }
                             else
                             {
-                                <Field Name="ValueDateTimeArray" Text=""  />
+                                <Field Name="ValueDateTimeArray" Text="" />
                             }
 
                             break;
@@ -80,17 +73,17 @@
                             break;
 
                     }
-                </SimplyForm> 
+                </SimplyForm>
 
                 <div class="input-group-append">
 
-                    @if (index == filters.Count - 1)
+                    @if (index == Value.Filters.Count - 1)
                     {
-                        <button @onclick="@(e => AddFilter())" class="btn btn-outline-secondary " type="button">+</button>
+                        <button @onclick="e => Value.Filters.Add(new FilterModel())" class="btn btn-outline-secondary " type="button">+</button>
                     }
                     else
                     {
-                        <button @onclick="@(e => RemoveFilter(filter))" class="btn btn-outline-secondary " type="button">x</button>
+                        <button @onclick="e => Value.Filters.Remove(filter)" class="btn btn-outline-secondary " type="button">x</button>
                     }
 
                 </div>
@@ -99,16 +92,9 @@
             @if (index == 0)
             {
                 <div class="col-auto pl-0">
-                    <button type="button" @onclick="() => Search(0)" class="btn btn-primary" style="width: 80px">
-                        @if (filterQueryBusy || searchQueryBusy)
-                        {
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                        }
-                        else
-                        {
-                            @:Search
-                        }
-                    </button>
+                    <BusyButton OnClick="() => Search(0)" class="btn btn-primary" style="width: 80px">
+                        Search
+                    </BusyButton>
 
                     @if (Commands != null)
                     {
@@ -119,31 +105,26 @@
         </div>
 
         index++;
-
     }
-}
 
-
-@if (result != null && result.Result.Count() > 0)
-{
-    <div class="mb-3">
-        <SimplyGridNonGeneric Data="result.Result" RowClicked="GridRowClicked" Height="@Height" Width="@Width">
-            @Columns
-        </SimplyGridNonGeneric>
-    </div>
-    <SimplyPager TotalCount="result.TotalCount" Count="result.Result.Count()" Page="page" PageSize="PageSize" PageChanged="page => Search(page)"></SimplyPager>
+    if (result != null && result.Result.Count() > 0)
+    {
+        <div class="mb-3">
+            <SimplyGridNonGeneric Data="result.Result" RowClicked="model => RowClicked.InvokeAsync((TModel)model)" Height="@Height" Width="@Width">
+                @Columns
+            </SimplyGridNonGeneric>
+        </div>
+        <SimplyPager TotalCount="result.TotalCount" Count="result.Result.Count()" Page="Value.Page" PageSize="PageSize" PageChanged="page => Search(page)"></SimplyPager>
+    }
 }
 
 @code{
 
     [Parameter]
+    public ISimplyRazorApiClient ApiClient { get; set; }
+
+    [Parameter]
     public string SearchUrl { get; set; }
-
-    [Parameter]
-    public string FilterUrl { get; set; }
-
-    [Parameter]
-    public string ExportUrl { get; set; }
 
     [Parameter]
     public RenderFragment Filters { get; set; }
@@ -161,26 +142,26 @@
     public string Width { get; set; }
 
     [Parameter]
-    public RenderFragment<IComponentAction> Commands { get; set; }
+    public RenderFragment<ISimplySearchCommand> Commands { get; set; }
 
     [Parameter]
     public EventCallback<TModel> RowClicked { get; set; }
 
-    List<FilterModel> filters = new List<FilterModel>()
-    {
-        new FilterModel()
-    };
+    [Parameter]
+    public SimplySearchValue Value { get; set; }
 
-    List<SimplySearchFilterSetup> filterSetup = new List<SimplySearchFilterSetup>();
-    bool searchQueryBusy;
-    bool filterQueryBusy;
-    int page;
+    [Parameter]
+    public EventCallback<SimplySearchValue> ValueChanged { get; set; }
+
     SearchyResponse<TModel> result;
-    string query;
 
-    void AddFilter()
+    async protected override Task OnInitializedAsync()
     {
-        filters.Add(new FilterModel());
+        if (Value == null || Value.Filters.Count == 0)
+        {
+            Value = new SimplySearchValue();
+            Value.Filters.Add(new FilterModel());
+        }
     }
 
     void OnRuleChange(FilterModel filter, int rule)
@@ -196,7 +177,6 @@
             filter.DateMode = DateMode.Single;
             filter.ValueDateTimeArray = null;
         }
-
     }
 
     void OnFilterChange(FilterModel filter, string value)
@@ -222,62 +202,16 @@
             filter.Type = selectedFilterSetup.Type;
             filter.Lookup = selectedFilterSetup.Lookup;
             filter.TypeAhead = selectedFilterSetup.TypeAhead;
-
-        }
-
-        
-    }
-
-    void RemoveFilter(FilterModel filter)
-    {
-        //if (filter.Required)
-        //    await notify.Publish(new UserMessage { Body = "This filter is required for search.", Level = AlertLevel.Warning });
-        //else
-        filters.Remove(filter);
-    }
-
-    void Search(int page)
-    {
-
-        var searchRequest = new SearchyRequest(new SearchyCondition(GetFilledFilters()))
-        {
-            PageSize = PageSize,
-            PageIndex = page
-        };
-
-        query = $"{SearchUrl}?{searchRequest.ToString()}";
-        this.page = page;
-    }
-
-    async public Task AddFilterSetup(SimplySearchFilterSetup filter)
-    {
-        filterSetup.Add(filter);
-        //if (filter.Default || filter.Required) filters.Add(new FilterModel(filter));
-        await InvokeAsync(() => StateHasChanged());
-    }
-
-    async Task OnFilterQueryResult(ApiResult<IEnumerable<SearchyFilterSetup>> apiResult)
-    {
-        if (apiResult.Success)
-        {
-            //foreach (var fc in apiResult.Response)
-
-            //    await AddFilterSetup(fc);
         }
     }
 
-    public void RemoveFilterSetup(SimplySearchFilterSetup filter)
+    async Task Search(int page)
     {
-        filterSetup.Remove(filter);
-    }
+        Value.Page = page;
 
-    Task GridRowClicked(object model)
-    {
-        return RowClicked.InvokeAsync((TModel)model);
-    }
+        var apiClient = serviceProvider.GetApiClient(ApiClient);
+        var apiResult = await apiClient.Search<TModel>($"{SearchUrl}?{Value.ToSearchyRequest(PageSize).ToString()}");
 
-    async Task OnSearchQueryResult(ApiResult<SearchyResponse<TModel>> apiResult)
-    {
         if (apiResult.Success)
         {
             if (apiResult.Response.Result.Count() == 0)
@@ -286,49 +220,21 @@
             }
             result = apiResult.Response;
         }
-
-        query = null;
+        await ValueChanged.InvokeAsync(Value);
     }
 
-    async public Task Invoke(string actionName, object actionValue)
+    ICollection<SimplySearchFilterSetup> filterSetup = new List<SimplySearchFilterSetup>();
+
+    async public Task AddFilterSetup(SimplySearchFilterSetup filter)
     {
-        switch (actionName.ToLower())
-        {
-            case "exporttoexcel":
-
-                var searchRequest = new SearchyRequest(new SearchyCondition(GetFilledFilters()));
-
-                var result = await apiService.PostAsync<RemoteBlob>(ExportUrl, searchRequest);
-
-                if (result.Success)
-                {
-                    if (result.Response.Location.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-                        await JSRuntime.DownloadFile(result.Response.Location, result.Response.Name);
-
-                    else
-
-                        await JSRuntime.DownloadFile($"{componentOptions.BlobsUri.ToString()}{result.Response.Location}", result.Response.Name);
-                }
-
-                break;
-
-            default:
-
-                break;
-        }
+        filterSetup.Add(filter);
+        await InvokeAsync(() => StateHasChanged());
     }
 
-    IEnumerable<FilterModel> GetFilledFilters()
+    public void RemoveFilterSetup(SimplySearchFilterSetup filter)
     {
-        return filters.Where(filter =>
-            (filter.ValueDateTime != null ||
-            filter.ValueDateTimeArray != null ||
-            filter.ValueDecimal != null ||
-            filter.ValueDecimalArray != null ||
-            filter.ValueString != null ||
-            filter.ValueStringArray != null)
-                && !string.IsNullOrEmpty(filter.Field)
-                && filter.Rule!=default);
+        filterSetup.Remove(filter);
     }
 
+    public SearchyRequest SearchyRequest => Value.ToSearchyRequest(PageSize);
 }

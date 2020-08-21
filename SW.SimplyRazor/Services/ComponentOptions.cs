@@ -12,6 +12,6 @@ namespace SW.SimplyRazor
         public string ApiTokenKey { get; set; }
         public string ApiTokenAudience { get; set; }
         public string ApiTokenIssuer { get; set; }
-        public Func<IServiceProvider, HttpClient> DefaultHttpClientFactory { get; set; }
+        public Func<IServiceProvider, ISimplyRazorApiClient> DefaultApiClientFactory { get; set; }
     }
 }

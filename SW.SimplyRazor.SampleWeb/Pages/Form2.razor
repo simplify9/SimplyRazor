@@ -1,106 +1,128 @@
 ﻿@page "/form2"
 @inject NavigationManager navigationManager
+@inject SampleClient sampleClient
 
 <SimplyAlertHub></SimplyAlertHub>
 
-<SimplyQuery QueryUrl="@($"employees/5")" OnResult="OnQueryResult" TResponse="Employee">
-    <Result>
-        <SimplyForm @bind-Value="context.CurrentResult">
+@if (employee != null)
+{
+    <SimplyForm @bind-Value="employee">
 
-            <SimplyTabs >
+        <SimplyTabs>
 
-                <Tab Title="General">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <Field Name="FirstName" Text=""></Field>
-                        </div>
-                        <div class="col-md-6">
-                            <Field Name="LastName" Text=""></Field>
-                        </div>
+            <Tab Title="General">
+                <div class="row">
+                    <div class="col-md-6">
+                        <Field Name="FirstName" Text=""></Field>
                     </div>
-                    <Field Name="FirstName" InputType="InputType.Multiline" ReadOnly="true" rows="10"></Field>
-                    <Field Name="LastName" ReadOnly="true"></Field>
+                    <div class="col-md-6">
+                        <Field Name="LastName" Text=""></Field>
+                    </div>
+                </div>
+                <Field Name="FirstName" InputType="InputType.Multiline" ReadOnly="true" rows="10"></Field>
+                <Field Name="LastName" ReadOnly="true"></Field>
 
-                    <Field Name="@nameof(Employee.Age)" Default="20" Format="#.#" />
-                    <div>test</div>
-                    <Field Name="Married" />
-                    <Field Name="EmploymentDate" InputType="InputType.Calendar" />
-                    <Field Name="AbsentPeriod" />
+                <Field Name="@nameof(Employee.Age)" Default="20" Format="#.#" />
+                <div>test</div>
+                <Field Name="Married" />
+                <Field Name="EmploymentDate" InputType="InputType.Calendar" />
+                <Field Name="AbsentPeriod" />
 
-                    <Field Name="EmploymentStatus" Lookup="mockmodels" ReadOnly="true" />
-                    <Field Name="Country" Lookup="countries" TypeAhead="2" />
-                    <Field Name="BirthCountry" Lookup="countries" TypeAhead="1" Placeholder="Type a value!" />
-                    <Field Name="Country" Lookup="countries" ReadOnly="true"  />
-                    <Field Name="Roles" Lookup="countries"></Field>
+                <Field Name="EmploymentStatus" Lookup="mockmodels" ReadOnly="true" />
+                <Field Name="Country" Lookup="countries" TypeAhead="2" />
+                @*<Field Name="BirthCountry" Lookup="countries" TypeAhead="1" Placeholder="Type a value!" />*@
+                <Field Name="Country" Lookup="countries"  />
+                <Field Name="Roles" Lookup="countries"></Field>
 
-                    <Field Name="Roles" InputType="InputType.Multiline"></Field>
-
-
-                </Tab>
-                <Tab Title="Album">
-
-                    <Field Name="Photo" />
-                    <Field Name="Photos" />
-
-                </Tab>
+                <Field Name="Roles" InputType="InputType.Multiline"></Field>
 
 
-                <Tab Title="Properties">
+            </Tab>
+            <Tab Title="Album">
 
-                    <Field Name="AdditionalValues"></Field>
+                <Field Name="Photo" />
+                <Field Name="Photos" />
 
-                </Tab>
-                <Tab Title="Salary">
+            </Tab>
 
-                    <Field Name="Salary.Amount" />
-                    <Field Name="Salary.Currency" />
 
-                </Tab>
+            <Tab Title="Properties">
 
-                <Tab Title="Leaves">
-                    <Subform Name="Leaves">
-                        <Columns>
-                            <Field Text="Action">
-                                <ColumnHeader Context="fieldContext">
-                                    Action (<a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("add", null))">add</a>)
-                                </ColumnHeader>
-                                <ColumnValue Context="fieldContext">
-                                    <a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("remove", fieldContext.Model))">Remove</a>
-                                    <a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("edit", fieldContext.Model))">Edit</a>
-                                </ColumnValue>
-                            </Field>
-                            <Field Name="Reason" />
-                            <Field Name="Days" />
-                            <Field Name="Photo"   />
-                        </Columns>
-                        <Form>
-                            <Field Name="Photo" accept="image/*" size="1000000" />
+                <Field Name="AdditionalValues"></Field>
 
-                            <Field Name="Reason" />
-                            <Field Name="Days" />
-                        </Form>
-                    </Subform>
+            </Tab>
+            <Tab Title="Salary">
 
-                </Tab>
-            </SimplyTabs>
-        </SimplyForm>
+                <Field Name="Salary.Amount" />
+                <Field Name="Salary.Currency" />
 
-        <div class="container-fluid mt-5">
-            <SimplyCommand Title="Save" Confirm="true" CommandUrl="employees/5" Request="context" OnResult="OnSaveResult" class="btn btn-secondary" />
-            <button @onclick="() => context.Refresh()" class="btn btn-secondary" >Refresh</button>
+            </Tab>
 
-        </div>
+            <Tab Title="Leaves">
+                <Subform Name="Leaves">
+                    <Columns>
+                        <Field Text="Action">
+                            <ColumnHeader Context="fieldContext">
+                                Action (<a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("add", null))">add</a>)
+                            </ColumnHeader>
+                            <ColumnValue Context="fieldContext">
+                                <a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("remove", fieldContext.Model))">Remove</a>
+                                <a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("edit", fieldContext.Model))">Edit</a>
+                            </ColumnValue>
+                        </Field>
+                        <Field Name="Reason" />
+                        <Field Name="Days" />
+                        <Field Name="Photo" />
+                    </Columns>
+                    <Form>
+                        <Field Name="Photo" accept="image/*" size="1000000" />
+                        <Field Name="Reason" />
+                        <Field Name="Days" />
+                    </Form>
+                </Subform>
 
-        <p>Age: @context.CurrentResult?.Age</p>
-        <p>Emp Status: @context.CurrentResult?.EmploymentStatus</p>
-        <p>Country: @context.CurrentResult?.Country</p>
-        <p>Photo: @context.CurrentResult?.Photo</p>
-    </Result>
-</SimplyQuery>
+            </Tab>
+        </SimplyTabs>
+    </SimplyForm>
+
+    <div class="container-fluid mt-5">
+        @*<SimplyCommand Title="Save" Confirm="true" CommandUrl="employees/5" Request="employee" OnResult="OnSaveResult" class="btn btn-secondary" />*@
+    </div>
+
+    <p>Age: @employee?.Age</p>
+    <p>Emp Status: @employee?.EmploymentStatus</p>
+    <p>Country: @employee?.Country</p>
+    <p>Photo: @employee?.Photo</p>
+
+}
 @code {
 
     Employee employee;
     bool ready;
+
+    async protected override Task OnInitializedAsync()
+    {
+        var result = await sampleClient.GetById<Employee>("employees", 5);
+
+
+        if (result.Success) employee = result.Response;
+
+        //employee.Leaves = new List<Leave>();
+        //{
+        //    new Leave
+        //    {
+        //        Days = 1,
+        //        Reason = "test"
+        //    }
+        //};
+        employee.Roles = new List<string>
+        {
+                "JO"
+        };
+        employee.Age = decimal.Parse("5.10000");
+        employee.AbsentPeriod = new DateTime[] { DateTime.Now, DateTime.Now.AddDays(3) };
+
+    }
 
     void OnSaveResult(ApiResult apiResult)
     {
@@ -108,27 +130,6 @@
             navigationManager.NavigateTo("/");
     }
 
-    void OnQueryResult(ApiResult<Employee> apiResult)
-    {
-        if (apiResult.Success)
-        {
-            employee = apiResult.Response;
-            //employee.Leaves = new List<Leave>();
-            //{
-            //    new Leave
-            //    {
-            //        Days = 1,
-            //        Reason = "test"
-            //    }
-            //};
-            employee.Roles = new List<string>
-            {
-                "JO"
-            };
-            employee.Age = decimal.Parse("5.10000");
-            employee.AbsentPeriod = new DateTime[] { DateTime.Now, DateTime.Now.AddDays(3) };
-            ready = true;
-        }
-    }
+
 
 }

@@ -28,18 +28,6 @@ namespace SW.SimplyRazor
             Rules = new List<SearchyRule>();
         }
 
-        public FilterModel(ISearchyFilterSetup isfc)
-        {
-            Type = isfc.Type;
-            Text = isfc.Text;
-            Field = isfc.Field;
-            Required = isfc.Required;
-            Default = isfc.Default;
-            Rules = isfc.Rules;
-
-            Rule = isfc.Rules.First();
-        }
-
         public object Value { get; set; }
         public SearchyRule Rule { get; set; }
         public string Type { get; set; }
@@ -47,14 +35,8 @@ namespace SW.SimplyRazor
         public string Field { get; set; }
         public ICollection<SearchyRule> Rules { get; set; }
 
-        public IEnumerable<KeyValuePair<string, string>> CompactRules
-        {
-            get
-            {
-                return RulesDictionary.Where(k => Rules.Select(r => ((int)r).ToString()).Contains(k.Key));
-            }
-        }
-
+        public IEnumerable<KeyValuePair<string, string>> CompactRules => 
+            RulesDictionary.Where(k => Rules.Select(r => ((int)r).ToString()).Contains(k.Key));
 
         public bool Required { get; set; }
         public bool Default { get; set; }
@@ -64,13 +46,9 @@ namespace SW.SimplyRazor
         public decimal[] ValueDecimalArray { get; set; }
         public string[] ValueStringArray { get; set; }
         public DateTime[] ValueDateTimeArray { get; set; }
-
         public DateMode DateMode { get; set; }
-
         public string Lookup { get; set; }
-
         public int? TypeAhead { get; set; }
-
     }
 
 }

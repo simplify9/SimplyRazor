@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Http;
 using SW.I18n;
 using SW.CqApi;
+using SW.HttpExtensions;
 
 namespace SW.SimplyRazor.SampleWeb
 {
@@ -44,13 +45,14 @@ namespace SW.SimplyRazor.SampleWeb
                 config.ApiTokenAudience = "local";
                 config.ApiTokenIssuer = "local";
                 config.ApiTokenKey = "jhgfjhgfjhgfjhgfjhfjfj";
-                config.DefaultHttpClientFactory = (sp) =>
+                config.DefaultApiClientFactory = (sp) =>
                 {
-                    return sp.GetService<HttpClient>();
+                    return sp.GetService<SampleClient>();
                 };
             });
 
             services.AddAuthentication().AddJwtBearer();
+            services.AddApiClient<SampleClient, SampleClientOptions>(); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

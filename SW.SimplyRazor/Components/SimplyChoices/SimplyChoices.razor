@@ -1,14 +1,11 @@
 ﻿@namespace SW.SimplyRazor
 @implements IDisposable
 @inject IJSRuntime JSRuntime
-@inject ApiService apiClient
+@inject IServiceProvider serviceProvider
 
 <select id="@Id" @ref="inputRef" @attributes="UnmatchedAttributes">
     @*<option value="0" selected disabled>Please enter your address.</option>*@
 </select>
-
-<SimplyQuery QueryUrl="@queryUrl" OnResult="OnQueryResult" TResponse="Dictionary<string,string>"></SimplyQuery>
-<SimplyQuery QueryUrl="@queryValueUrl" OnResult="OnQueryValueResult" TResponse="string"></SimplyQuery>
 
 @code {
 
@@ -37,9 +34,7 @@
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
     ElementReference inputRef;
-    object inputValue;
-    string queryUrl;
-    string queryValueUrl;
+    bool rendered;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -56,39 +51,39 @@
 
             if (TypeAhead == 0)
             {
-                queryUrl = $"{Lookup}?lookup=true";
-
+                await PopulateChoices($"{Lookup}?lookup=true");
 
             }
             else if (Value != default)
-                queryValueUrl = $"{Lookup}/{Value}?lookup=true";
+            {
+                var apiClient = serviceProvider.GetApiClient();
+                var result = await apiClient.Lookup($"{Lookup}/{Value}?lookup=true");
+                if (result.Success)
+                    await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, new[] { new { Key = Value, Value = result.Response, selected = true } }, "key", "value");
+            }
 
-            StateHasChanged();
+            //StateHasChanged();
 
 
             if (Disabled) await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.disable", Id);
+            rendered = true;
         }
     }
 
-    public override async Task SetParametersAsync(ParameterView parameters)
+    async protected override Task OnParametersSetAsync()
     {
-        var value = parameters.GetValueOrDefault<object>("Value");
-        var oldValue = Value;
-        await base.SetParametersAsync(parameters);
+        await base.OnParametersSetAsync();
 
-        if (string.IsNullOrEmpty(value?.ToString()) || value == oldValue) return;
-
-        if (TypeAhead > 0)
-
-            await StepperDeboucer.Debouce(async () =>
+        if (rendered && TypeAhead > 0)
+        {
+            if (Value != null)
             {
-                queryUrl = $"{Lookup}?lookup=true&search={value}";
+                await PopulateChoices($"{Lookup}?lookup=true&search={Value}");
                 await InvokeAsync(() => StateHasChanged());
-            });
+            }
 
-        if (!string.IsNullOrEmpty(queryUrl))
-            await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoice", Id, Value);
-
+            //await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoice", Id, Value);
+        }
     }
 
     Debouncer StepperDeboucer = new Debouncer(); // one second
@@ -100,7 +95,8 @@
 
             await StepperDeboucer.Debouce(async () =>
             {
-                queryUrl = $"{Lookup}?lookup=true&search={value}";
+                await PopulateChoices($"{Lookup}?lookup=true&search={value}");
+
                 await InvokeAsync(() => StateHasChanged());
             });
     }
@@ -111,29 +107,18 @@
         await ValueChanged.InvokeAsync(value);
     }
 
-    async Task OnQueryResult(ApiResult<Dictionary<string, string>> apiResult)
+    async Task PopulateChoices(string url)
     {
+        var apiClient = serviceProvider.GetApiClient();
+        var apiResult = await apiClient.Search(url);
         if (apiResult.Success)
         {
             await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, apiResult.Response.ToArray(), "Key", "Value");
             if (Value != default)
 
                 await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoice", Id, Value);
-
-
-
         }
     }
-
-    async Task OnQueryValueResult(ApiResult<string> apiResult)
-    {
-        if (apiResult.Success)
-            await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, new[] { new { Key = Value, Value = apiResult.Response, selected = true } }, "key", "value");
-    }
-
-    //async ValueTask IAsyncDisposable.DisposeAsync()
-    //{
-    //}
 
     void IDisposable.Dispose()
     {

@@ -1,0 +1,36 @@
+﻿@namespace SW.SimplyRazor
+@inject NotifyService notify
+
+<button disabled="@working" type="button" @onclick="ButtonOnClick" @attributes="UnmatchedAttributes">
+    @if (working)
+    {
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    }
+    else
+    {
+        @ChildContent
+    }
+</button>
+
+@code {
+
+    bool working;
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    async Task ButtonOnClick(EventArgs args)
+    {
+        working = true;
+
+        await OnClick.InvokeAsync(args);
+
+        working = false;
+    }
+}

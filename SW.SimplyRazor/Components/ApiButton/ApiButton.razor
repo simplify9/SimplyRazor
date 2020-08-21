@@ -3,20 +3,11 @@
 @inject NotifyService notify
 @inject ApiService apiService
 
-<button disabled="@working" type="button" @onclick="ButtonOnClick" @attributes="UnmatchedAttributes">
-    @if (working)
-    {
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-    }
-    else
-    {
-        @ChildContent
-    }
-</button>
+<BusyButton OnClick="OnClick" UnmatchedAttributes="UnmatchedAttributes">
+    @ChildContent
+</BusyButton>
 
 @code {
-
-    bool working;
 
     [Parameter]
     public string Url { get; set; }
@@ -39,10 +30,8 @@
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
-    async Task ButtonOnClick(EventArgs args)
+    async Task OnClick(object args)
     {
-        working = true;
-
         ApiResult<TResponse> result;
 
         switch (Method)
@@ -72,6 +61,5 @@
         if (result.Success) await OnSuccess.InvokeAsync(result.Response);
         else await OnFailure.InvokeAsync(null);
 
-        working = false;
     }
 }

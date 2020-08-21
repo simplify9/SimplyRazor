@@ -1,12 +1,14 @@
 ﻿@page "/"
 @inject NavigationManager navigationManager
-@using SW.PrimitiveTypes
+@inject IJSRuntime JSRuntime
+@inject IServiceProvider serviceProvider
+
 
 <SimplyAlertHub></SimplyAlertHub>
 
-<SimplySearch PageSize="10" SearchUrl="employees" FilterUrl="employees/filters" ExportUrl="employees/export" RowClicked="RowClicked" TModel="Employee" Height="200px" Width="max-content">
-    <Commands Context="action">
-        <button class="btn btn-primary" type="button" @onclick="@(() => action.Invoke("exporttoexcel", null))">Export</button>
+<SimplySearch PageSize="10" SearchUrl="employees" RowClicked="RowClicked" TModel="Employee" Height="200px" Width="max-content">
+    <Commands>
+        <button class="btn btn-primary" type="button" @onclick="() => OnExportToExcel(context.SearchyRequest)">Export</button>
         <a href="form2">
             New Employee
         </a>
@@ -38,6 +40,24 @@
 </SimplySearch>
 
 @code{
+
+    SimplySearchValue search;
+
+    void OnSearch(SimplySearchValue value)
+    {
+        navigationManager.NavigateTo($"/{value.ToString()}");
+    }
+
+    async Task OnExportToExcel(SearchyRequest searchyRequest)
+    {
+        var apiClient = serviceProvider.GetApiClient();
+        //var result = await apiClient.PostAsync<RemoteBlob>(actionValue.ToString(), searchRequest);
+
+        //if (result.Success)
+        //{
+        //    await JSRuntime.DownloadFile(result.Response.Location, result.Response.Name);
+        //}
+    }
 
     void RowClicked(Employee employee)
     {

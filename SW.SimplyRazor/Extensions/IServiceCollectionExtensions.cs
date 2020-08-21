@@ -11,10 +11,10 @@ namespace SW.SimplyRazor
             if (configure != null) configure.Invoke(componentOptions);
             serviceCollection.AddSingleton(componentOptions);
 
-            serviceCollection.AddHttpClient<ApiService>((serviceProvider, httpClient) =>
-            {
-                httpClient.BaseAddress = componentOptions.ApiBaseUri;
-            });
+            //serviceCollection.AddHttpClient<ApiService>((serviceProvider, httpClient) =>
+            //{
+            //    httpClient.BaseAddress = componentOptions.ApiBaseUri;
+            //});
 
             serviceCollection.AddScoped<JwtStore>();
 

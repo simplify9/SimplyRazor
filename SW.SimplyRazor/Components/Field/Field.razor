@@ -1,6 +1,8 @@
 ﻿@namespace SW.SimplyRazor
 @implements IField
 @implements IDisposable
+@inject IServiceProvider serviceProvider
+
 @using SW.PrimitiveTypes
 @using System.Reflection
 @using Humanizer
@@ -42,16 +44,7 @@
         <td>
             @if (ColumnValue == null)
             {
-                @if (Lookup != null && !string.IsNullOrWhiteSpace(Value.ToString()))
-                {
-                    <SimplyQuery QueryUrl="@($"{Lookup}/{Value}?lookup=true")" OnResult="OnQueryResult" TResponse="string" />
-                    <SimplyReady @bind-Ready="lookupReady">
-                        @lookupValue
-                    </SimplyReady>
-                }
-                else
-
-                    @GetFormattedValue()
+                @lookupValue
             }
             else
             {
@@ -299,9 +292,23 @@
 
                 editorFragment = CreateEditor();
                 break;
+
+            case FieldRole.ColumnValue:
+
+                if (ColumnValue == null)
+
+                    if (Lookup != null && !string.IsNullOrWhiteSpace(Value.ToString()))
+                    {
+                        var apiClient = serviceProvider.GetApiClient();
+                        var result = await apiClient.Lookup($"{Lookup}/{Value}?lookup=true");
+                        if (result.Success)
+                            lookupValue = result.Response;
+                    }
+                    else
+                        lookupValue = GetFormattedValue()?.ToString();
+
+                break;
         }
-
-
     }
 
     async Task OnChange(object value)
@@ -384,9 +391,7 @@
         if (Value == null) return null;
 
         if (!string.IsNullOrEmpty(Format))
-        {
             return ((dynamic)Value).ToString(Format);
-        }
         else
             return Value;
     }

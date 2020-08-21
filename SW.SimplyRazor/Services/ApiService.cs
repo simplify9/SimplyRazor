@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SW.PrimitiveTypes;
 using System;
 using System.Net.Http;
 using System.Text;
