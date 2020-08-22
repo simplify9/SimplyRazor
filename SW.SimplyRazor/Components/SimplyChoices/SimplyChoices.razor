@@ -22,10 +22,10 @@
     public bool Disabled { get; set; }
 
     [Parameter]
-    public object Value { get; set; }
+    public string Value { get; set; }
 
     [Parameter]
-    public EventCallback<object> ValueChanged { get; set; }
+    public EventCallback<string> ValueChanged { get; set; }
 
     [Parameter]
     public int TypeAhead { get; set; }
@@ -34,7 +34,7 @@
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
     ElementReference inputRef;
-    bool rendered;
+    bool internalSetValue;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -52,38 +52,33 @@
             if (TypeAhead == 0)
             {
                 await PopulateChoices($"{Lookup}?lookup=true");
-
             }
-            else if (Value != default)
+        }
+
+        var controlValue = await JSRuntime.InvokeAsync<string>("simplyChoicesInterop.getValue", Id);
+
+        if (Value != controlValue)
+        {
+            if (TypeAhead > 0 && Value != default)
             {
                 var apiClient = serviceProvider.GetApiClient();
                 var result = await apiClient.Lookup($"{Lookup}/{Value}?lookup=true");
                 if (result.Success)
                     await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, new[] { new { Key = Value, Value = result.Response, selected = true } }, "key", "value");
             }
-
-            //StateHasChanged();
-
-
-            if (Disabled) await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.disable", Id);
-            rendered = true;
+            else if (Value != default)
+            {
+                await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoice", Id, Value);
+            }
         }
+
+
+        if (Disabled) await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.disable", Id);
     }
 
-    async protected override Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
-        await base.OnParametersSetAsync();
-
-        if (rendered && TypeAhead > 0)
-        {
-            if (Value != null)
-            {
-                await PopulateChoices($"{Lookup}?lookup=true&search={Value}");
-                await InvokeAsync(() => StateHasChanged());
-            }
-
-            //await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoice", Id, Value);
-        }
+        StateHasChanged();
     }
 
     Debouncer StepperDeboucer = new Debouncer(); // one second
@@ -96,8 +91,6 @@
             await StepperDeboucer.Debouce(async () =>
             {
                 await PopulateChoices($"{Lookup}?lookup=true&search={value}");
-
-                await InvokeAsync(() => StateHasChanged());
             });
     }
 
@@ -114,9 +107,6 @@
         if (apiResult.Success)
         {
             await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, apiResult.Response.ToArray(), "Key", "Value");
-            if (Value != default)
-
-                await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoice", Id, Value);
         }
     }
 

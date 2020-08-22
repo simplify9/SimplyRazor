@@ -9,17 +9,17 @@
   "author": "Simplify9",
   "license": "ISC",
   "devDependencies": {
-    "bootstrap": "^4.5.0",
+    "bootstrap": "^4.5.2",
     "bs-custom-file-input": "^1.3.4",
     "choices.js": "^9.0.1",
-    "flatpickr": "^4.6.3",
+    "flatpickr": "^4.6.6",
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
     "gulp-cssnano": "^2.1.3",
     "gulp-minify": "^3.1.0",
     "gulp-sass": "^4.1.0",
     "gulp-uglify": "^3.0.2",
-    "quill": "^1.3.7",
-    "js-yaml": "^3.13.1"
+    "js-yaml": "^3.13.1",
+    "quill": "^1.3.7"
   }
 }

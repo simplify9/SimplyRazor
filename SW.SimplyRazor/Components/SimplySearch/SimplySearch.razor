@@ -110,9 +110,9 @@
     if (result != null && result.Result.Count() > 0)
     {
         <div class="mb-3">
-            <SimplyGridNonGeneric Data="result.Result" RowClicked="model => RowClicked.InvokeAsync((TModel)model)" Height="@Height" Width="@Width">
+            <SimplyGrid Data="result.Result" RowClicked="model => RowClicked.InvokeAsync((TModel)model)" Height="@Height" Width="@Width" TModel="TModel">
                 @Columns
-            </SimplyGridNonGeneric>
+            </SimplyGrid>
         </div>
         <SimplyPager TotalCount="result.TotalCount" Count="result.Result.Count()" Page="Value.Page" PageSize="PageSize" PageChanged="page => Search(page)"></SimplyPager>
     }

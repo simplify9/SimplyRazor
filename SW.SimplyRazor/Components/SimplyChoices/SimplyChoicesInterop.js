@@ -29,28 +29,27 @@
         },
 
         setChoices: function (id, data, value, label) {
-
             window[id].setChoices(data, value, label, true);
         },
 
         setChoice: function (id, value) {
-
             window[id].setChoiceByValue(value);
         },
 
         destroy: function (id) {
-
             window[id].destroy();
         },
 
         disable: function (id) {
-
             window[id].disable();
         },
 
         enable: function (id) {
-
             window[id].enable();
+        },
+
+        getValue: function (id) {
+            return window[id].getValue(true);
         },
 
     };
