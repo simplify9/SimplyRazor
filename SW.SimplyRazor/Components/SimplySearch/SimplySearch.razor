@@ -110,7 +110,7 @@
     if (result != null && result.Result.Count() > 0)
     {
         <div class="mb-3">
-            <SimplyGrid Data="result.Result" RowClicked="model => RowClicked.InvokeAsync((TModel)model)" Height="@Height" Width="@Width" TModel="TModel">
+            <SimplyGrid Data="result.Result" RowClicked="model => RowClicked.InvokeAsync((TModel)model)" Height="@Height" Width="@Width" >
                 @Columns
             </SimplyGrid>
         </div>

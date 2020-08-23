@@ -4,7 +4,7 @@
 @{
     var type = typeof(PrimitiveTypeWrapper<>).MakeGenericType(State.PropertyInfo.PropertyType.GetGenericArguments()[0]);
 
-    <SimplyTableNonGeneric @bind-Value="wrapper" OnItem="OnItem" Text="@State.Text" Type="type">
+    <SimplyTable @bind-Value="wrapper" OnItem="OnItem" Text="@State.Text" Type="type">
         <Columns>
             <Field Text="Action">
                 <ColumnHeader>
@@ -19,7 +19,7 @@
         <Form>
             <Field Name="Value" Lookup="@State.Lookup" />
         </Form>
-    </SimplyTableNonGeneric>
+    </SimplyTable>
 }
 
 

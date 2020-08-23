@@ -1,24 +1,65 @@
-﻿@typeparam TModel
+﻿@implements IComponentAction
 @namespace SW.SimplyRazor
+@inject NotifyService  notify
+@using System.Reflection
+@using System.Collections
 
-<SimplyTableNonGeneric Value="Value" 
-                       Type="typeof(TModel)" 
-                       Text="@Text"
-                       Form="Form" 
-                       Columns="Columns" 
-                       OnItem="TableOnItem"
-                       ValueChanged="TableValueChanged"/>
+@if (!string.IsNullOrEmpty(Text))
+{
+    <div class="row">
+        <div class="col-auto">
+            <label>@Text</label>
+        </div>
+    </div>
+}
+@if (Value != null && ((IEnumerable)Value).GetEnumerator().MoveNext())
+{
+    <CascadingValue IsFixed="true" Value="this" Name="FieldAction">
+        <SimplyGrid Data="(IEnumerable)Value">
+            @Columns
+        </SimplyGrid>
+    </CascadingValue>
+}
+else if (Form != null)
+{
+    <div class="mb-1"><em><a href="JavaScript:void(0);" @onclick="() => Add()">click</a> to add...</em></div>
+}
+
+@if (newModel != null)
+{
+    <div class="modal" tabindex="-1" role="dialog" style="display:block">
+        <div class="modal-dialog modal-dialog-scrollable" role="document" style="display:block">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add or edit..</h5>
+                </div>
+                <div class="modal-body">
+                    <SimplyForm Value="newModel" TModel="object">
+                        @Form
+                    </SimplyForm>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="()=> OnFormSubmit()"> Ok </button>
+                    <button type="button" class="btn btn-secondary" @onclick="()=> CancelEdit()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
 
     [Parameter]
-    public ICollection<TModel> Value { get; set; }
+    public Type Type { get; set; }
 
     [Parameter]
-    public EventCallback<ICollection<TModel>> ValueChanged { get; set; }
+    public object Value { get; set; }
 
     [Parameter]
-    public EventCallback<TableItem<TModel>> OnItem { get; set; }
+    public EventCallback<object> ValueChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<TableItem<object>> OnItem { get; set; }
 
     [Parameter]
     public RenderFragment Columns { get; set; }
@@ -29,23 +70,113 @@
     [Parameter]
     public RenderFragment Form { get; set; }
 
-    TModel newModel;
-    TModel originalModel;
+    object newModel;
+    object originalModel;
+    MethodInfo addMethod;
+    MethodInfo removeMethod;
+    MethodInfo containsMethod;
 
-    async Task TableOnItem(TableItem<object> tableItem)
+
+    void Add()
     {
-        await OnItem.InvokeAsync(new TableItem<TModel>
+        newModel = Activator.CreateInstance(Type);
+    }
+
+    void RemoveAll()
+    {
+
+    }
+
+    void CancelEdit()
+    {
+        newModel = null;
+        originalModel = null;
+    }
+
+    async public Task Invoke(string actionName, object actionValue)
+    {
+
+        switch (actionName.ToLower())
         {
-            Flag = tableItem.Flag,
-            Item = (TModel)tableItem.Item
-        });
+            case "add":
+
+                Add();
+                break;
+
+            case "remove":
+
+                await OnItem.InvokeAsync(new TableItem<object>
+                {
+                    Item = actionValue,
+                    Flag = TableItemFlag.Removed
+                });
+
+                removeMethod.Invoke(Value, new object[] { actionValue });
+                //Value.Remove(actionValue);
+                break;
+
+            case "edit":
+
+                originalModel = actionValue;
+                newModel = Object.DeepClone(originalModel, Type);
+                break;
+        }
     }
 
-    async Task TableValueChanged(object obj)
+    protected override void OnInitialized()
     {
-        await ValueChanged.InvokeAsync((ICollection<TModel>)obj);
+        addMethod = typeof(List<>).MakeGenericType(Type).GetMethod("Add");
+        removeMethod = typeof(List<>).MakeGenericType(Type).GetMethod("Remove");
+        containsMethod = typeof(List<>).MakeGenericType(Type).GetMethod("Contains");
     }
 
 
+    async Task OnFormSubmit()
+    {
+        try
+        {
+            if (originalModel == null)
+            {
+                if (Value == null) Value = Activator.CreateInstance(typeof(List<>).MakeGenericType(Type));
+
+                await OnItem.InvokeAsync(new TableItem<object>
+                {
+                    Item = newModel,
+                    Flag = TableItemFlag.Added
+                });
+
+                if ((bool)containsMethod.Invoke(Value, new object[] { newModel }))
+                    await notify.Publish(new UserMessage { Body = "Item exists.", Level = AlertLevel.Warning });
+                else
+                    addMethod.Invoke(Value, new object[] { newModel });
+
+            }
+            else
+            {
+                await OnItem.InvokeAsync(new TableItem<object>
+                {
+                    Item = newModel,
+                    Flag = TableItemFlag.Changed
+                });
+
+                if ((bool)containsMethod.Invoke(Value, new object[] { newModel }))
+                    await notify.Publish(new UserMessage { Body = "Item exists.", Level = AlertLevel.Warning });
+                else
+                    Object.DeepClone(newModel, originalModel);
+
+
+            }
+
+
+            await ValueChanged.InvokeAsync(Value);
+            newModel = null;
+            originalModel = null;
+
+        }
+        catch (Exception ex)
+        {
+            await notify.Publish(new UserMessage { Body = ex.Message, Level = AlertLevel.Warning });
+        }
+    }
 
 }

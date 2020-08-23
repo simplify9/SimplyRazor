@@ -1,7 +1,12 @@
 ﻿@typeparam TModel
+@implements IChangeMaster
 @namespace SW.SimplyRazor
 
-<SimplyFormNonGeneric ChildContent="ChildContent" Value="Value" ValueChanged="FormValueChanged" />
+<CascadingValue IsFixed="true" Value="this" Name="ChangeMaster">
+    <CascadingValue Value="Value" Name="Model">
+        @ChildContent
+    </CascadingValue>
+</CascadingValue>
 
 @code {
 
@@ -19,4 +24,10 @@
     {
         await ValueChanged.InvokeAsync((TModel)value);
     }
+
+    public async Task FieldValueChanged(string name)
+    {
+        await ValueChanged.InvokeAsync(Value);
+    }
+
 }
