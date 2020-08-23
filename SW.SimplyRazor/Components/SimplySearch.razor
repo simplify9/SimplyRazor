@@ -110,9 +110,11 @@
     if (result != null && result.Result.Count() > 0)
     {
         <div class="mb-3">
-            <SimplyGrid Data="result.Result" RowClicked="model => RowClicked.InvokeAsync((TModel)model)" Height="@Height" Width="@Width" >
-                @Columns
-            </SimplyGrid>
+            <SimplyTable Value="result.Result"  Height="@Height" Width="@Width" Type="typeof(TModel)" OnItem="OnItem" >
+                <Columns>
+                    @Columns
+                </Columns>
+            </SimplyTable>
         </div>
         <SimplyPager TotalCount="result.TotalCount" Count="result.Result.Count()" Page="Value.Page" PageSize="PageSize" PageChanged="page => Search(page)"></SimplyPager>
     }
@@ -145,7 +147,7 @@
     public RenderFragment<ISimplySearchCommand> Commands { get; set; }
 
     [Parameter]
-    public EventCallback<TModel> RowClicked { get; set; }
+    public EventCallback<TableItem> OnItem { get; set; }
 
     [Parameter]
     public SimplySearchValue Value { get; set; }

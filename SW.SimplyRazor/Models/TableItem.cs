@@ -2,9 +2,9 @@
 
 namespace SW.SimplyRazor
 {
-    public class TableItem<TModel>
+    public class TableItem
     {
         public TableItemFlag Flag { get; set; }
-        public TModel Item { get; set; }
+        public object Item { get; set; }
     }
 }

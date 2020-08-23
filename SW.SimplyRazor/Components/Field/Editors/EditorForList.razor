@@ -65,7 +65,7 @@
         }
     }
 
-    async Task OnItem(TableItem<object> tableItem)
+    async Task OnItem(TableItem tableItem)
     {
 
         if (value == null) value = Activator.CreateInstance(typeof(List<>).MakeGenericType(collectionType));

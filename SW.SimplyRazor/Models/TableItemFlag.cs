@@ -5,6 +5,7 @@ namespace SW.SimplyRazor
     {
         Added,
         Changed,
-        Removed
+        Removed,
+        Clicked
     }
 }

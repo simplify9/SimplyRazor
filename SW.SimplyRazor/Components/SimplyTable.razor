@@ -15,9 +15,37 @@
 @if (Value != null && ((IEnumerable)Value).GetEnumerator().MoveNext())
 {
     <CascadingValue IsFixed="true" Value="this" Name="FieldAction">
-        <SimplyGrid Data="(IEnumerable)Value">
-            @Columns
-        </SimplyGrid>
+
+        <div style="@(Height==null ? "" : $"height: {Height};overflow-y: auto; ") overflow-x: auto;">
+            <table class="table table-sm table-hover" style="@(Width == null ? "" : $"width: {Width};" )">
+                <thead>
+                    <tr>
+                        @{
+                            var enumerator = ((IEnumerable)Value).GetEnumerator();
+                            enumerator.MoveNext();
+
+                            <CascadingValue IsFixed="true" Value="FieldRole.ColumnName" Name="RenderMode">
+                                <CascadingValue Value="enumerator.Current" Name="Model">
+                                    @Columns
+                                </CascadingValue>
+                            </CascadingValue>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    <CascadingValue IsFixed="true" Value="FieldRole.ColumnValue" Name="RenderMode">
+                        @foreach (var item in (IEnumerable)Value)
+                        {
+                            <tr @key="item" @onclick="() => OnItem.InvokeAsync(new TableItem {Flag=TableItemFlag.Clicked, Item = item})">
+                                <CascadingValue Value="item" Name="Model">
+                                    @Columns
+                                </CascadingValue>
+                            </tr>
+                        }
+                    </CascadingValue>
+                </tbody>
+            </table>
+        </div>
     </CascadingValue>
 }
 else if (Form != null)
@@ -59,7 +87,7 @@ else if (Form != null)
     public EventCallback<object> ValueChanged { get; set; }
 
     [Parameter]
-    public EventCallback<TableItem<object>> OnItem { get; set; }
+    public EventCallback<TableItem> OnItem { get; set; }
 
     [Parameter]
     public RenderFragment Columns { get; set; }
@@ -70,16 +98,20 @@ else if (Form != null)
     [Parameter]
     public RenderFragment Form { get; set; }
 
+    [Parameter]
+    public string Height { get; set; }
+
+    [Parameter]
+    public string Width { get; set; }
+
+
     object newModel;
     object originalModel;
     MethodInfo addMethod;
     MethodInfo removeMethod;
     MethodInfo containsMethod;
 
-    void Add()
-    {
-        newModel = Activator.CreateInstance(Type);
-    }
+    void Add() => newModel = Activator.CreateInstance(Type);
 
     void RemoveAll()
     {
@@ -103,14 +135,13 @@ else if (Form != null)
 
             case "remove":
 
-                await OnItem.InvokeAsync(new TableItem<object>
+                await OnItem.InvokeAsync(new TableItem
                 {
                     Item = actionValue,
                     Flag = TableItemFlag.Removed
                 });
 
                 removeMethod.Invoke(Value, new object[] { actionValue });
-                //Value.Remove(actionValue);
                 break;
 
             case "edit":
@@ -136,7 +167,7 @@ else if (Form != null)
             {
                 if (Value == null) Value = Activator.CreateInstance(typeof(List<>).MakeGenericType(Type));
 
-                await OnItem.InvokeAsync(new TableItem<object>
+                await OnItem.InvokeAsync(new TableItem
                 {
                     Item = newModel,
                     Flag = TableItemFlag.Added
@@ -150,7 +181,7 @@ else if (Form != null)
             }
             else
             {
-                await OnItem.InvokeAsync(new TableItem<object>
+                await OnItem.InvokeAsync(new TableItem
                 {
                     Item = newModel,
                     Flag = TableItemFlag.Changed
@@ -160,10 +191,7 @@ else if (Form != null)
                     await notify.Publish(new UserMessage { Body = "Item exists.", Level = AlertLevel.Warning });
                 else
                     newModel.DeepClone(originalModel);
-
-
             }
-
 
             await ValueChanged.InvokeAsync(Value);
             newModel = null;

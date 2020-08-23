@@ -193,11 +193,7 @@
 
         nameArray = Name.Split('.');
 
-        PropertyInfo = (ModelType ?? Model.GetType()).GetProperty(nameArray[0]);
-
-        for (int i = 1; i < nameArray.Length; i++)
-
-            PropertyInfo = PropertyInfo.PropertyType.GetProperty(nameArray[i]);
+        PropertyInfo = (ModelType ?? Model.GetType()).GetPropertyInfo(Name);
 
         if (PropertyInfo == null) throw new ArgumentException("Field not found.", Name);
 
@@ -327,21 +323,7 @@
 
     bool TrySetValue(object value)
     {
-        object obj = Model;
-
-        for (int i = 0; i < nameArray.Length - 1; i++)
-        {
-            var targetProp = obj.GetType().GetProperty(nameArray[i]);
-            var nextType = targetProp.PropertyType;
-            var nextObj = targetProp.GetValue(obj);
-            if (nextObj == null)
-            {
-                nextObj = Activator.CreateInstance(nextType);
-                targetProp.SetValue(obj, nextObj);
-            }
-
-            obj = nextObj;
-        }
+        var obj = Model.GetValue(Name);
 
         try
         {
