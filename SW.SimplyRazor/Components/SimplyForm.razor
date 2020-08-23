@@ -20,10 +20,10 @@
     public RenderFragment ChildContent { get; set; }
 
 
-    async Task FormValueChanged(object value)
-    {
-        await ValueChanged.InvokeAsync((TModel)value);
-    }
+    //async Task FormValueChanged(object value)
+    //{
+    //    await ValueChanged.InvokeAsync((TModel)value);
+    //}
 
     public async Task FieldValueChanged(string name)
     {
