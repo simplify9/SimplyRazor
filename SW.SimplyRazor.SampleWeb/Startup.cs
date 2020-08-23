@@ -40,11 +40,7 @@ namespace SW.SimplyRazor.SampleWeb
 
             services.AddSimplyRazor(config =>
             {
-                config.ApiBaseUri = new Uri("https://localhost:5001/cqapi/");
                 config.BlobsUri = new Uri("https://localhost:5001/api/blobs/");
-                config.ApiTokenAudience = "local";
-                config.ApiTokenIssuer = "local";
-                config.ApiTokenKey = "jhgfjhgfjhgfjhgfjhfjfj";
                 config.DefaultApiClientFactory = (sp) =>
                 {
                     return sp.GetService<SampleClient>();
