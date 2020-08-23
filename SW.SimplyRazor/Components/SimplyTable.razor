@@ -76,7 +76,6 @@ else if (Form != null)
     MethodInfo removeMethod;
     MethodInfo containsMethod;
 
-
     void Add()
     {
         newModel = Activator.CreateInstance(Type);
@@ -95,7 +94,6 @@ else if (Form != null)
 
     async public Task Invoke(string actionName, object actionValue)
     {
-
         switch (actionName.ToLower())
         {
             case "add":
@@ -118,7 +116,7 @@ else if (Form != null)
             case "edit":
 
                 originalModel = actionValue;
-                newModel = Object.DeepClone(originalModel, Type);
+                newModel = originalModel.DeepClone(Type);
                 break;
         }
     }
@@ -129,7 +127,6 @@ else if (Form != null)
         removeMethod = typeof(List<>).MakeGenericType(Type).GetMethod("Remove");
         containsMethod = typeof(List<>).MakeGenericType(Type).GetMethod("Contains");
     }
-
 
     async Task OnFormSubmit()
     {
@@ -162,7 +159,7 @@ else if (Form != null)
                 if ((bool)containsMethod.Invoke(Value, new object[] { newModel }))
                     await notify.Publish(new UserMessage { Body = "Item exists.", Level = AlertLevel.Warning });
                 else
-                    Object.DeepClone(newModel, originalModel);
+                    newModel.DeepClone(originalModel);
 
 
             }

@@ -7,14 +7,10 @@ resources:
 - repo: self
 
 variables:
-  buildConfiguration: 'Release'
-  major: 2
+  major: 3
   minor: 0
   version: $[format('{0}.{1}.{2}', variables['major'], variables['minor'], counter(format('{0}.{1}', variables['major'], variables['minor']), 0))]
-
-  # Agent VM image name
   vmImageName: 'ubuntu-latest'
-
 
 steps:
 
@@ -37,7 +33,7 @@ steps:
   displayName: Build
   inputs:
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration)'
+    arguments: '--configuration Release'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet test'

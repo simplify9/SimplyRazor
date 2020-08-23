@@ -10,6 +10,5 @@ namespace SW.SimplyRazor
     {
         Task AddFilterSetup(SimplySearchFilterSetup filter);
         void RemoveFilterSetup(SimplySearchFilterSetup filter);
-        //Task RowClick(string index);
     }
 }

@@ -15,19 +15,12 @@
                     @ChildContent
                 </div>
                 <div class="modal-footer">
-                    <button @onclick="() => OnUserChoice(true)" type="button" class="btn btn-primary">
-
-                        @if (Working)
-                        {
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                        }
-                        else
-                        {
-                            @:Confirm
-                        }
-
+                    <BusyButton OnClick="() => OnUserChoice(true)" class="btn btn-primary">
+                        Confirm
+                    </BusyButton>
+                    <button @onclick="() => OnUserChoice(false)" type="button" class="btn btn-secondary">
+                        Cancel
                     </button>
-                    <button @onclick="() => OnUserChoice(false)" type="button" class="btn btn-secondary">Cancel</button>
                 </div>
             </div>
         </div>
@@ -47,12 +40,6 @@
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
-
-    [Parameter]
-    public bool Working { get; set; }
-
-    [Parameter]
-    public EventCallback<bool> WorkingChanged { get; set; }
 
     [Parameter]
     public string Title { get; set; }

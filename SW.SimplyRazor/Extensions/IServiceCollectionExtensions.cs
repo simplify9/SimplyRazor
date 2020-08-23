@@ -16,7 +16,7 @@ namespace SW.SimplyRazor
             //    httpClient.BaseAddress = componentOptions.ApiBaseUri;
             //});
 
-            serviceCollection.AddScoped<JwtStore>();
+            //serviceCollection.AddScoped<JwtStore>();
 
             serviceCollection.AddScoped<Notifier<UserMessage>>();
             serviceCollection.AddScoped<Notifier<InvalidFieldNotification>>();
