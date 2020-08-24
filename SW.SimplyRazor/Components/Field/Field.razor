@@ -226,68 +226,58 @@
                 var nakedType = Nullable.GetUnderlyingType(PropertyInfo.PropertyType) ?? PropertyInfo.PropertyType;
 
                 if (PropertyInfo.PropertyType == typeof(bool))
-                {
                     editor = typeof(EditorForBoolean);
-                }
+
                 else if (PropertyInfo.PropertyType == typeof(RemoteBlob))
-                {
                     editor = typeof(EditorForUpload);
-                }
+
                 else if (nakedType.IsEnum)
-                {
                     editor = typeof(EditorForEnum);
-                }
+
                 else if (typeof(IDictionary<string, string>).IsAssignableFrom(PropertyInfo.PropertyType))
-                {
                     editor = typeof(EditorForDictionary);
-                }
+
                 else if (PropertyInfo.PropertyType.IsArray && PropertyInfo.PropertyType.GetElementType() == typeof(string))
-                {
                     editor = typeof(EditorForListAsTextArea);
-                }
+
                 else if (PropertyInfo.PropertyType.IsArray && PropertyInfo.PropertyType.GetElementType() == typeof(DateTime))
-                {
                     editor = typeof(EditorForDateRange);
-                }
+
                 else if (PropertyInfo.PropertyType.IsArray)
-                {
                     throw new ArgumentException("Only 'string' and 'datetime' arrays supported.", Name);
-                }
+
                 else if (PropertyInfo.PropertyType.IsGenericType && typeof(IEnumerable).IsAssignableFrom(PropertyInfo.PropertyType))
-                {
                     if (InputType == InputType.Multiline && PropertyInfo.PropertyType.GetGenericArguments()[0] == typeof(string))
                         editor = typeof(EditorForListAsTextArea);
                     else
                         editor = typeof(EditorForList);
-                }
-                else if (nakedType == typeof(DateTime) && InputType == InputType.Calendar)
-                {
-                    editor = typeof(EditorForDateAsCalendar);
-                }
-                else if (Lookup != null)
-                {
-                    if (TypeAhead == null)
 
+                else if (nakedType == typeof(DateTime) && InputType == InputType.Calendar)
+                    editor = typeof(EditorForDateAsCalendar);
+
+                else if (Lookup != null)
+                    if (TypeAhead == null)
                         editor = typeof(EditorForTextAsSelect);
 
                     else
-
                         editor = typeof(EditorForTypeAhead);
 
-                }
                 else
-                {
                     editor = typeof(EditorForText);
-                }
 
 
                 if (Value == null && Default != null)
-                {
                     await OnChange(Default);
-                }
 
                 editorFragment = CreateEditor();
                 break;
+        }
+    }
+
+    async protected override Task OnParametersSetAsync()
+    {
+        switch (RenderMode)
+        {
 
             case FieldRole.ColumnValue:
 
@@ -367,6 +357,21 @@
 
         await InvokeAsync(() => StateHasChanged());
     }
+
+    //async public Task<string> GetLookupValue()
+    //{
+    //    if (Lookup != null && !string.IsNullOrWhiteSpace(Value.ToString()))
+    //    {
+    //        var apiClient = serviceProvider.GetApiClient();
+    //        var result = await apiClient.Lookup($"{Lookup}/{Value}?lookup=true");
+    //        if (result.Success)
+    //            return result.Response;
+    //    }
+    //    else
+    //        return GetFormattedValue()?.ToString();
+
+    //    return null;
+    //}
 
     public object GetFormattedValue()
     {

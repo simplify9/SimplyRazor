@@ -148,6 +148,7 @@ else if (Form != null)
 
                 originalModel = actionValue;
                 newModel = originalModel.DeepClone(Type);
+                StateHasChanged();
                 break;
         }
     }
@@ -190,7 +191,9 @@ else if (Form != null)
                 if ((bool)containsMethod.Invoke(Value, new object[] { newModel }))
                     await notify.Publish(new UserMessage { Body = "Item exists.", Level = AlertLevel.Warning });
                 else
+                {
                     newModel.DeepClone(originalModel);
+                }
             }
 
             await ValueChanged.InvokeAsync(Value);
