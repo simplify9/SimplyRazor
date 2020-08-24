@@ -8,6 +8,7 @@ resources:
 - repo: self
 
 variables:
+  buildConfiguration: 'Release'
   major: 3
   minor: 0
   version: $[format('{0}.{1}.{2}', variables['major'], variables['minor'], counter(format('{0}.{1}', variables['major'], variables['minor']), 0))]
@@ -34,7 +35,7 @@ steps:
   displayName: Build
   inputs:
     projects: '**/*.csproj'
-    arguments: '--configuration Release'
+    arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet test'
