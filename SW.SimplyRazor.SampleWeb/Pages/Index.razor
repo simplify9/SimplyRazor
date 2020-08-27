@@ -6,7 +6,7 @@
 
 <SimplyAlertHub></SimplyAlertHub>
 
-<SimplySearch PageSize="10" SearchUrl="employees" OnItem="OnItem" TModel="Employee" Height="200px" Width="max-content">
+<Search PageSize="10" SearchUrl="employees" OnItem="OnItem" TModel="Employee" Height="200px" Width="max-content">
     <Commands>
         <button class="btn btn-primary" type="button" @onclick="() => OnExportToExcel(context.SearchyRequest)">Export</button>
         <a href="form2">
@@ -37,7 +37,7 @@
         <Field Name="Salary.Amount" />
         <Field Name="Salary.Currency" />
     </Columns>
-</SimplySearch>
+</Search>
 
 @code{
 

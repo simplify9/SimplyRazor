@@ -92,7 +92,7 @@
             @if (index == 0)
             {
                 <div class="col-auto pl-0">
-                    <BusyButton OnClick="() => Search(0)" class="btn btn-primary" style="width: 80px">
+                    <BusyButton OnClick="() => DoSearch(0)" class="btn btn-primary" style="width: 80px">
                         Search
                     </BusyButton>
 
@@ -116,7 +116,7 @@
                 </Columns>
             </SimplyTable>
         </div>
-        <SimplyPager TotalCount="result.TotalCount" Count="result.Result.Count()" Page="Value.Page" PageSize="PageSize" PageChanged="page => Search(page)"></SimplyPager>
+        <Pager TotalCount="result.TotalCount" Count="result.Result.Count()" Page="Value.Page" PageSize="PageSize" PageChanged="page => DoSearch(page)"></Pager>
     }
 }
 
@@ -207,7 +207,7 @@
         }
     }
 
-    async Task Search(int page)
+    async Task DoSearch(int page)
     {
         Value.Page = page;
 

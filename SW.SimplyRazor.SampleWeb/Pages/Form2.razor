@@ -2,13 +2,13 @@
 @inject NavigationManager navigationManager
 @inject SampleClient sampleClient
 
-<SimplyAlertHub></SimplyAlertHub>
+<AlertHub></AlertHub>
 
 <Ready Value="employee">
     <IsReady>
         <SimplyForm @bind-Value="employee">
 
-            <SimplyTabs>
+            <Tabs>
 
                 <Tab Title="General">
                     <div class="row">
@@ -82,7 +82,7 @@
                     </Subform>
 
                 </Tab>
-            </SimplyTabs>
+            </Tabs>
         </SimplyForm>
 
         <div class="container-fluid mt-5">
