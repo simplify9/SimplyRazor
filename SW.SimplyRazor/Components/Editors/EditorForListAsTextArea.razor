@@ -26,14 +26,10 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
-    public override async Task SetParametersAsync(ParameterView parameters)
+    protected override void OnParametersSet()
     {
-        await base.SetParametersAsync(parameters);
-
         if (State.Value != null)
-        {
-            value = String.Join("\n",(State.Value as IEnumerable<string>));
-        }
+            value = String.Join("\n", (State.Value as IEnumerable<string>));
     }
 
     void ValueOnChange(ChangeEventArgs args)

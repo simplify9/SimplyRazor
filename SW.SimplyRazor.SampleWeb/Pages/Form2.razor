@@ -4,97 +4,98 @@
 
 <SimplyAlertHub></SimplyAlertHub>
 
-@if (employee != null)
-{
-    <SimplyForm @bind-Value="employee">
+<Ready Value="employee">
+    <IsReady>
+        <SimplyForm @bind-Value="employee">
 
-        <SimplyTabs>
+            <SimplyTabs>
 
-            <Tab Title="General">
-                <div class="row">
-                    <div class="col-md-6">
-                        <Field Name="FirstName" Text=""></Field>
+                <Tab Title="General">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <Field Name="FirstName" Text=""></Field>
+                        </div>
+                        <div class="col-md-6">
+                            <Field Name="LastName" Text=""></Field>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <Field Name="LastName" Text=""></Field>
-                    </div>
-                </div>
-                <Field Name="FirstName" InputType="InputType.Multiline" ReadOnly="true" rows="10"></Field>
-                <Field Name="LastName" ReadOnly="true"></Field>
+                    <Field Name="FirstName" InputType="InputType.Multiline" ReadOnly="true" rows="10"></Field>
+                    <Field Name="LastName" ReadOnly="true"></Field>
 
-                <Field Name="@nameof(Employee.Age)" Default="20" Format="#.#" />
-                <div>test</div>
-                <Field Name="Married" />
-                <Field Name="EmploymentDate" InputType="InputType.Calendar" />
-                <Field Name="AbsentPeriod" />
+                    <Field Name="@nameof(Employee.Age)" Default="20" Format="#.#" />
+                    <div>test</div>
+                    <Field Name="Married" />
+                    <Field Name="EmploymentDate" InputType="InputType.Calendar" />
+                    <Field Name="AbsentPeriod" />
 
-                <Field Name="EmploymentStatus" Lookup="mockmodels" ReadOnly="true" />
-                <Field Name="Country" Lookup="countries" TypeAhead="0" />
-                @*<Field Name="BirthCountry" Lookup="countries" TypeAhead="1" Placeholder="Type a value!" />*@
-                <Field Name="Country" Lookup="countries"  />
-                <Field Name="Roles" Lookup="countries"></Field>
+                    <Field Name="EmploymentStatus" Lookup="mockmodels" ReadOnly="true" />
+                    <Field Name="Country" Lookup="countries" TypeAhead="0" />
+                    @*<Field Name="BirthCountry" Lookup="countries" TypeAhead="1" Placeholder="Type a value!" />*@
+                    <Field Name="Country" Lookup="countries" />
+                    <Field Name="Roles" Lookup="countries"></Field>
 
-                <Field Name="Roles" InputType="InputType.Multiline"></Field>
+                    <Field Name="Roles" InputType="InputType.Multiline"></Field>
 
 
-            </Tab>
-            <Tab Title="Album">
+                </Tab>
+                <Tab Title="Album">
 
-                <Field Name="Photo" />
-                <Field Name="Photos" />
+                    <Field Name="Photo" />
+                    <Field Name="Photos" />
 
-            </Tab>
+                </Tab>
 
 
-            <Tab Title="Properties">
+                <Tab Title="Properties">
 
-                <Field Name="AdditionalValues"></Field>
+                    <Field Name="AdditionalValues"></Field>
 
-            </Tab>
-            <Tab Title="Salary">
+                </Tab>
+                <Tab Title="Salary">
 
-                <Field Name="Salary.Amount" />
-                <Field Name="Salary.Currency" />
+                    <Field Name="Salary.Amount" />
+                    <Field Name="Salary.Currency" />
 
-            </Tab>
+                </Tab>
 
-            <Tab Title="Leaves">
-                <Subform Name="Leaves">
-                    <Columns>
-                        <Field Text="Action">
-                            <ColumnHeader Context="fieldContext">
-                                Action (<a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("add", null))">add</a>)
-                            </ColumnHeader>
-                            <ColumnValue Context="fieldContext">
-                                <a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("remove", fieldContext.Model))">Remove</a>
-                                <a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("edit", fieldContext.Model))">Edit</a>
-                            </ColumnValue>
-                        </Field>
-                        <Field Name="Reason" />
-                        <Field Name="Days" />
-                        <Field Name="Photo" />
-                    </Columns>
-                    <Form>
-                        <Field Name="Photo" accept="image/*" size="1000000" />
-                        <Field Name="Reason" />
-                        <Field Name="Days" />
-                    </Form>
-                </Subform>
+                <Tab Title="Leaves">
+                    <Subform Name="Leaves">
+                        <Columns>
+                            <Field Text="Action">
+                                <ColumnHeader Context="fieldContext">
+                                    Action (<a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("add", null))">add</a>)
+                                </ColumnHeader>
+                                <ColumnValue Context="fieldContext">
+                                    <a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("remove", fieldContext.Model))">Remove</a>
+                                    <a href="JavaScript:void(0);" @onclick="@(() => fieldContext.Action.Invoke("edit", fieldContext.Model))">Edit</a>
+                                </ColumnValue>
+                            </Field>
+                            <Field Name="Reason" />
+                            <Field Name="Days" />
+                            <Field Name="Photo" />
+                        </Columns>
+                        <Form>
+                            <Field Name="Photo" accept="image/*" size="1000000" />
+                            <Field Name="Reason" />
+                            <Field Name="Days" />
+                        </Form>
+                    </Subform>
 
-            </Tab>
-        </SimplyTabs>
-    </SimplyForm>
+                </Tab>
+            </SimplyTabs>
+        </SimplyForm>
 
-    <div class="container-fluid mt-5">
-        @*<SimplyCommand Title="Save" Confirm="true" CommandUrl="employees/5" Request="employee" OnResult="OnSaveResult" class="btn btn-secondary" />*@
-    </div>
+        <div class="container-fluid mt-5">
+            @*<SimplyCommand Title="Save" Confirm="true" CommandUrl="employees/5" Request="employee" OnResult="OnSaveResult" class="btn btn-secondary" />*@
+        </div>
 
-    <p>Age: @employee?.Age</p>
-    <p>Emp Status: @employee?.EmploymentStatus</p>
-    <p>Country: @employee?.Country</p>
-    <p>Photo: @employee?.Photo</p>
+        <p>Age: @employee?.Age</p>
+        <p>Emp Status: @employee?.EmploymentStatus</p>
+        <p>Country: @employee?.Country</p>
+        <p>Photo: @employee?.Photo</p>
+    </IsReady>
+</Ready>
 
-}
 @code {
 
     Employee employee;
@@ -116,7 +117,7 @@
         //    }
         //};
         employee.Roles = new List<string>
-        {
+    {
                 "JO"
         };
         employee.Age = decimal.Parse("5.10000");
@@ -129,7 +130,5 @@
         if (apiResult.Success)
             navigationManager.NavigateTo("/");
     }
-
-
 
 }

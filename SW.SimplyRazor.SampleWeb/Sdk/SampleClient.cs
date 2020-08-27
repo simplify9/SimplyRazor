@@ -1,11 +1,8 @@
-﻿using SW.HttpExtensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using SW.EfCoreExtensions;
 using System.Net.Http;
 using SW.PrimitiveTypes;
+using SW.HttpExtensions;
 
 namespace SW.SimplyRazor.SampleWeb
 {

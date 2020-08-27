@@ -155,9 +155,9 @@ else if (Form != null)
 
     protected override void OnInitialized()
     {
-        addMethod = typeof(List<>).MakeGenericType(Type).GetMethod("Add");
-        removeMethod = typeof(List<>).MakeGenericType(Type).GetMethod("Remove");
-        containsMethod = typeof(List<>).MakeGenericType(Type).GetMethod("Contains");
+        addMethod = typeof(ICollection<>).MakeGenericType(Type).GetMethod("Add");
+        removeMethod = typeof(ICollection<>).MakeGenericType(Type).GetMethod("Remove");
+        containsMethod = typeof(ICollection<>).MakeGenericType(Type).GetMethod("Contains");
     }
 
     async Task OnFormSubmit()

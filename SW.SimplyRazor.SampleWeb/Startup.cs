@@ -41,7 +41,7 @@ namespace SW.SimplyRazor.SampleWeb
             services.AddSimplyRazor(config =>
             {
                 config.BlobsUri = new Uri("https://localhost:5001/api/blobs/");
-                config.DefaultApiClientFactory = (sp) =>
+                config.DefaultApiClientFactory = sp =>
                 {
                     return sp.GetService<SampleClient>();
                 };

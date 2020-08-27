@@ -1,0 +1,39 @@
+﻿@namespace SW.SimplyRazor
+
+@if (ready)
+{
+    @IsReady
+}
+else if (IsNotReady == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    @IsNotReady
+}
+
+@code {
+
+    bool ready;
+
+    [Parameter]
+    public object Value { get; set; }
+
+    [Parameter]
+    public RenderFragment IsReady { get; set; }
+
+    [Parameter]
+    public RenderFragment IsNotReady { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Value == null)
+            ready = false;
+        else if (Value.GetType() == typeof(bool) && !(bool)Value)
+            ready = false;
+        else
+            ready = true;
+    }
+
+}
