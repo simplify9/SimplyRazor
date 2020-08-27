@@ -3,9 +3,9 @@
 @inject IJSRuntime JSRuntime
 @inject IServiceProvider serviceProvider
 
-<SimplyAlertHub></SimplyAlertHub>
+<AlertHub></AlertHub>
 
-<SimplySearch PageSize="10" SearchUrl="employees" ExportUrl="employees/export" RowClicked="RowClicked" TModel="Employee" Height="200px" Width="max-content">
+<Search PageSize="10" SearchUrl="employees" ExportUrl="employees/export" RowClicked="RowClicked" TModel="Employee" Height="200px" Width="max-content">
     <Commands>
         <button class="btn btn-primary" type="button" @onclick="() => OnExportToExcel(context.SearchyRequest)">Export</button>
         <a href="form2">
@@ -36,7 +36,7 @@
         <Field Name="Salary.Amount" />
         <Field Name="Salary.Currency" />
     </Columns>
-</SimplySearch>
+</Search>
 
 @code{
 

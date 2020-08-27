@@ -9,12 +9,12 @@
     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" aria-haspopup="true" aria-expanded="false" @onclick="() => dropdownVisible = !dropdownVisible">
         Export
     </button>
-    <SimplyDropdown @bind-Visible="dropdownVisible">
+    <Dropdown @bind-Visible="dropdownVisible">
         <a class="dropdown-item" href="profile">Profile</a>
         <a class="dropdown-item" href="changepassword">Change Password</a>
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="Logout">Logout</a>
-    </SimplyDropdown>
+    </Dropdown>
 </div>
 @code {
 
