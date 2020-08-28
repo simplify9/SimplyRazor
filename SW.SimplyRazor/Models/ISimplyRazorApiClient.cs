@@ -8,8 +8,8 @@ namespace SW.SimplyRazor
 {
     public interface ISimplyRazorApiClient
     {
-        Task<ApiResult<SearchyResponse<TModel>>> Search<TModel>(string searchUrl);
-        Task<ApiResult<IDictionary<string, string>>> Search(string searchUrl);
-        Task<ApiResult<string>> Lookup(string searchUrl);
+        Task<ApiResult<SearchyResponse<TModel>>> Search<TModel>(string url);
+        Task<ApiResult<IDictionary<string, string>>> Search(string url);
+        Task<ApiResult<string>> Lookup(string url);
     }
 }

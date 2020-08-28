@@ -41,38 +41,38 @@
                 <SimplyForm @bind-Value="f1">
 
                     @switch (filter.Type)
-                    {
-                        case SearchyDataType.Number:
+                        {
+                            case SearchyDataType.Number:
                             <Field Name="ValueDecimal" Text="" Lookup="@filter.Lookup" />
-                            break;
+                                break;
 
-                        case SearchyDataType.Date:
+                            case SearchyDataType.Date:
 
-                            if (filter.DateMode == DateMode.Single)
-                            {
+                                if (filter.DateMode == DateMode.Single)
+                                {
                                 <Field Name="ValueDateTime" Text="" InputType="InputType.Calendar" />
-                            }
-                            else
-                            {
+                                }
+                                else
+                                {
                                 <Field Name="ValueDateTimeArray" Text="" />
-                            }
+                                }
 
-                            break;
+                                break;
 
-                        default:
+                            default:
 
-                            if (filter.Lookup == null)
-                            {
+                                if (filter.Lookup == null)
+                                {
                                 <Field Name="ValueString" Text="" />
-                            }
-                            else
-                            {
+                                }
+                                else
+                                {
                                 <Field Name="ValueString" Text="" Lookup="@filter.Lookup" TypeAhead="@filter.TypeAhead" />
-                            }
+                                }
 
-                            break;
+                                break;
 
-                    }
+                        }
                 </SimplyForm>
 
                 <div class="input-group-append">
@@ -110,7 +110,7 @@
     if (result != null && result.Result.Count() > 0)
     {
         <div class="mb-3">
-            <SimplyTable Value="result.Result"  Height="@Height" Width="@Width" Type="typeof(TModel)" OnItem="OnItem" >
+            <SimplyTable Value="result.Result" Height="@Height" Width="@Width" Type="typeof(TModel)" OnItem="ti => OnTableItem(ti)">
                 <Columns>
                     @Columns
                 </Columns>
@@ -147,7 +147,7 @@
     public RenderFragment<ISimplySearchCommand> Commands { get; set; }
 
     [Parameter]
-    public EventCallback<TableItem> OnItem { get; set; }
+    public EventCallback<TableItem<TModel>> OnItem { get; set; }
 
     [Parameter]
     public SimplySearchValue Value { get; set; }
@@ -157,13 +157,22 @@
 
     SearchyResponse<TModel> result;
 
-    async protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         if (Value == null || Value.Filters.Count == 0)
         {
             Value = new SimplySearchValue();
             Value.Filters.Add(new FilterModel());
         }
+    }
+
+    Task OnTableItem(TableItem tableItem)
+    {
+        return OnItem.InvokeAsync(new TableItem<TModel>
+        {
+            Flag = tableItem.Flag,
+            Item = (TModel)tableItem.Item
+        });
     }
 
     void OnRuleChange(FilterModel filter, int rule)
