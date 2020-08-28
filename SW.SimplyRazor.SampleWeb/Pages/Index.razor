@@ -3,7 +3,6 @@
 @inject IJSRuntime JSRuntime
 @inject IServiceProvider serviceProvider
 
-
 <AlertHub></AlertHub>
 
 <Search PageSize="10" SearchUrl="employees" OnItem="OnItem" TModel="Employee" Height="200px" Width="max-content">
@@ -16,10 +15,6 @@
     <Filters>
         <Field Name="Id" Text="Id" Required="true"></Field>
         <Field Name="EmploymentDate" Required="true"></Field>
-
-
-        @*<Field Name="HandlerName"  Text="Handler" ></Field>
-            <Field Name="Started" Text="Date" ></Field>*@
     </Filters>
     <Columns>
         <Field Name="Id" Text="Id">
@@ -59,9 +54,9 @@
         //}
     }
 
-    void OnItem(TableItem tableItem)
+    void OnItem(TableItem<Employee> tableItem)
     {
-        if (tableItem.Flag == TableItemFlag.Clicked)
-            navigationManager.NavigateTo($"/form2?id={((Employee)tableItem.Item).Id}");
+        if (tableItem.Flag == TableItemFlag.Clicked) 
+            navigationManager.NavigateTo($"/form2?id={tableItem.Item.Id}");
     }
 }
