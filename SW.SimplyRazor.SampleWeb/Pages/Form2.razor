@@ -3,13 +3,10 @@
 @inject SampleClient sampleClient
 
 <AlertHub></AlertHub>
-
 <Ready Value="employee">
     <IsReady>
         <SimplyForm @bind-Value="employee">
-
             <Tabs>
-
                 <Tab Title="General">
                     <div class="row">
                         <div class="col-md-6">
@@ -21,43 +18,28 @@
                     </div>
                     <Field Name="FirstName" InputType="InputType.Multiline" ReadOnly="true" rows="10"></Field>
                     <Field Name="LastName" ReadOnly="true"></Field>
-
                     <Field Name="@nameof(Employee.Age)" Default="20" Format="#.#" />
                     <div>test</div>
                     <Field Name="Married" />
                     <Field Name="EmploymentDate" InputType="InputType.Calendar" />
                     <Field Name="AbsentPeriod" />
-
                     <Field Name="EmploymentStatus" Lookup="mockmodels" ReadOnly="true" />
                     <Field Name="Country" Lookup="countries" TypeAhead="0" />
                     @*<Field Name="BirthCountry" Lookup="countries" TypeAhead="1" Placeholder="Type a value!" />*@
                     <Field Name="Country" Lookup="countries" />
                     <Field Name="Roles" Lookup="countries"></Field>
-
                     <Field Name="Roles" InputType="InputType.Multiline"></Field>
-
-
                 </Tab>
                 <Tab Title="Album">
-
                     <Field Name="Photo" />
-                    <Field Name="Photos" />
-
                 </Tab>
-
-
                 <Tab Title="Properties">
-
                     <Field Name="AdditionalValues"></Field>
-
                 </Tab>
                 <Tab Title="Salary">
-
                     <Field Name="Salary.Amount" />
                     <Field Name="Salary.Currency" />
-
                 </Tab>
-
                 <Tab Title="Leaves">
                     <Subform Name="Leaves">
                         <Columns>
@@ -80,15 +62,22 @@
                             <Field Name="Days" />
                         </Form>
                     </Subform>
-
                 </Tab>
             </Tabs>
         </SimplyForm>
 
         <div class="container-fluid mt-5">
-            @*<SimplyCommand Title="Save" Confirm="true" CommandUrl="employees/5" Request="employee" OnResult="OnSaveResult" class="btn btn-secondary" />*@
+            <BusyButton class="btn btn-secondary">
+                <Title>
+                    Save
+                </Title>
+                <IfBusy>
+                    <Confirm Title="Save" OnClick="result => OnConfirmSave(result, context)" >
+                        Are you sure you want to save this record?
+                    </Confirm>
+                </IfBusy>
+            </BusyButton>
         </div>
-
         <p>Age: @employee?.Age</p>
         <p>Emp Status: @employee?.EmploymentStatus</p>
         <p>Country: @employee?.Country</p>
@@ -117,7 +106,7 @@
         //    }
         //};
         employee.Roles = new List<string>
-    {
+{
                 "JO"
         };
         employee.Age = decimal.Parse("5.10000");
@@ -125,10 +114,24 @@
 
     }
 
-    void OnSaveResult(ApiResult apiResult)
+    async Task OnSave(IBusyButton busyButton)
     {
-        if (apiResult.Success)
-            navigationManager.NavigateTo("/");
+        await Task.Delay(TimeSpan.FromSeconds(2));
+        await busyButton.SetBusy(false);
+        //if (apiResult.Success)
+        //    navigationManager.NavigateTo("/");
+    }
+
+    async Task OnConfirmSave(bool result, IBusyButton busyButton)
+    {
+        if (result)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2));
+        }
+
+        await busyButton.SetBusy(false);
+        //if (apiResult.Success)
+        //    navigationManager.NavigateTo("/");
     }
 
 }

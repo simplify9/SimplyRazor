@@ -17,19 +17,19 @@ namespace SW.SimplyRazor.SampleWeb
             return await Builder.Path(searchUrl).AsApiResult<string>().GetAsync();
         }
 
-        async public Task<ApiResult<SearchyResponse<TModel>>> Search<TModel>(string searchUrl)
+        public Task<ApiResult<SearchyResponse<TModel>>> Search<TModel>(string searchUrl)
         {
-            return await Builder.Path(searchUrl).AsApiResult<SearchyResponse<TModel>>().GetAsync();
+            return Builder.Path(searchUrl).AsApiResult<SearchyResponse<TModel>>().GetAsync();
         }
 
-        async public Task<ApiResult<IDictionary<string, string>>> Search(string searchUrl)
+        public Task<ApiResult<IDictionary<string, string>>> Search(string searchUrl)
         {
-            return await Builder.Path(searchUrl).AsApiResult<IDictionary<string, string>>().GetAsync();
+            return Builder.Path(searchUrl).AsApiResult<IDictionary<string, string>>().GetAsync();
         }
 
-        async public Task<ApiResult<TModel>> GetById<TModel>(string url, object id)
+        public Task<ApiResult<TModel>> GetById<TModel>(string url, object id)
         {
-            return await Builder.Path($"{url}/{id}").AsApiResult<TModel>().GetAsync();
+            return Builder.Path($"{url}/{id}").AsApiResult<TModel>().GetAsync();
         }
     }
 }

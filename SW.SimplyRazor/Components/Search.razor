@@ -92,8 +92,10 @@
             @if (index == 0)
             {
                 <div class="col-auto pl-0">
-                    <BusyButton OnClick="() => DoSearch(0)" class="btn btn-primary" style="width: 80px">
-                        Search
+                    <BusyButton OnClick="bb => DoSearch(bb, 0)" class="btn btn-primary" style="width: 80px">
+                        <Title>
+                            Search
+                        </Title>
                     </BusyButton>
 
                     @if (Commands != null)
@@ -116,7 +118,7 @@
                 </Columns>
             </SimplyTable>
         </div>
-        <Pager TotalCount="result.TotalCount" Count="result.Result.Count()" Page="Value.Page" PageSize="PageSize" PageChanged="page => DoSearch(page)"></Pager>
+        <Pager TotalCount="result.TotalCount" Count="result.Result.Count()" Page="Value.Page" PageSize="PageSize" PageChanged="page => DoSearch(null, page)"></Pager>
     }
 }
 
@@ -216,7 +218,7 @@
         }
     }
 
-    async Task DoSearch(int page)
+    async Task DoSearch(IBusyButton bb, int page)
     {
         Value.Page = page;
 
@@ -231,6 +233,7 @@
             }
             result = apiResult.Response;
         }
+        if (bb != null) await bb.SetBusy(false);
         await ValueChanged.InvokeAsync(Value);
     }
 

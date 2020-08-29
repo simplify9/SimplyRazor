@@ -1,36 +1,55 @@
 ﻿@namespace SW.SimplyRazor
+@implements IBusyButton
 @inject NotifyService notify
 
-<button disabled="@working" type="button" @onclick="ButtonOnClick" @attributes="UnmatchedAttributes">
-    @if (working)
+<button disabled="@busy" type="button" @onclick="ButtonOnClick" @attributes="UnmatchedAttributes">
+    @if (busy && BusyTitle == null)
     {
         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
     }
+    else if (busy)
+    {
+        @BusyTitle
+    }
     else
     {
-        @ChildContent
+        @Title
     }
 </button>
 
+@if (busy && IfBusy != null)
+{
+    @IfBusy(this)
+}
+
 @code {
 
-    bool working;
+    bool busy;
 
     [Parameter]
-    public EventCallback OnClick { get; set; }
+    public EventCallback<IBusyButton> OnClick { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment BusyTitle { get; set; }
+
+    [Parameter]
+    public RenderFragment Title { get; set; }
+
+    [Parameter]
+    public RenderFragment<IBusyButton> IfBusy { get; set; }
 
     async Task ButtonOnClick(EventArgs args)
     {
-        working = true;
+        busy = true;
+        await OnClick.InvokeAsync(this);
+    }
 
-        await OnClick.InvokeAsync(args);
-
-        working = false;
+    async public Task SetBusy(bool busy)
+    {
+        this.busy = busy;
+        await InvokeAsync(() => StateHasChanged());
     }
 }

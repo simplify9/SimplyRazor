@@ -1,42 +1,36 @@
 ﻿@namespace SW.SimplyRazor
 
-@if (Visible)
-{
-    <div class="modal" tabindex="-1" role="dialog" style="display:block">
-        <div class="modal-dialog" role="document" style="display:block">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">@Title</h5>
-                    <button @onclick="() => OnUserChoice(false)" type="button" class="close" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    @ChildContent
-                </div>
-                <div class="modal-footer">
-                    <BusyButton OnClick="() => OnUserChoice(true)" class="btn btn-primary">
+<div class="modal" tabindex="-1" role="dialog" style="display:block">
+    <div class="modal-dialog" role="document" style="display:block">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Title</h5>
+                <button @onclick="() => OnUserChoice(false)" type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @ChildContent
+            </div>
+            <div class="modal-footer">
+                <BusyButton OnClick="bb => OnUserChoice(true)" class="btn btn-primary">
+                    <Title>
                         Confirm
-                    </BusyButton>
-                    <button @onclick="() => OnUserChoice(false)" type="button" class="btn btn-secondary">
-                        Cancel
-                    </button>
-                </div>
+                    </Title>
+                </BusyButton>
+                <button @onclick="() => OnUserChoice(false)" type="button" class="btn btn-secondary">
+                    Cancel
+                </button>
             </div>
         </div>
     </div>
-}
+</div>
+
 
 @code {
 
     [Parameter]
-    public bool Visible { get; set; }
-
-    [Parameter]
-    public EventCallback<bool> VisibleChanged { get; set; }
-
-    [Parameter]
-    public EventCallback<bool> OnResult { get; set; }
+    public EventCallback<bool> OnClick { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
@@ -47,9 +41,19 @@
     [Parameter]
     public AlertLevel Level { get; set; }
 
-    async Task OnUserChoice(bool choice)
+    async Task OnUserChoice(bool choice, IBusyButton busyButton = null)
     {
-        await OnResult.InvokeAsync(choice);
-        await VisibleChanged.InvokeAsync(false);
+        try
+        {
+            await OnClick.InvokeAsync(choice);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+        finally
+        {
+            if (busyButton != null) await busyButton.SetBusy(false);
+        }
     }
 }
