@@ -94,7 +94,6 @@
     {
         var result = await sampleClient.GetById<Employee>("employees", 5);
 
-
         if (result.Success) employee = result.Response;
 
         //employee.Leaves = new List<Leave>();
