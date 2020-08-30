@@ -1,0 +1,15 @@
+﻿@namespace SW.SimplyRazor
+@inject RequestContext requestContext
+
+
+@code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    async protected override Task OnParametersSetAsync()
+    {
+        var authenticationState = await authenticationStateTask;
+        requestContext.Set(authenticationState.User);
+    }
+}

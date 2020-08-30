@@ -1,13 +1,14 @@
 ﻿@inject NavigationManager navigationManager
-
-
-<Router AppAssembly="@typeof(Program).Assembly">
-    <Found Context="routeData">
-        <AuthorizeRouteView  RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-    </Found>
-    <NotFound>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p>Sorry, there's nothing at this address: @navigationManager.Uri</p>
-        </LayoutView>
-    </NotFound>
-</Router>
+<CascadingAuthenticationState>
+    <UseRequestContext />
+    <Router AppAssembly="@typeof(Program).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p>Sorry, there's nothing at this address: @navigationManager.Uri</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
