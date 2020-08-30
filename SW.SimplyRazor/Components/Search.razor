@@ -224,7 +224,7 @@
 
         var apiClient = serviceProvider.GetApiClient(ApiClient);
         var apiResult = await apiClient.Search<TModel>($"{SearchUrl}?{Value.ToSearchyRequest(PageSize).ToString()}");
-
+        await notify.NotifyOnApiResult(apiResult);
         if (apiResult.Success)
         {
             if (apiResult.Response.Result.Count() == 0)

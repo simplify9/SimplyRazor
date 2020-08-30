@@ -2,6 +2,7 @@
 @implements IField
 @implements IDisposable
 @inject IServiceProvider serviceProvider
+@inject NotifyService notify
 
 @using SW.PrimitiveTypes
 @using System.Reflection
@@ -287,6 +288,7 @@
                     {
                         var apiClient = serviceProvider.GetApiClient();
                         var result = await apiClient.Lookup($"{Lookup}/{Value}?lookup=true");
+                        await notify.NotifyOnApiResult(result);
                         if (result.Success)
                             lookupValue = result.Response;
                     }
