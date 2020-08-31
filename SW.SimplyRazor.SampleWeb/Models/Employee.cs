@@ -46,31 +46,8 @@ namespace SW.SimplyRazor.SampleWeb.Models
 
         public IDictionary<string, string> AdditionalValues { get; set; }
 
-        //public static IList<Employee> Sample = new List<Employee>
-        //{
-        //    new Employee()
-        //    {
-        //        Id=1,
-        //        FirstName="Samer",
-        //        LastName="Awajan",
-        //        Gender="M",
-        //        Salary = new Money{Amount=100, Currency="USD" },
-        //        Leaves = new List<Leave>()
-        //        {
-        //            new Leave {Days=100, Reason="sick" },
-        //            new Leave {Days=30, Reason="marriage" }
-        //        }
-        //    },
-        //    new Employee() {Id=2, FirstName="Yaser", LastName="Awajan", Gender="M" },
-        //    new Employee() {Id=3, FirstName="Osama", LastName="Awajan", Gender="M" },
-        //    new Employee() {Id=4, FirstName="Ahmad", LastName="Awajan", Gender="M" },
-
-        //};
 
     }
-
-
-
     public static class FakeEmployees
     {
 
