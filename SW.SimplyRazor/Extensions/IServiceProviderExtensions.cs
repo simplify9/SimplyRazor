@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SW.PrimitiveTypes;
 using System;
 
 namespace SW.SimplyRazor
 {
     public static class IServiceProviderExtensions
     {
-        public static ISimplyRazorApiClient GetApiClient(this IServiceProvider serviceProvider, ISimplyRazorApiClient apiClient = null)
+        public static IBasicApiClient GetApiClient(this IServiceProvider serviceProvider, IBasicApiClient apiClient = null)
         {
             if (apiClient != null) return apiClient;
 

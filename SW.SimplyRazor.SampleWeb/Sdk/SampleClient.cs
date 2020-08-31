@@ -6,13 +6,13 @@ using SW.HttpExtensions;
 
 namespace SW.SimplyRazor.SampleWeb
 {
-    public class SampleClient : ApiClientBase<SampleClientOptions>, ISimplyRazorApiClient
+    public class SampleClient : ApiClientBase<SampleClientOptions>, IBasicApiClient
     {
         public SampleClient(HttpClient httpClient, RequestContext requestContext, SampleClientOptions options) : base(httpClient, requestContext, options)
         {
         }
 
-        async public Task<ApiResult<string>> Lookup(string searchUrl)
+        async public Task<ApiResult<string>> LookupValue(string searchUrl)
         {
             return await Builder.Path(searchUrl).AsApiResult<string>().GetAsync();
         }
