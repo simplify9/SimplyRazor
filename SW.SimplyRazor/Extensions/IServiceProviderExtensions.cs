@@ -11,7 +11,9 @@ namespace SW.SimplyRazor
             if (apiClient != null) return apiClient;
 
             var componentOptions = serviceProvider.GetRequiredService<ComponentOptions>();
-            return componentOptions.DefaultApiClientFactory.Invoke(serviceProvider);
+            apiClient = componentOptions.DefaultApiClientFactory.Invoke(serviceProvider);
+            if (apiClient == null) throw new SWException("Failed to get api client instance.");
+            return apiClient;
         }
     }
 }

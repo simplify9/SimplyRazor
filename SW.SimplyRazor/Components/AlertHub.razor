@@ -8,7 +8,7 @@
     var index = i;
 
     <CascadingValue Value="this" Name="AlertHub">
-        <SimplyAlert @key="alerts[index]" Id="@alerts[index].Id" Body="@alerts[index].Body" Level="alerts[index].Level"></SimplyAlert>
+        <Alert @key="alerts[index]" Id="@alerts[index].Id" Body="@alerts[index].Body" Level="alerts[index].Level"></Alert>
     </CascadingValue>
 }
 

@@ -9,7 +9,7 @@
                Lookup="@State.Lookup"
                TypeAhead="@State.TypeAhead.Value"
                Value="@State.Value?.ToString()"
-               ValueChanged=" (value) =>  ValueChanged.InvokeAsync(value)"
+               ValueChanged="value =>  ValueChanged.InvokeAsync(value)"
                Disabled="State.ReadOnly"
                Placeholder="@State.Placeholder"
                @attributes="UnmatchedAttributes"></SimplyChoices>

@@ -3,19 +3,19 @@
 @inject IJSRuntime JSRuntime
 @inject IServiceProvider serviceProvider
 
-<AlertHub></AlertHub>
+@*<AlertHub></AlertHub>*@
 
-<Search PageSize="10" SearchUrl="employees" OnItem="OnItem" TModel="Employee" Height="200px" Width="max-content">
+<Search PageSize="10" SearchUrl="employee" OnItem="OnItem" TModel="Employee" Height="200px" Width="max-content">
     <Commands>
         <button class="btn btn-primary" type="button" @onclick="() => OnExportToExcel(context.SearchyRequest)">Export</button>
         <a href="form2">
             New Employee
         </a>
     </Commands>
-    <Filters>
+    @*<Filters>
         <Field Name="Id" Text="Id" Required="true"></Field>
         <Field Name="EmploymentDate" Required="true"></Field>
-    </Filters>
+    </Filters>*@
     <Columns>
         <Field Name="Id" Text="Id">
             <ColumnValue>
