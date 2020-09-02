@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using SW.PrimitiveTypes;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,11 +12,16 @@ namespace SW.SimplyRazor
         {
             if (result.StatusCode == 400)
             {
-                var messages = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(result.Body);
+                IDictionary<string, IEnumerable<string>> messages = new Dictionary<string, IEnumerable<string>>();
+                try
+                {
+                    messages = JsonConvert.DeserializeObject<IDictionary<string, IEnumerable<string>>>(result.Body);
+                }
+                catch (Exception) { }
+
                 bool notified = false;
 
                 foreach (var kvp in messages)
-
                     if (kvp.Key.StartsWith("Field."))
                     {
                         var fieldName = kvp.Key.Split(new char[] { '.' }, 2)[1];
@@ -41,7 +47,6 @@ namespace SW.SimplyRazor
                     }
 
                 if (!notified)
-
                     await notify.Publish(new UserMessage
                     {
                         Body = "Validation failed.",
