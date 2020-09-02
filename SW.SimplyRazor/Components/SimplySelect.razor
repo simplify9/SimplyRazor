@@ -1,6 +1,7 @@
 ﻿@typeparam TKey
 @namespace SW.SimplyRazor
 @inject IServiceProvider serviceProvider
+@inject NotifyService notify
 
 @using System.Collections
 @using Humanizer
@@ -102,6 +103,7 @@
         {
             var apiClient = serviceProvider.GetApiClient();
             var result = await apiClient.Search($"{Lookup}?lookup=true");
+            await notify.NotifyOnApiResult(result);
             if (result.Success) Items = result.Response;
         }
     }

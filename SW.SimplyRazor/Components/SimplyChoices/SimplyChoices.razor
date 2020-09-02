@@ -2,6 +2,7 @@
 @implements IDisposable
 @inject IJSRuntime JSRuntime
 @inject IServiceProvider serviceProvider
+@inject NotifyService notify
 
 <select id="@Id" @ref="inputRef" @attributes="UnmatchedAttributes">
     @*<option value="0" selected disabled>Please enter your address.</option>*@
@@ -63,6 +64,7 @@
             {
                 var apiClient = serviceProvider.GetApiClient();
                 var result = await apiClient.LookupValue($"{Lookup}/{Value}?lookup=true");
+                await notify.NotifyOnApiResult(result);
                 if (result.Success)
                     await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, new[] { new { Key = Value, Value = result.Response, selected = true } }, "key", "value");
             }
@@ -104,6 +106,7 @@
     {
         var apiClient = serviceProvider.GetApiClient();
         var apiResult = await apiClient.Search(url);
+        await notify.NotifyOnApiResult(apiResult);
         if (apiResult.Success)
         {
             await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, apiResult.Response.ToArray(), "Key", "Value");
