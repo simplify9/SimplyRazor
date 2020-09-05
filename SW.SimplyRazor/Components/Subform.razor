@@ -8,7 +8,8 @@
     <SimplyTable Value="value"
                  Type="modelType"
                  Text="@Text"
-                 ValueChanged="TableValueChanged" >
+                 ValueChanged="TableValueChanged"
+                 OnItem="OnItem" >
         <Columns>
             @Columns
         </Columns>
@@ -35,6 +36,10 @@
 
     [Parameter]
     public EventCallback<object> ValueChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<TableItem> OnItem { get; set; }
+
 
     [Parameter]
     public RenderFragment Columns { get; set; }

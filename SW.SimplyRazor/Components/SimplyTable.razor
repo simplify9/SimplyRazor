@@ -111,7 +111,10 @@ else if (Form != null)
     MethodInfo removeMethod;
     MethodInfo containsMethod;
 
-    void Add() => newModel = Activator.CreateInstance(Type);
+    void Add()
+    {
+        newModel = Activator.CreateInstance(Type);
+    }
 
     void RemoveAll()
     {
