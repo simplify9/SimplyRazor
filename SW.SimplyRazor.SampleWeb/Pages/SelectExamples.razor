@@ -2,7 +2,7 @@
 <h3>SelectExamples</h3>
 
 <p>
-    <SimplySelect @bind-Value="value" EmptyText="Select country" Lookup="country"></SimplySelect>
+    <SimplySelect @bind-Value="value" EmptyText="Select country" Lookup="@Lookup.FromSearchy("country")"></SimplySelect>
 
 </p>
 
@@ -11,7 +11,7 @@
 </p>
 
 <p>
-    <SimplySelect @bind-Value="value2" EmptyText="Select country" Lookup="country"></SimplySelect>
+    <SimplySelect @bind-Value="value2" EmptyText="Select country" Lookup="@Lookup.FromSearchy("country")"></SimplySelect>
 
 </p>
 
@@ -20,7 +20,7 @@
 </p>
 
 <p>
-    <SimplySelect @bind-Value="value3" EmptyText="Select integer" Lookup="intmock"></SimplySelect>
+    <SimplySelect @bind-Value="value3" EmptyText="Select integer" Lookup="@Lookup.FromSearchy("intmock")"></SimplySelect>
 </p>
 
 <p>
@@ -28,7 +28,7 @@
 </p>
 
 <p>
-    <SimplySelect @bind-Value="value4" EmptyText="Select integer" Lookup="intmock"></SimplySelect>
+    <SimplySelect @bind-Value="value4" EmptyText="Select integer" Lookup="@Lookup.FromSearchy("intmock")"></SimplySelect>
 </p>
 
 <p>

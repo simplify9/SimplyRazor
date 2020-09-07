@@ -14,7 +14,7 @@
     public string Id { get; set; }
 
     [Parameter]
-    public string Lookup { get; set; }
+    public Lookup Lookup { get; set; }
 
     [Parameter]
     public string Placeholder { get; set; }
@@ -52,7 +52,7 @@
 
             if (TypeAhead == 0)
             {
-                await PopulateChoices($"{Lookup}?lookup=true");
+                await PopulateChoices(Lookup.ApplySearch());
             }
         }
 
@@ -63,7 +63,7 @@
             if (TypeAhead > 0 && Value != default)
             {
                 var apiClient = serviceProvider.GetApiClient();
-                var result = await apiClient.LookupValue($"{Lookup}/{Value}?lookup=true");
+                var result = await apiClient.LookupValue(Lookup.ApplyValue(Value));
                 await notify.NotifyOnApiResult(result);
                 if (result.Success)
                     await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, new[] { new { Key = Value, Value = result.Response, selected = true } }, "key", "value");
@@ -92,7 +92,7 @@
 
             await StepperDeboucer.Debouce(async () =>
             {
-                await PopulateChoices($"{Lookup}?lookup=true&search={value}");
+                await PopulateChoices(Lookup.ApplySearch(value));
             });
     }
 

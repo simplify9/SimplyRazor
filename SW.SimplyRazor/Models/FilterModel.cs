@@ -47,7 +47,7 @@ namespace SW.SimplyRazor
         public string[] ValueStringArray { get; set; }
         public DateTime[] ValueDateTimeArray { get; set; }
         public DateMode DateMode { get; set; }
-        public string Lookup { get; set; }
+        public Lookup Lookup { get; set; }
         public int? TypeAhead { get; set; }
     }
 

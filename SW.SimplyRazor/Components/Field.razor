@@ -92,7 +92,7 @@
     public IComponentAction Action { get; set; }
 
     [Parameter]
-    public string Lookup { get; set; }
+    public Lookup Lookup { get; set; }
 
     [Parameter]
     public object Default { get; set; }
@@ -284,10 +284,10 @@
 
                 if (ColumnValue == null)
 
-                    if (Lookup != null && !string.IsNullOrWhiteSpace(Value.ToString()))
+                    if (Lookup != null && !string.IsNullOrWhiteSpace(Value.ToString()) && Lookup.HasValueUrl)
                     {
                         var apiClient = serviceProvider.GetApiClient();
-                        var result = await apiClient.LookupValue($"{Lookup}/{Value}?lookup=true");
+                        var result = await apiClient.LookupValue(Lookup.ApplyValue(Value));
                         await notify.NotifyOnApiResult(result);
                         if (result.Success)
                             lookupValue = result.Response;

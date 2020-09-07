@@ -16,7 +16,7 @@
         <Field Name="Id" Text="Id" Required="true"></Field>
         <Field Name="EmploymentDate" Required="true"></Field>
         <Field Name="FirstName"></Field>
-        <Field Name="Country" Lookup="countries"></Field>
+        <Field Name="Country" Lookup="@Lookup.FromSearchy("countries")"></Field>
 
         @*<Field Name="HandlerName"  Text="Handler" ></Field>
             <Field Name="Started" Text="Date" ></Field>*@

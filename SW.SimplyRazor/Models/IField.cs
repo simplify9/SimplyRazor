@@ -12,7 +12,7 @@ namespace SW.SimplyRazor
         string Text { get; set; }
         string Help { get; set; }
         string Placeholder { get; set; }
-        string Lookup { get; set; }
+        Lookup Lookup { get; set; }
         string Id { get; }
         object Value { get; }
         bool IsInvalid { get; }

@@ -6,12 +6,6 @@
 @using System.Collections
 @using Humanizer
 
-
-@*@if (Lookup != null)
-{
-    <SimplyQuery QueryUrl="@($"{Lookup}?lookup=true")" OnResult="OnQueryResult" TResponse="Dictionary<string, string>" ></SimplyQuery>
-}*@
-
 <select @onchange="SelectValueChanged" @attributes="UnmatchedAttributes">
 
     @if (EmptyText != null)
@@ -33,7 +27,7 @@
             object value = null;
             var enumerableType = itemUntyped.GetType();
 
-            if (enumerableType == typeof(string) && typeof(TKey)== typeof(string))
+            if (enumerableType == typeof(string) && typeof(TKey) == typeof(string))
             {
                 key = itemUntyped;
                 value = itemUntyped;
@@ -77,7 +71,7 @@
     public EventCallback<IEnumerable> ItemsChanged { get; set; }
 
     [Parameter]
-    public string Lookup { get; set; }
+    public Lookup Lookup { get; set; }
 
     [Parameter]
     public string EmptyText { get; set; }
@@ -102,7 +96,7 @@
         if (Lookup != null)
         {
             var apiClient = serviceProvider.GetApiClient();
-            var result = await apiClient.Search($"{Lookup}?lookup=true");
+            var result = await apiClient.Search(Lookup.ApplySearch());
             await notify.NotifyOnApiResult(result);
             if (result.Success) Items = result.Response;
         }
@@ -136,15 +130,5 @@
             await ValueChanged.InvokeAsync(Value);
         }
     }
-
-    //void OnQueryResult(ApiResult< Dictionary<string, string>> apiResult)
-    //{
-    //    if (apiResult.Success)
-    //    {
-    //        Items = apiResult.Response;
-    //        //StateHasChanged();
-
-    //    }
-    //}
 
 }

@@ -3,9 +3,9 @@
 
 <h3>Choices</h3>
 
-<SimplyAlertHub></SimplyAlertHub>
+<AlertHub></AlertHub>
 
-<SimplyChoices Id="choicesInput" Lookup="countries" Value="@("JO")" ></SimplyChoices>
+<SimplyChoices Id="choicesInput" Lookup="@Lookup.FromSearchy("countries")" Value="@("JO")" ></SimplyChoices>
 
 @code {
 
