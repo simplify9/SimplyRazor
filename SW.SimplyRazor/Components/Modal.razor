@@ -1,0 +1,37 @@
+﻿@namespace SW.SimplyRazor
+
+<div class="modal" tabindex="-1" role="dialog" style="display:block">
+    <div class="modal-dialog" role="document" style="display:block">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Title</h5>
+                <button @onclick="args => OnClose.InvokeAsync(args)" type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @Body
+            </div>
+            <div class="modal-footer">
+                @Footer
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public RenderFragment Body { get; set; }
+
+    [Parameter]
+    public RenderFragment Footer { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+
+}

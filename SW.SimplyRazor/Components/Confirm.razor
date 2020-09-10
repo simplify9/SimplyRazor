@@ -1,6 +1,22 @@
 ﻿@namespace SW.SimplyRazor
 
-<div class="modal" tabindex="-1" role="dialog" style="display:block">
+<Modal Title="@Title" OnClose="() => OnClick.InvokeAsync(false)">
+    <Body>
+        @ChildContent
+    </Body>
+    <Footer>
+        <BusyButton OnClick="bb => OnUserChoice(true, bb)" class="btn btn-primary">
+            <Title>
+                Confirm
+            </Title>
+        </BusyButton>
+        <button @onclick="() => OnUserChoice(false)" type="button" class="btn btn-secondary">
+            Cancel
+        </button>
+    </Footer>
+</Modal>
+
+@*<div class="modal" tabindex="-1" role="dialog" style="display:block">
     <div class="modal-dialog" role="document" style="display:block">
         <div class="modal-content">
             <div class="modal-header">
@@ -24,7 +40,7 @@
             </div>
         </div>
     </div>
-</div>
+</div>*@
 
 
 @code {
