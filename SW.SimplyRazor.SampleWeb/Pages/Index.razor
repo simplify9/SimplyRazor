@@ -2,9 +2,10 @@
 @inject NavigationManager navigationManager
 @inject IJSRuntime JSRuntime
 @inject IServiceProvider serviceProvider
+@inject ScopedState scopedState 
 @*<AlertHub></AlertHub>*@
 
-<Search PageSize="10" Value="search" ValueChanged="OnSearchValueChanged" SearchUrl="employees" OnItem="OnItem" TModel="Employee" Height="200px" Width="max-content">
+<Search PageSize="10" @bind-Value="scopedState[navigationManager.Uri]"  SearchUrl="employees" OnItem="OnItem" TModel="Employee" Height="200px" Width="max-content">
     <Commands>
         <button class="btn btn-primary" type="button" @onclick="() => OnExportToExcel(context.SearchyRequest)">Export</button>
         <a href="form2">
@@ -39,14 +40,16 @@
 
     protected override void OnInitialized()
     {
-        search = new SearchyRequest("Id", SearchyRule.NotEqualsTo, 5);
+        //search = scopedState.GetOrDefault(navigationManager.Uri, new SearchyRequest()); //SearchyRequestExtensions.FromQueryString(new Uri(navigationManager.Uri).Query);
     }
 
     void OnSearchValueChanged(SearchyRequest value)
     {
-        //navigationManager.NavigateTo($"/{value.ToString()}");
-        search = value;
-    }
+        //scopedState.Set(navigationManager.Uri, value);
+        //search = value;
+        //navigationManager.NavigateTo($"{new Uri(navigationManager.Uri).AbsolutePath}?{value.ToString()}");
+        //search = value;
+        }
 
     async Task OnExportToExcel(SearchyRequest searchyRequest)
     {

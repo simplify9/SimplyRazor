@@ -10,6 +10,7 @@ namespace SW.SimplyRazor
             var componentOptions = new ComponentOptions();
             if (configure != null) configure.Invoke(componentOptions);
             serviceCollection.AddSingleton(componentOptions);
+            serviceCollection.AddScoped<ScopedState>();
 
             serviceCollection.AddScoped<Notifier<UserMessage>>();
             serviceCollection.AddScoped<Notifier<InvalidFieldNotification>>();

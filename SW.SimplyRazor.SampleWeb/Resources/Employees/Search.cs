@@ -13,7 +13,7 @@ namespace SW.SimplyRazor.SampleWeb.Resources.Employees
     {
         async public Task<object> Handle(SearchyRequest request, bool lookup = false, string searchPhrase = null)
         {
-            //await Task.Delay(TimeSpan.FromMilliseconds(500));
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
 
             var result = FakeEmployees.Data.AsQueryable().Search(request.Conditions, request.Sorts, request.PageSize, request.PageIndex);
 
