@@ -16,9 +16,13 @@
 @{
     int index = 0;
 
-    foreach (var filter in Value.Filters)
+    foreach (var filter in searchState.Filters)
     {
         var f1 = filter;
+        SimplySearchFilterSetup setup = null;
+
+        if (f1.Field != null)
+            searchState.FilterSetups.TryGetValue(f1.Field, out setup);
 
         <div class="row mb-2" @key="filter">
             <div class="input-group col-6">
@@ -26,64 +30,73 @@
                     <SimplySelect Value="filter.Field"
                                   ValueChanged="value => OnFilterChange(filter, value)"
                                   EmptyText="select"
-                                  Items="filterSetup.ToDictionary(k => k.Field, v => v.Text)"
+                                  Items="searchState.FilterSetups.ToDictionary(k => k.Key, v => v.Value.Text)"
                                   TKey="string"
                                   class="form-control" />
 
                 </div>
+
                 <SimplySelect Value="(int)filter.Rule"
                               ValueChanged="value => OnRuleChange(filter, value)"
-                              Items="filter.CompactRules"
+                              Items="setup?.CompactRules"
                               TKey="int"
                               class="form-control"
                               style="max-width: 90px" />
 
                 <SimplyForm @bind-Value="f1">
 
-                    @switch (filter.Type)
+
+                    @switch (setup?.Type)
                         {
                             case SearchyDataType.Number:
-                            <Field Name="ValueDecimal" Text="" Lookup="@filter.Lookup" />
+
+                            <Field Name="ValueDecimal" Text="" Lookup="@setup.Lookup" />
                                 break;
 
                             case SearchyDataType.Date:
 
-                                if (filter.DateMode == DateMode.Single)
+                                if (filter.Rule == SearchyRule.Range)
                                 {
-                                <Field Name="ValueDateTime" Text="" InputType="InputType.Calendar" />
+                                <Field Name="ValueDateTimeArray" Text="" />
                                 }
                                 else
                                 {
-                                <Field Name="ValueDateTimeArray" Text="" />
+                                <Field Name="ValueDateTime" Text="" InputType="InputType.Calendar" />
                                 }
 
                                 break;
 
-                            default:
 
-                                if (filter.Lookup == null)
+                            case SearchyDataType.Text:
+                            
+
+                                if (setup.Lookup == null)
                                 {
                                 <Field Name="ValueString" Text="" />
                                 }
                                 else
                                 {
-                                <Field Name="ValueString" Text="" Lookup="@filter.Lookup" TypeAhead="@filter.TypeAhead" />
+                                <Field Name="ValueString" Text="" Lookup="@setup.Lookup" TypeAhead="@setup.TypeAhead" />
                                 }
-
                                 break;
 
+                            default:
+                            <Field Name="Value" Text="" />
+                                break;
                         }
+
+
                 </SimplyForm>
 
                 <div class="input-group-append">
 
-                    @if (index == Value.Filters.Count - 1)
+                    @if (index == searchState.Filters.Count - 1)
                     {
-                        <button @onclick="e => Value.Filters.Add(new FilterModel())" class="btn btn-outline-secondary " type="button">+</button>
+                        <button @onclick="e => searchState.Filters.Add(new SimplySearchFilter())" class="btn btn-outline-secondary " type="button">+</button>
                     }
                     else
                     {
-                        <button @onclick="e => Value.Filters.Remove(filter)" class="btn btn-outline-secondary " type="button">x</button>
+                        <button @onclick="e => searchState.Filters.Remove(filter)" class="btn btn-outline-secondary " type="button">x</button>
                     }
 
                 </div>
@@ -118,7 +131,7 @@
                 </Columns>
             </SimplyTable>
         </div>
-        <Pager TotalCount="result.TotalCount" Count="result.Result.Count()" Page="Value.Page" PageSize="PageSize" PageChanged="page => DoSearch(null, page)"></Pager>
+        <Pager TotalCount="result.TotalCount" Count="result.Result.Count()" Page="Value.PageIndex" PageSize="PageSize" PageChanged="page => DoSearch(null, page)"></Pager>
     }
 }
 
@@ -152,20 +165,54 @@
     public EventCallback<TableItem<TModel>> OnItem { get; set; }
 
     [Parameter]
-    public SimplySearchValue Value { get; set; }
+    public SearchyRequest Value { get; set; }
 
     [Parameter]
-    public EventCallback<SimplySearchValue> ValueChanged { get; set; }
+    public EventCallback<SearchyRequest> ValueChanged { get; set; }
 
     SearchyResponse<TModel> result;
+    SearchState searchState = new SearchState();
 
     protected override void OnInitialized()
     {
-        if (Value == null || Value.Filters.Count == 0)
+        //if (Value == null || Value.Filters.Count == 0)
+        //{
+        //}
+    }
+
+
+
+    async protected override Task OnParametersSetAsync()
+    {
+
+        if (Value == null)
         {
-            Value = new SimplySearchValue();
-            Value.Filters.Add(new FilterModel());
+            //searchState.Filters.Add();
         }
+        else
+        {
+
+            foreach (var f in Value.Conditions.First().Filters)
+            {
+                searchState.Filters.Add(new SimplySearchFilter(f));
+            }
+
+            //var apiClient = serviceProvider.GetApiClient(ApiClient);
+            //var apiResult = await apiClient.Search<TModel>
+            //    ($"{SearchUrl}?{Value.ToString()}");
+            //await notify.NotifyOnApiResult(apiResult);
+            //if (apiResult.Success)
+            //{
+            //    if (apiResult.Response.Result.Count() == 0)
+            //    {
+            //        await notify.Publish(new UserMessage { Body = "Search returned no results.", Level = AlertLevel.Info });
+            //    }
+            //    result = apiResult.Response;
+            //    //StateHasChanged();
+            //}
+        }
+        //Value.PageIndex = page;
+
     }
 
     Task OnTableItem(TableItem tableItem)
@@ -177,78 +224,70 @@
         });
     }
 
-    void OnRuleChange(FilterModel filter, int rule)
+    void OnRuleChange(SimplySearchFilter filter, int rule)
     {
         filter.Rule = (SearchyRule)rule;
-        if (filter.Rule == SearchyRule.Range)
-        {
-            filter.DateMode = DateMode.Range;
-            filter.ValueDateTime = null;
-        }
-        else
-        {
-            filter.DateMode = DateMode.Single;
-            filter.ValueDateTimeArray = null;
-        }
+        filter.Value = null;
     }
 
-    void OnFilterChange(FilterModel filter, string value)
+    void OnFilterChange(SimplySearchFilter filter, string value)
     {
         filter.Field = value;
-        filter.ValueString = null;
-        filter.ValueStringArray = null;
-        filter.ValueDecimal = null;
-        filter.ValueDecimalArray = null;
-        filter.ValueDateTime = null;
-        filter.ValueDateTimeArray = null;
+        filter.Value = null;
         filter.Rule = default;
-
-        var selectedFilterSetup = filterSetup.Where(fs => fs.Field == value).FirstOrDefault();
-        if (selectedFilterSetup == null)
-        {
-            filter.Rules = new List<SearchyRule>();
-        }
-        else
-        {
-            filter.Rule = selectedFilterSetup.Rules.First();
-            filter.Rules = selectedFilterSetup.Rules;
-            filter.Type = selectedFilterSetup.Type;
-            filter.Lookup = selectedFilterSetup.Lookup;
-            filter.TypeAhead = selectedFilterSetup.TypeAhead;
-        }
     }
 
     async Task DoSearch(IBusyButton bb, int page)
     {
-        Value.Page = page;
+        //Value.PageIndex = page;
 
-        var apiClient = serviceProvider.GetApiClient(ApiClient);
-        var apiResult = await apiClient.Search<TModel>($"{SearchUrl}?{Value.ToSearchyRequest(PageSize).ToString()}");
-        await notify.NotifyOnApiResult(apiResult);
-        if (apiResult.Success)
-        {
-            if (apiResult.Response.Result.Count() == 0)
-            {
-                await notify.Publish(new UserMessage { Body = "Search returned no results.", Level = AlertLevel.Info });
-            }
-            result = apiResult.Response;
-        }
+        //var newValue = new SearchyRequest(new SearchyCondition(GetFilledFilters()))
+        //{
+        //    PageSize = PageSize,
+        //    PageIndex = page
+        //};
+
+        //var apiClient = serviceProvider.GetApiClient(ApiClient);
+        //var apiResult = await apiClient.Search<TModel>
+        //    ($"{SearchUrl}?{Value.ToString()}");
+        //await notify.NotifyOnApiResult(apiResult);
+        //if (apiResult.Success)
+        //{
+        //    if (apiResult.Response.Result.Count() == 0)
+        //    {
+        //        await notify.Publish(new UserMessage { Body = "Search returned no results.", Level = AlertLevel.Info });
+        //    }
+        //    result = apiResult.Response;
+        //}
         if (bb != null) await bb.SetBusy(false);
-        await ValueChanged.InvokeAsync(Value);
+        //await ValueChanged.InvokeAsync(newValue);
     }
-
-    ICollection<SimplySearchFilterSetup> filterSetup = new List<SimplySearchFilterSetup>();
 
     async public Task AddFilterSetup(SimplySearchFilterSetup filter)
     {
-        filterSetup.Add(filter);
+        searchState.FilterSetups.Add(filter.Field, filter);
         await InvokeAsync(() => StateHasChanged());
     }
 
     public void RemoveFilterSetup(SimplySearchFilterSetup filter)
     {
-        filterSetup.Remove(filter);
+        searchState.FilterSetups.Remove(filter.Field);
     }
 
-    public SearchyRequest SearchyRequest => Value.ToSearchyRequest(PageSize);
+    public SearchyRequest SearchyRequest => Value;
+
+    //IEnumerable<FilterModel> GetFilledFilters()
+    //{
+    //    //return filters.Where(filter =>
+    //    //    (filter.ValueDateTime != null ||
+    //    //    filter.ValueDateTimeArray != null ||
+    //    //    filter.ValueDecimal != null ||
+    //    //    filter.ValueDecimalArray != null ||
+    //    //    filter.ValueString != null ||
+    //    //    filter.ValueStringArray != null) &&
+    //    //    !string.IsNullOrEmpty(filter.Field) &&
+    //    //    filter.Rule != default);
+
+    //    return null;
+    //}
 }

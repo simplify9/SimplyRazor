@@ -2,20 +2,19 @@
 @inject NavigationManager navigationManager
 @inject IJSRuntime JSRuntime
 @inject IServiceProvider serviceProvider
-
 @*<AlertHub></AlertHub>*@
 
-<Search PageSize="10" SearchUrl="employee" OnItem="OnItem" TModel="Employee" Height="200px" Width="max-content">
+<Search PageSize="10" Value="search" ValueChanged="OnSearchValueChanged" SearchUrl="employees" OnItem="OnItem" TModel="Employee" Height="200px" Width="max-content">
     <Commands>
         <button class="btn btn-primary" type="button" @onclick="() => OnExportToExcel(context.SearchyRequest)">Export</button>
         <a href="form2">
             New Employee
         </a>
     </Commands>
-    @*<Filters>
+    <Filters>
         <Field Name="Id" Text="Id" Required="true"></Field>
         <Field Name="EmploymentDate" Required="true"></Field>
-    </Filters>*@
+    </Filters>
     <Columns>
         <Field Name="Id" Text="Id">
             <ColumnValue>
@@ -36,11 +35,17 @@
 
 @code{
 
-    SimplySearchValue search;
+    SearchyRequest search;
 
-    void OnSearch(SimplySearchValue value)
+    protected override void OnInitialized()
     {
-        navigationManager.NavigateTo($"/{value.ToString()}");
+        search = new SearchyRequest("Id", SearchyRule.NotEqualsTo, 5);
+    }
+
+    void OnSearchValueChanged(SearchyRequest value)
+    {
+        //navigationManager.NavigateTo($"/{value.ToString()}");
+        search = value;
     }
 
     async Task OnExportToExcel(SearchyRequest searchyRequest)
@@ -56,7 +61,7 @@
 
     void OnItem(TableItem<Employee> tableItem)
     {
-        if (tableItem.Flag == TableItemFlag.Clicked) 
+        if (tableItem.Flag == TableItemFlag.Clicked)
             navigationManager.NavigateTo($"/form2?id={tableItem.Item.Id}");
     }
 }
