@@ -23,7 +23,7 @@ gulp.task('js', function () {
         'extensions/ijsruntimeextensionsinterop.js'
 
     ])
-        .pipe(concat('simply.razor.js'))
+        .pipe(concat('simplyrazor.js'))
         .pipe(minify())
         .pipe(gulp.dest('wwwroot'));
 });
@@ -37,6 +37,6 @@ gulp.task('css', function () {
         'node_modules/flatpickr/dist/flatpickr.min.css',
 
     ])
-        .pipe(concat('simply.razor.css'))
+        .pipe(concat('simplyrazor.css'))
         .pipe(gulp.dest('wwwroot'));
 });
