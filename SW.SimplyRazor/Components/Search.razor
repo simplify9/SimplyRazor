@@ -221,10 +221,11 @@
     {
         filter.Field = value;
         filter.Value = null;
-        if (filter.Field != null)
-            filter.Rule = (SearchyRule)int.Parse(filterSetups[filter.Field].CompactRules.First().Key);
-        else
+        if (filter.Field == null)
             filter.Rule = default;
+        else
+            filter.Rule = (SearchyRule)int.Parse(filterSetups[filter.Field].CompactRules.First().Key);
+
     }
 
     async Task DoSearch(int page, IBusyButton bb = null)

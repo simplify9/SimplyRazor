@@ -5,7 +5,7 @@
 @inject ScopedState scopedState 
 @*<AlertHub></AlertHub>*@
 
-<Search PageSize="10" @bind-Value="scopedState[navigationManager.Uri]"  SearchUrl="employees" OnItem="OnItem" TModel="Employee" Height="200px" Width="max-content">
+<Search PageSize="10" @bind-Value="scopedState[navigationManager.Uri]"  SearchUrl="employees" OnItem="OnItem" TModel="Employee" >
     <Commands>
         <button class="btn btn-primary" type="button" @onclick="() => OnExportToExcel(context.SearchyRequest)">Export</button>
         <a href="form2">
@@ -15,6 +15,7 @@
     <Filters>
         <Field Name="Id" Text="Id" Required="true"></Field>
         <Field Name="EmploymentDate" Required="true"></Field>
+        <Field Name="Country" Lookup="@Lookup.FromSearchy("countries")"/>
     </Filters>
     <Columns>
         <Field Name="Id" Text="Id">
@@ -35,21 +36,6 @@
 </Search>
 
 @code{
-
-    SearchyRequest search;
-
-    protected override void OnInitialized()
-    {
-        //search = scopedState.GetOrDefault(navigationManager.Uri, new SearchyRequest()); //SearchyRequestExtensions.FromQueryString(new Uri(navigationManager.Uri).Query);
-    }
-
-    void OnSearchValueChanged(SearchyRequest value)
-    {
-        //scopedState.Set(navigationManager.Uri, value);
-        //search = value;
-        //navigationManager.NavigateTo($"{new Uri(navigationManager.Uri).AbsolutePath}?{value.ToString()}");
-        //search = value;
-        }
 
     async Task OnExportToExcel(SearchyRequest searchyRequest)
     {

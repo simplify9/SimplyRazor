@@ -16,8 +16,10 @@
 {
     <CascadingValue IsFixed="true" Value="this" Name="FieldAction">
 
-        <div style="@(Height==null ? "" : $"height: {Height};overflow-y: auto; ") overflow-x: auto;">
-            <table class="table table-sm table-hover" style="@(Width == null ? "" : $"width: {Width};" )">
+        @*<div style="@(Height==null ? "" : $"height: {Height};overflow-y: auto; ") overflow-x: auto;">*@
+        <div class="table-responsive">
+            @*style="@(Width == null ? "" : $"width: {Width};" )"*@
+            <table class="table table-sm table-hover w-auto">
                 <thead>
                     <tr>
                         @{

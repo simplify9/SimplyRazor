@@ -26,14 +26,8 @@ namespace SW.SimplyRazor
 
         public string ValueString
         {
-            get
-            {
-                return (string)Value;
-            }
-            set
-            {
-                Value = value;
-            }
+            get => (string)Value;
+            set => Value = value;
         }
 
         public string[] ValueStringArray

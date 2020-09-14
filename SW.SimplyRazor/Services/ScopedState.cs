@@ -15,7 +15,7 @@ namespace SW.SimplyRazor
             entries = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
         }
 
-        public object this[string key] //{ get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public object this[string key] 
         {
             get
             {
@@ -23,12 +23,9 @@ namespace SW.SimplyRazor
                     return value;
                 return null;
             }
-            set
-            {
-                entries[key] = value;
-            }
-        }
 
+            set => entries[key] = value;
+        }
 
         public ICollection<string> Keys => throw new NotImplementedException();
 
@@ -75,12 +72,12 @@ namespace SW.SimplyRazor
 
         public bool Remove(string key)
         {
-            throw new NotImplementedException();
+            return entries.Remove(key);
         }
 
         public bool Remove(KeyValuePair<string, object> item)
         {
-            throw new NotImplementedException();
+            return entries.Remove(item);
         }
 
         public bool TryGetValue(string key, out object value)
