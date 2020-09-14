@@ -15,7 +15,9 @@
     <Filters>
         <Field Name="Id" Text="Id" Required="true"></Field>
         <Field Name="EmploymentDate" Required="true"></Field>
-        <Field Name="Country" Lookup="@Lookup.FromSearchy("countries")"/>
+        <Field Name="Country" Lookup="@Lookup.FromSearchy("countries")" />
+        <Field Name="EmploymentStatus" Lookup="@Lookup.FromSearchy("mockmodels")" />
+
     </Filters>
     <Columns>
         <Field Name="Id" Text="Id">

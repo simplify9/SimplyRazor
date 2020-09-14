@@ -79,7 +79,7 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UnmatchedAttributes { get; set; }
 
-    async protected override Task OnInitializedAsync()
+    async protected override Task OnParametersSetAsync()
     {
         var nakedType = Nullable.GetUnderlyingType(typeof(TKey)) ?? typeof(TKey);
 
