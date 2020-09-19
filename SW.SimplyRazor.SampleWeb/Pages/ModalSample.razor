@@ -1,0 +1,34 @@
+﻿@page "/modal"
+
+
+<h3>ModalSample</h3>
+
+<a href="JavaScript:void(0);"  @onclick="FailMessageClick" class="badge badge-danger">Fail</a>
+@if (showFailMessage)
+{
+    <Modal Title="Exception" OnClose="FailMessageClick">
+        <Body>
+            <text>
+
+
+            </text>            
+            If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. HTML encoding converts characters that are not allowed in HTML into character-entity equivalents; HTML decoding reverses the encoding. For example, when embedded in a block of text, the characters  and  are encoded as &lt; and &gt; for HTTP transmission.
+
+            To encode or decode values outside of a web application, use the WebUtility class.
+        </Body>
+    </Modal>
+}
+
+
+
+@code {
+
+    bool showFailMessage;
+
+    void FailMessageClick()
+    {
+        showFailMessage = !showFailMessage;
+    }
+
+
+}

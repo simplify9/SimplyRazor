@@ -245,7 +245,13 @@
 
     public void RemoveFilterSetup(SimplySearchFilterSetup filter)
     {
-        filterSetups.Remove(filter.Field);
+        try
+        {
+            filterSetups.Remove(filter.Field);
+        }
+        catch (Exception)
+        {
+        }
     }
 
     public SearchyRequest SearchyRequest => (SearchyRequest)Value;

@@ -2,10 +2,10 @@
 @inject NavigationManager navigationManager
 @inject IJSRuntime JSRuntime
 @inject IServiceProvider serviceProvider
-@inject ScopedState scopedState 
+@inject ScopedState scopedState
 @*<AlertHub></AlertHub>*@
 
-<Search PageSize="10" @bind-Value="scopedState[navigationManager.Uri]"  SearchUrl="employees" OnItem="OnItem" TModel="Employee" >
+<Search PageSize="10" @bind-Value="scopedState[navigationManager.Uri]" SearchUrl="employees"  TModel="Employee">
     <Commands>
         <button class="btn btn-primary" type="button" @onclick="() => OnExportToExcel(context.SearchyRequest)">Export</button>
         <a href="form2">
@@ -25,7 +25,25 @@
                 <a @onclick="@(() => context.Action.Invoke("s", "s"))">Edit</a>
             </ColumnValue>
         </Field>
+        <Field>
+            <ColumnValue>
+                <a href="JavaScript:void(0);" @onclick="FailMessageClick" class="badge badge-danger">Fail</a>
+
+
+                @if (showFailMessage)
+                {
+                    <Modal Title="Exception" OnClose="FailMessageClick">
+                        <Body>
+
+                            @(((Employee)context.Model).DisplayName)
+
+                        </Body>
+                    </Modal>
+                }
+            </ColumnValue>
+        </Field>
         <Field Name="FirstName" />
+
         <Field Name="LastName" />
         <Field Name="Age" />
         <Field Name="EmploymentDate" />
@@ -38,6 +56,14 @@
 </Search>
 
 @code{
+
+    bool showFailMessage;
+
+    void FailMessageClick()
+    {
+        showFailMessage = !showFailMessage;
+    }
+
 
     async Task OnExportToExcel(SearchyRequest searchyRequest)
     {
