@@ -216,15 +216,11 @@
     async Task DoSearch(int page, IBusyButton bb = null)
     {
         internalValue.PageIndex = page;
-
-        var searchValue = (SearchyRequest)internalValue.Clone();
-        var emptyFilters = searchValue.Conditions.First().Filters.Where(f => f.Value == null).ToList();
-        foreach (var filter in emptyFilters)
-            searchValue.Conditions.First().Filters.Remove(filter);
+        var newValue = (SearchyRequest)internalValue.Clone();
 
         var apiClient = serviceProvider.GetApiClient(ApiClient);
         var apiResult = await apiClient.Search<TModel>
-            ($"{SearchUrl}?{searchValue.ToString()}");
+            ($"{SearchUrl}?{newValue.ToString()}");
         await notify.NotifyOnApiResult(apiResult);
         if (apiResult.Success)
         {
@@ -234,8 +230,6 @@
             result = apiResult.Response;
         }
 
-        var newValue = (SearchyRequest)internalValue.Clone();
-        newValue.PageIndex = page;
         await ValueChanged.InvokeAsync(newValue);
         if (bb != null) await bb.SetBusy(false);
     }
