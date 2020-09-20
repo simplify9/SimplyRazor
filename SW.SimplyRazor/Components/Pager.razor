@@ -31,7 +31,10 @@
         else
         {
             <li class="page-item" @onclick="e=> ChangePage(Page + 1)">
-                <span class="page-link" style="cursor:pointer ">Next</span>
+                <span class="page-link" style="cursor:pointer ">
+                    Next
+                    <span class="badge badge-pill badge-primary">@(Page + 2)</span>
+                </span>
             </li>
         }
         @if (totalPages == 0 || totalPages == Page + 1)

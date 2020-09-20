@@ -38,7 +38,9 @@
                     <CascadingValue IsFixed="true" Value="FieldRole.ColumnValue" Name="RenderMode">
                         @foreach (var item in (IEnumerable)Value)
                         {
-                            <tr @key="item" @onclick="() => OnItem.InvokeAsync(new TableItem {Flag=TableItemFlag.Clicked, Item = item})">
+                            <tr @key="item" 
+                                @onclick="() => OnItem.InvokeAsync(new TableItem {Flag=TableItemFlag.Clicked, Item = item})"
+                                @ondblclick="() => OnItem.InvokeAsync(new TableItem {Flag=TableItemFlag.DoubleClicked, Item = item})" >
                                 <CascadingValue Value="item" Name="Model">
                                     @Columns
                                 </CascadingValue>

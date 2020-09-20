@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UserSecretsId>c0141685-b21d-48ac-b938-e8b7f27a3c5a</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -17,10 +15,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.8" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
-    <PackageReference Include="SimplyWorks.CqApi" Version="2.0.19" />
+    <PackageReference Include="SimplyWorks.CqApi" Version="2.0.26" />
     <PackageReference Include="SimplyWorks.ExportToExcel" Version="2.0.0" />
     <PackageReference Include="SimplyWorks.I18n" Version="2.0.3" />
-    <PackageReference Include="Bogus" Version="30.0.4" />
+    <PackageReference Include="Bogus" Version="31.0.2" />
   </ItemGroup>
 
   <ItemGroup>

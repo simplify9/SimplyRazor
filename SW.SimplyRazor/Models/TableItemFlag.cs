@@ -6,6 +6,7 @@ namespace SW.SimplyRazor
         Added,
         Changed,
         Removed,
-        Clicked
+        Clicked,
+        DoubleClicked
     }
 }
