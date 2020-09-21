@@ -18,7 +18,10 @@
                 <span class="page-link" style="cursor:pointer ">First</span>
             </li>
             <li class="page-item " @onclick="e=> ChangePage(Page - 1)">
-                <span class="page-link" style="cursor:pointer ">Previous</span>
+                <span class="page-link" style="cursor:pointer ">
+                    Previous
+                    <span class="badge badge-pill badge-primary">@Page</span>
+                </span>
             </li>
         }
 

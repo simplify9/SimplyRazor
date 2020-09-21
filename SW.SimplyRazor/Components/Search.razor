@@ -219,16 +219,12 @@
         var newValue = (SearchyRequest)internalValue.Clone();
 
         var apiClient = serviceProvider.GetApiClient(ApiClient);
-        var apiResult = await apiClient.Search<TModel>
-            ($"{SearchUrl}?{newValue.ToString()}");
+        var apiResult = await apiClient.Search<TModel>($"{SearchUrl}?{newValue.ToString()}");
         await notify.NotifyOnApiResult(apiResult);
-        if (apiResult.Success)
-        {
-            if (apiResult.Response.Result.Count() == 0)
-                await notify.Publish(new UserMessage { Body = "Search returned no results.", Level = AlertLevel.Info });
+        if (apiResult.Success && apiResult.Response.Result.Count() == 0)
+            await notify.Publish(new UserMessage { Body = "No results.", Level = AlertLevel.Info });
 
-            result = apiResult.Response;
-        }
+        result = apiResult.Response;
 
         await ValueChanged.InvokeAsync(newValue);
         if (bb != null) await bb.SetBusy(false);
