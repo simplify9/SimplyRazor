@@ -1,5 +1,4 @@
 ﻿using SW.PrimitiveTypes;
-using SW.Searchy;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SW.ExportToExcel;
 using SW.SimplyRazor.SampleWeb.Models;
+using SW.EfCoreExtensions;
 
 namespace SW.SimplyRazor.SampleWeb.Resources.Employees
 {

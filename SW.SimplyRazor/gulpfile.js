@@ -40,7 +40,7 @@ gulp.task('js', function () {
         //'components/simplysearch/simplysearchinterop.js',
 
     ])
-        .pipe(concat('simply.razor.js'))
+        .pipe(concat('simplyrazor.js'))
         .pipe(minify())
         .pipe(gulp.dest('wwwroot'));
 });
@@ -56,6 +56,6 @@ gulp.task('css', function () {
         //'node_modules/tabulator-tables/dist/css/bootstrap/tabulator_bootstrap.min.css',
 
     ])
-        .pipe(concat('simply.razor.css'))
+        .pipe(concat('simplyrazor.css'))
         .pipe(gulp.dest('wwwroot'));
 });

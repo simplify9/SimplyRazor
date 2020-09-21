@@ -39,8 +39,8 @@ namespace SW.SimplyRazor.SampleWeb
 
             services.AddSimplyRazor(config =>
             {
-                config.ApiBaseUri = new Uri("https://localhost:5001/cqapi/");
-                config.BlobsUri = new Uri("https://localhost:5001/api/blobs/");
+                config.ApiBaseUri = new Uri("http://localhost:5000/cqapi/");
+                config.BlobsUri = new Uri("http://localhost:5000/api/blobs/");
                 config.ApiTokenAudience = "local";
                 config.ApiTokenIssuer = "local";
                 config.ApiTokenKey = "jhgfjhgfjhgfjhgfjhfjfj";
@@ -68,7 +68,7 @@ namespace SW.SimplyRazor.SampleWeb
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthorization();

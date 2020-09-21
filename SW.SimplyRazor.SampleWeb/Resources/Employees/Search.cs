@@ -1,5 +1,5 @@
-﻿using SW.PrimitiveTypes;
-using SW.Searchy;
+﻿using SW.EfCoreExtensions;
+using SW.PrimitiveTypes;
 using SW.SimplyRazor.SampleWeb.Models;
 using System;
 using System.Collections.Generic;
