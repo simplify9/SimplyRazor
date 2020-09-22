@@ -1,4 +1,6 @@
 ﻿@page "/form2"
+@page "/form2/{Id:int}"
+
 @inject NavigationManager navigationManager
 @inject SampleClient sampleClient
 
@@ -72,7 +74,7 @@
                     Save
                 </Title>
                 <IfBusy>
-                    <Confirm Title="Save" OnClick="result => OnConfirmSave(result, context)" >
+                    <Confirm Title="Save" OnClick="result => OnConfirmSave(result, context)">
                         Are you sure you want to save this record?
                     </Confirm>
                 </IfBusy>
@@ -89,6 +91,9 @@
 
     Employee employee;
     bool ready;
+
+    [Parameter]
+    public int Id { get; set; }
 
     async protected override Task OnInitializedAsync()
     {

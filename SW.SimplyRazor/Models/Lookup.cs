@@ -16,8 +16,6 @@ namespace SW.SimplyRazor
         private string ListUrl { get;  set; }
         private string ValueUrl { get;  set; }
 
-
-
         public static Lookup FromSearchy(string searchyUrl, bool noValue = false)
         {
             if (string.IsNullOrWhiteSpace(searchyUrl))
@@ -28,8 +26,8 @@ namespace SW.SimplyRazor
             return new Lookup
             {
                 Type = LookupType.Api,
-                ListUrl = $"{searchyUrl}?lookup=true&search={{search}}",
-                ValueUrl = noValue ? null : $"{searchyUrl}/{{value}}?lookup=true"
+                ListUrl = $"{searchyUrl}?lookup=true&search={{search}}&format=1",
+                ValueUrl = noValue ? null : $"{searchyUrl}/{{value}}?lookup=true&format=1"
             };
         }
 
