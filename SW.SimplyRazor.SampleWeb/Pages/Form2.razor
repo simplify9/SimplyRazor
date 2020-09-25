@@ -26,7 +26,7 @@
                     <Field Name="EmploymentDate" InputType="InputType.Calendar" />
                     <Field Name="AbsentPeriod" />
                     <Field Name="EmploymentStatus" Lookup="@Lookup.FromSearchy("mockmodels")" ReadOnly="true" />
-                    <Field Name="Country" Lookup="@Lookup.From("countries?lookup=true")" TypeAhead="0" />
+                    <Field Name="Country" Lookup="@Lookup.FromSearchy("countries")" TypeAhead="3" />
                     <Field Name="BirthCountry" Lookup="@Lookup.FromSearchy("countries")" TypeAhead="1" Placeholder="Type a value!" />
                     <Field Name="Country" Lookup="@Lookup.FromSearchy("countries")" />
                     <Field Name="Roles" Lookup="@Lookup.FromSearchy("countries")"></Field>

@@ -43,9 +43,7 @@ namespace SW.SimplyRazor
         private void CancelAllStepperTokens()
         {
             foreach (var token in StepperCancelTokens)
-
                 if (!token.IsCancellationRequested)
-
                     token.Cancel();
         }
     }

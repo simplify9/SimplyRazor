@@ -89,11 +89,9 @@
     async public Task OnSearch(string value, int resultCount)
     {
         if (TypeAhead > 0)
-
             await StepperDeboucer.Debouce(async () =>
-            {
-                await PopulateChoices(Lookup.ApplySearch(value));
-            });
+                await InvokeAsync(async () =>
+                    await PopulateChoices(Lookup.ApplySearch(value))));
     }
 
     [JSInvokable]
