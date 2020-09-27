@@ -112,11 +112,11 @@
             if (result != null && result.Result.Count() > 0)
             {
                 <div class="mb-3 mt-4">
-                    <SimplyTable Value="result.Result" Height="@Height" Width="@Width" Type="typeof(TModel)" OnItem="ti => OnTableItem(ti)">
-                        <Columns>
-                            @Columns
-                        </Columns>
-                    </SimplyTable>
+                    <SimplyTable Value="result.Result" 
+                                 Height="@Height" Width="@Width" 
+                                 Type="typeof(TModel)" 
+                                 OnItem="ti => OnTableItem(ti)" 
+                                 Columns="Columns" />
                 </div>
                 <Pager TotalCount="result.TotalCount" Count="result.Result.Count()" Page="internalValue.PageIndex" PageSize="PageSize" PageChanged="page => DoSearch(page)"></Pager>
             }

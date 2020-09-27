@@ -9,14 +9,9 @@
                  Type="modelType"
                  Text="@Text"
                  ValueChanged="TableValueChanged"
-                 OnItem="OnItem" >
-        <Columns>
-            @Columns
-        </Columns>
-        <Form>
-            @Form
-        </Form>
-    </SimplyTable>
+                 OnItem="OnItem" 
+                 Form="Form"
+                 Columns="Columns" />
 
     @if (serverFeedback != null)
     {
