@@ -5,13 +5,26 @@
 @if (modelType != null)
 {
     <SimplyNotify Notification="InvalidFieldNotification" OnReceived="OnServerFeedback" Tag="@Name" />
-    <SimplyTable Value="value"
-                 Type="modelType"
-                 Text="@Text"
-                 ValueChanged="TableValueChanged"
-                 OnItem="OnItem" 
-                 Form="Form"
-                 Columns="Columns" />
+
+    @if (Form == null)
+    {
+        <SimplyTable Value="value"
+                     Type="modelType"
+                     Text="@Text"
+                     ValueChanged="TableValueChanged"
+                     OnItem="OnItem"
+                     Columns="Columns" />
+    }
+    else
+    {
+        <SimplyTable Value="value"
+                     Type="modelType"
+                     Text="@Text"
+                     ValueChanged="TableValueChanged"
+                     OnItem="OnItem"
+                     Columns="Columns" 
+                     Form="Form"/>
+    }
 
     @if (serverFeedback != null)
     {
