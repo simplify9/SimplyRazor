@@ -8,7 +8,7 @@ namespace SW.SimplyRazor
 {
     public static class NotifyServiceExtensions
     {
-        async public static Task NotifyOnApiResult(this NotifyService notify, ApiResult result)
+        async public static Task<bool> NotifyOnApiResult(this NotifyService notify, ApiResult result)
         {
             if (result.StatusCode == 400)
             {
@@ -52,6 +52,8 @@ namespace SW.SimplyRazor
                         Body = "Validation failed.",
                         Level = AlertLevel.Warning
                     });
+
+                return false;
             }
 
             else if (result.StatusCode == 401)
@@ -61,6 +63,8 @@ namespace SW.SimplyRazor
                     Body = "Unauthorized.",
                     Level = AlertLevel.Warning
                 });
+
+                return false;
             }
 
             else if (result.StatusCode > 400 && result.StatusCode < 500)
@@ -72,6 +76,8 @@ namespace SW.SimplyRazor
 
                 });
 
+                return false;
+
             }
             else if (result.StatusCode == 0 || result.StatusCode >= 500)
             {
@@ -80,7 +86,11 @@ namespace SW.SimplyRazor
                     Body = $"Error ({result.StatusCode}): {(result.Body ?? "...")}",
                     Level = AlertLevel.Error
                 });
+
+                return false;
             }
+
+            return true;
         }
     }
 }
