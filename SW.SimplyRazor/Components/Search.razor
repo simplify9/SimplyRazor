@@ -220,8 +220,7 @@
 
         var apiClient = serviceProvider.GetApiClient(ApiClient);
         var apiResult = await apiClient.Search<TModel>($"{SearchUrl}?{newValue.ToString()}");
-        await notify.NotifyOnApiResult(apiResult);
-        if (apiResult.Success && apiResult.Response.Result.Count() == 0)
+        if (await notify.NotifyOnApiResult(apiResult) && apiResult.Response.Result.Count() == 0)
             await notify.Publish(new UserMessage { Body = "No results.", Level = AlertLevel.Info });
 
         result = apiResult.Response;

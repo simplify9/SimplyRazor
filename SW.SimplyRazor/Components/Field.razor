@@ -288,8 +288,7 @@
                     {
                         var apiClient = serviceProvider.GetApiClient();
                         var result = await apiClient.LookupValue(Lookup.ApplyValue(Value));
-                        await notify.NotifyOnApiResult(result);
-                        if (result.Success)
+                        if (await notify.NotifyOnApiResult(result))
                             lookupValue = result.Response;
                     }
                     else

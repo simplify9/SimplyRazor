@@ -97,8 +97,8 @@
         {
             var apiClient = serviceProvider.GetApiClient();
             var result = await apiClient.Search(Lookup.ApplySearch());
-            await notify.NotifyOnApiResult(result);
-            if (result.Success) Items = result.Response;
+            if (await notify.NotifyOnApiResult(result)) 
+                Items = result.Response;
         }
     }
 
