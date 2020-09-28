@@ -2,7 +2,7 @@
 @implements IDisposable
 @inject IJSRuntime JSRuntime
 
-<input id="@Id" @ref="inputRef" @onchange="OnChange" disabled="@Disabled" @attributes="UnmatchedAttributes"  />
+<input id="@Id" @ref="inputRef" disabled="@Disabled" @attributes="UnmatchedAttributes"  />
 
 @code {
 
@@ -39,22 +39,33 @@
                 Id,
                 Value,
                 Mode.ToString().ToLower());
+        }
+        else
+        {
+            var dates = await JSRuntime.InvokeAsync<DateTime[]>("simplyDateInterop.getDate", Id);
 
+            if (Value == null && dates.Length > 0)
+                await JSRuntime.InvokeVoidAsync("simplyDateInterop.clear", Id);
+            else if (Value != null && Mode == DateMode.Single && (dates.Length == 0 || (DateTime)Value != dates[0]))
+                await JSRuntime.InvokeVoidAsync("simplyDateInterop.setDate", Id, Value);
         }
     }
 
-    async Task OnChange(ChangeEventArgs args)
+    protected override void OnParametersSet()
     {
-
-        //if (Mode == DateMode.Single)
-        //{
-        //    if (string.IsNullOrWhiteSpace(args.Value.ToString()))
-        //        await JSRuntime.InvokeVoidAsync("simplyDateInterop.clear", Id);
-        //    else
-        //        await JSRuntime.InvokeVoidAsync("simplyDateInterop.setDate", Id, args.Value);
-        //}
-
+        StateHasChanged();
     }
+
+    //async Task OnChange(ChangeEventArgs args)
+    //{
+    //    //if (Mode == DateMode.Single)
+    //    //{
+    //    //    if (string.IsNullOrWhiteSpace(args.Value.ToString()))
+    //    //        await JSRuntime.InvokeVoidAsync("simplyDateInterop.clear", Id);
+    //    //    else
+    //    //        await JSRuntime.InvokeVoidAsync("simplyDateInterop.setDate", Id, args.Value);
+    //    //}
+    //}
 
     [JSInvokable]
     async public Task OnValueUpdate(DateTime[] selectedDates)
@@ -73,14 +84,14 @@
 
     }
 
-    [JSInvokable]
-    async public Task OnChange(DateTime[] selectedDates)
-    {
-        //if (selectedDates.Length > 0)
-        //    await ValueChanged.InvokeAsync(selectedDates[0]);
-        //else
-        //    await ValueChanged.InvokeAsync(null);
-    }
+    //[JSInvokable]
+    //async public Task OnChange(DateTime[] selectedDates)
+    //{
+    //    //if (selectedDates.Length > 0)
+    //    //    await ValueChanged.InvokeAsync(selectedDates[0]);
+    //    //else
+    //    //    await ValueChanged.InvokeAsync(null);
+    //}
 
     void IDisposable.Dispose()
     {

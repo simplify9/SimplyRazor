@@ -10,9 +10,9 @@
                 onValueUpdate: function (selectedDates, dateStr, instance) {
                     dotNetObjRef.invokeMethodAsync('OnValueUpdate', selectedDates);
                 },
-                onChange: function (selectedDates, dateStr, instance) {
-                    dotNetObjRef.invokeMethodAsync('OnChange', selectedDates);
-                },
+                //onChange: function (selectedDates, dateStr, instance) {
+                //    dotNetObjRef.invokeMethodAsync('OnChange', selectedDates);
+                //},
 
             });
 
@@ -26,6 +26,11 @@
         setDate: function (id, date) {
 
             window[id].setDate(date);
+        },
+
+        getDate: function (id) {
+
+            return window[id].selectedDates;
         },
 
         clear: function (id) {
