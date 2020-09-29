@@ -2,7 +2,7 @@
 @implements IDisposable
 @inject IJSRuntime JSRuntime
 
-<input id="@Id" @ref="inputRef" disabled="@Disabled" @attributes="UnmatchedAttributes"  />
+<input id="@Id" @ref="inputRef" disabled="@Disabled" @attributes="UnmatchedAttributes" />
 
 @code {
 
@@ -56,6 +56,18 @@
         StateHasChanged();
     }
 
+    [JSInvokable]
+    async public Task OnValueUpdate(DateTime[] selectedDates)
+    {
+        if (Mode == DateMode.Single)
+            if (selectedDates.Length > 0)
+                await ValueChanged.InvokeAsync(selectedDates[0].ToLocalTime().ChangeKind());
+            else
+                await ValueChanged.InvokeAsync(null);
+        else
+            await ValueChanged.InvokeAsync(selectedDates.Select(i => i.ToLocalTime().ChangeKind()).ToArray());
+    }
+
     //async Task OnChange(ChangeEventArgs args)
     //{
     //    //if (Mode == DateMode.Single)
@@ -66,23 +78,6 @@
     //    //        await JSRuntime.InvokeVoidAsync("simplyDateInterop.setDate", Id, args.Value);
     //    //}
     //}
-
-    [JSInvokable]
-    async public Task OnValueUpdate(DateTime[] selectedDates)
-    {
-        if (Mode == DateMode.Single)
-        {
-            if (selectedDates.Length > 0)
-                await ValueChanged.InvokeAsync(selectedDates[0]);
-            else
-                await ValueChanged.InvokeAsync(null);
-        }
-        else
-        {
-            await ValueChanged.InvokeAsync(selectedDates);
-        }
-
-    }
 
     //[JSInvokable]
     //async public Task OnChange(DateTime[] selectedDates)
