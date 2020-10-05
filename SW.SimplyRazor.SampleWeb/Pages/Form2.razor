@@ -23,7 +23,7 @@
                     <Field Name="@nameof(Employee.Age)" Default="20" Format="#.#" />
                     <div>test</div>
                     <Field Name="Married" />
-                    <Field Name="EmploymentDate" InputType="InputType.Calendar" />
+                    <Field Name="EmploymentDate" InputType="InputType.CalendarWithTime" />
                     <Field Name="AbsentPeriod" />
                     <Field Name="EmploymentStatus" Lookup="@Lookup.FromSearchy("mockmodels")" ReadOnly="true" />
                     <Field Name="Country" Lookup="@Lookup.FromSearchy("countries")" TypeAhead="3" />

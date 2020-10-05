@@ -1,11 +1,12 @@
 ﻿(function () {
     window.simplyDateInterop = {
 
-        init: function (element, dotNetObjRef, id, defaultDate, mode) {
+        init: function (element, dotNetObjRef, id, defaultDate, mode, enableTime) {
 
             window[id] = flatpickr(element, {
                 defaultDate: defaultDate,
                 mode: mode,
+                enableTime: enableTime,
                 allowInput: ((mode == 'single') ? false : false),
                 onValueUpdate: function (selectedDates, dateStr, instance) {
                     dotNetObjRef.invokeMethodAsync('OnValueUpdate', selectedDates);

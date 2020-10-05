@@ -16,6 +16,9 @@
     public DateMode Mode { get; set; }
 
     [Parameter]
+    public bool EnableTime { get; set; }
+
+    [Parameter]
     public object Value { get; set; }
 
     [Parameter]
@@ -38,7 +41,8 @@
                 DotNetObjectReference.Create(this),
                 Id,
                 Value,
-                Mode.ToString().ToLower());
+                Mode.ToString().ToLower(),
+                EnableTime);
         }
         else
         {

@@ -9,6 +9,7 @@
             Value="@State.Value"
             ValueChanged="ValueChanged"
             Disabled="@State.ReadOnly"
+            EnableTime="State.InputType == InputType.CalendarWithTime"
             class="@cssClass"
             @attributes="UnmatchedAttributes" />
 @code {

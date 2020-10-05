@@ -1,0 +1,51 @@
+﻿@page "/flexformsample"
+
+<FlexForm Properties="properties" @bind-Value="value" />
+
+<button type="button" class="btn btn-primary" @onclick="() => OnSetClick()" >Set</button>
+
+@code {
+
+
+    IEnumerable<ExtendedProperty> properties;
+    IDictionary<string, string> value;
+
+    async protected override Task OnInitializedAsync()
+    {
+        properties = new List<ExtendedProperty>
+        {
+            new ExtendedProperty
+            {
+                Name = "Country",
+                Type = ExtendedPropertyType.Text
+            },
+            new ExtendedProperty
+            {
+                Name = "ETA",
+                Type = ExtendedPropertyType.DateTime
+            },
+            new ExtendedProperty
+            {
+                Name = "Weight",
+                Type = ExtendedPropertyType.Decimal
+            },
+
+        };
+
+        value = new Dictionary<string, string>
+        {
+            {"Weight", "12" }
+        };
+    }
+
+    void OnSetClick()
+    {
+        value = new Dictionary<string, string>
+        {
+            {"Weight", "5" }
+        };
+    }
+
+
+
+}

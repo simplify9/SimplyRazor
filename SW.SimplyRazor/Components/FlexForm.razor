@@ -1,0 +1,83 @@
+﻿@namespace SW.SimplyRazor
+@inject NotifyService notify
+
+
+<Ready Value="Properties != null && values != null">
+    <IsReady>
+        @{
+            foreach (var value in values)
+            {
+                var fieldName = value.Key;
+                var flexValue = value.Value;
+                //var flexProperty = Properties.Where(i => i.Name == fieldName).Single();
+
+                <SimplyForm Value="flexValue" ValueChanged="v => OnFieldChanged(fieldName, flexValue)" TModel="FlexValue">
+
+                    @switch (flexValue.ExtendedProperty.Type)
+                    {
+                        case ExtendedPropertyType.Decimal:
+                            <Field Name="ValueDecimal" Text="@fieldName" />
+                            break;
+
+                        case ExtendedPropertyType.DateTime:
+
+                            <Field Name="ValueDateTime" Text="@fieldName" InputType="InputType.Calendar" />
+
+                            break;
+
+
+                        case ExtendedPropertyType.Text:
+                            <Field Name="ValueString" Text="@fieldName" />
+                            break;
+
+                    }
+
+                </SimplyForm>
+            }
+        }
+
+    </IsReady>
+</Ready>
+
+
+@code {
+    [Parameter]
+    public IEnumerable<ExtendedProperty> Properties { get; set; }
+
+    [Parameter]
+    public IDictionary<string, string> Value { get; set; }
+
+    [Parameter]
+    public EventCallback<IDictionary<string, string>> ValueChanged { get; set; }
+
+    IDictionary<string, FlexValue> values;
+    IDictionary<string, string> internalValue;
+
+    protected override void OnInitialized()
+    {
+        values = Properties.ToDictionary(i => i.Name, i => new FlexValue(i));
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (!StringDictionaryComparer.Compare(Value, internalValue))
+        {
+            internalValue = Value;
+            if (internalValue != null)
+            {
+                foreach (var kvp in internalValue)
+                {
+                    var prop = Properties.Where(i => i.Name == kvp.Key).Single();
+                    values[kvp.Key] = new FlexValue(prop, kvp.Value);
+                }
+            }
+        }
+    }
+
+    async Task OnFieldChanged(string name, FlexValue flexValue)
+    {
+        var newValue = values.Where(i => i.Value.ToString() != null).ToDictionary(i => i.Key, i => i.Value.ToString());
+        await ValueChanged.InvokeAsync(newValue);
+    }
+
+}

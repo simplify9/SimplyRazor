@@ -142,6 +142,9 @@
     public int PageSize { get; set; }
 
     [Parameter]
+    public bool CountRows { get; set; } = true;
+
+    [Parameter]
     public string Height { get; set; }
 
     [Parameter]
@@ -173,6 +176,7 @@
             internalValue = new SearchyRequest
             {
                 PageSize = PageSize,
+                CountRows = CountRows
             };
 
             var conditions = internalValue.Conditions;

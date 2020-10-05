@@ -10,7 +10,8 @@
         @bind-Value="scopedState[navigationManager.Uri]" 
         SearchUrl="employees"
         OnItem="@(i => i.When(TableItemFlag.DoubleClicked, i => navigationManager.NavigateTo($"/form2/{i.Item.Id}")))"
-        TModel="Employee">
+        TModel="Employee"
+        CountRows="false" >
     <Commands>
         <button class="btn btn-primary" type="button" @onclick="() => OnExportToExcel(context.SearchyRequest)">Export</button>
         <a href="form2">

@@ -25,6 +25,14 @@
             </li>
         }
 
+        <li class="page-item disabled">
+            <span class="page-link" style="cursor:pointer ">
+                Current
+                <span class="badge badge-pill badge-primary">@(Page + 1)</span>
+            </span>
+        </li>
+
+
         @if (Count < PageSize || totalPages == Page + 1)
         {
             <li class="page-item disabled">

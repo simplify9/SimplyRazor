@@ -253,7 +253,7 @@
                     else
                         editor = typeof(EditorForList);
 
-                else if (nakedType == typeof(DateTime) && InputType == InputType.Calendar)
+                else if (nakedType == typeof(DateTime) && (InputType == InputType.Calendar || InputType == InputType.CalendarWithTime))
                     editor = typeof(EditorForDateAsCalendar);
 
                 else if (Lookup != null)

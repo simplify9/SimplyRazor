@@ -10,5 +10,6 @@ namespace SW.SimplyRazor
         Multiline,
         Password,
         Calendar,
+        CalendarWithTime
     }
 }
