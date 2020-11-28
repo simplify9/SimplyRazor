@@ -1,4 +1,6 @@
-﻿/*
+﻿/// <reference path="node_modules/jexcel/dist/jexcel.js" />
+/// <reference path="node_modules/jsuites/dist/jsuites.js" />
+/*
 Gulp file....
 */
 
@@ -16,10 +18,13 @@ gulp.task('js', function () {
         'node_modules/bs-custom-file-input/dist/bs-custom-file-input.js',
         'node_modules/choices.js/public/assets/scripts/choices.js',
         'node_modules/flatpickr/dist/flatpickr.min.js',
+        'node_modules/jexcel/dist/jexcel.js',
+        'node_modules/jsuites/dist/jsuites.js',
         'components/simplydate/simplydateinterop.js',
         'components/simplyeditor/simplyeditorinterop.js',
         'components/simplychoices/simplychoicesinterop.js',
         'components/simplyupload/simplyuploadinterop.js',
+        'components/simplyexcel/simplyexcelinterop.js',
         'extensions/ijsruntimeextensionsinterop.js'
 
     ])
@@ -32,6 +37,8 @@ gulp.task('css', function () {
     return gulp.src([
 
         'node_modules/choices.js/public/assets/styles/choices.css',
+        'node_modules/jexcel/dist/jexcel.css',
+        'node_modules/jsuites/dist/jsuites.css',
         'components/simplychoices/simplychoices.css',
         'node_modules/quill/dist/quill.snow.css',
         'node_modules/flatpickr/dist/flatpickr.min.css',

@@ -1,0 +1,49 @@
+﻿@namespace SW.SimplyRazor
+@implements IDisposable
+@inject IJSRuntime JSRuntime
+
+<div id="@jexcelDivId"></div>
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; }
+
+    string jexcelDivId = "jexcel_" + Guid.NewGuid().ToString("N");
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (Id == null) Id = $"jexcel_{Guid.NewGuid().ToString("N")}";
+
+            await JSRuntime.InvokeVoidAsync("simplyExcelInterop.init",
+                jexcelDivId,
+                Id,
+                DotNetObjectReference.Create(this));
+        }
+        else
+        {
+        }
+    }
+
+    [JSInvokable]
+    async public Task OnValueUpdate(object value)
+    {
+        var stringValue = value.ToString();
+        //if (Mode == DateMode.Single)
+        //    if (selectedDates.Length > 0)
+        //        await ValueChanged.InvokeAsync(selectedDates[0].ToLocalTime().ChangeKind());
+        //    else
+        //        await ValueChanged.InvokeAsync(null);
+        //else
+        //    await ValueChanged.InvokeAsync(selectedDates.Select(i => i.ToLocalTime().ChangeKind()).ToArray());
+    }
+
+    void IDisposable.Dispose()
+    {
+        JSRuntime.InvokeVoidAsync("simplyExcelInterop.destroy", jexcelDivId);
+    }
+
+
+}
