@@ -9,7 +9,7 @@ resources:
 
 variables:
   buildConfiguration: 'Release'
-  major: 3
+  major: 5
   minor: 0
   version: $[format('{0}.{1}.{2}', variables['major'], variables['minor'], counter(format('{0}.{1}', variables['major'], variables['minor']), 0))]
   vmImageName: 'ubuntu-latest'
