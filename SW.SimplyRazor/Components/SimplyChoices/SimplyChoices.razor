@@ -107,7 +107,7 @@
         await notify.NotifyOnApiResult(apiResult);
         if (apiResult.Success)
         {
-            await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, apiResult.Response.ToArray(), "value", "label");
+            await JSRuntime.InvokeVoidAsync("simplyChoicesInterop.setChoices", Id, apiResult.Response.ToArray(), "key", "value");
         }
     }
 
